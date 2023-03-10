@@ -131,7 +131,7 @@ public class ApplicationController : MonoBehaviour
         // }
 
         // Load the main menu scene.
-        SceneLoaderWrapper.Instance.LoadScene(SceneType.MainMenu.ToString(), GameDataSource.Instance.UseNetworkSceneManager());
+        SceneLoaderWrapper.Instance.LoadScene(SceneType.MainMenu.ToString(), false);
     }
 
     private IEnumerator checkInternetConnection()

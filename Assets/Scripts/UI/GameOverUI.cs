@@ -1,5 +1,6 @@
 using System;
 using TMPro;
+using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -50,7 +51,10 @@ public class GameOverUI : MonoBehaviour
 
     private void OnQuitButtonClicked()
     {
-        LoadScene(SceneType.MainMenu.ToString());
+        // Shutdown the NetworkManager
+        NetworkManager.Singleton.Shutdown();
+
+        SceneLoaderWrapper.Instance.LoadScene(SceneType.MainMenu.ToString(), false);
     }
 
     private void OnPlayAgainButtonClicked()

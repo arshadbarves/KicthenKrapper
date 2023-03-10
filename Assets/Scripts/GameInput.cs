@@ -19,7 +19,15 @@ public class GameInput : MonoBehaviour
 
     private void Awake()
     {
-        Instance = this;
+        if (Instance != null && Instance != this)
+        {
+            Destroy(gameObject);
+        }
+        else
+        {
+            Instance = this;
+        }
+
         playerInputActions = new PlayerInputActions();
         playerInputActions.Player.Enable(); // Enable the player input actions
 
@@ -29,7 +37,7 @@ public class GameInput : MonoBehaviour
 
     private void Start()
     {
-        inputType = GameManager.Instance.GetInputType();
+        inputType = GameDataSource.Instance.GetInputType();
     }
 
     private void OnDestroy()

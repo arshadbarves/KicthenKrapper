@@ -6,7 +6,14 @@ public class DeliveryCounter : BaseCounter
 
     private void Awake()
     {
-        Instance = this;
+        if (Instance != null && Instance != this)
+        {
+            Destroy(gameObject);
+        }
+        else
+        {
+            Instance = this;
+        }
     }
 
     public override void Interact(Player player)

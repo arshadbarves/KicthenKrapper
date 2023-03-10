@@ -1,20 +1,26 @@
-using Unity.Netcode;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class TestDebugNet : MonoBehaviour
 {
-    private void Update()
+    [SerializeField] private Button createGameButton;
+    [SerializeField] private Button joinGameButton;
+
+    private void Awake()
     {
-        if (Input.GetKeyDown(KeyCode.H))
-        {
-            Debug.Log("H pressed");
-            NetworkManager.Singleton.StartHost();
-        }
-        if (Input.GetKeyDown(KeyCode.C))
-        {
-            Debug.Log("C pressed");
-            NetworkManager.Singleton.StartClient();
-        }
+        createGameButton.onClick.AddListener(CreateGameButton_OnClick);
+        joinGameButton.onClick.AddListener(JoinGameButton_OnClick);
+    }
+
+    private void CreateGameButton_OnClick()
+    {
+        KitchenGameMultiplayer.Instance.StartHost();
+        SceneLoaderWrapper.Instance.LoadScene(SceneType.Lobby.ToString(), GameDataSource.Instance.UseNetworkSceneManager());
+    }
+
+    private void JoinGameButton_OnClick()
+    {
+        KitchenGameMultiplayer.Instance.StartClient();
     }
 }
 

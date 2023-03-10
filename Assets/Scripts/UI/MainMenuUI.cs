@@ -30,7 +30,6 @@ public class MainMenuUI : MonoBehaviour
 
     public void OnPlayButtonClicked()
     {
-        Debug.Log("OnPlayButtonClicked");
-        SceneLoaderWrapper.Instance.LoadScene(SceneType.Map_City_001.ToString(), false);
+        SceneLoaderWrapper.Instance.LoadScene(SceneType.MultiPlayerMenu.ToString(), false);
     }
 }

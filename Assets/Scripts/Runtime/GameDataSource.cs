@@ -6,6 +6,8 @@ public class GameDataSource : MonoBehaviour
     public static GameDataSource Instance { get; private set; }
 
     [SerializeField] private bool m_useNetworkSceneManager = false;
+    [SerializeField] private InputType inputType = InputType.Mobile;
+
     private int m_DeliveryCount;
     private int m_TrophyCount;
     private int m_HighestTrophyCount;
@@ -24,6 +26,11 @@ public class GameDataSource : MonoBehaviour
         {
             Destroy(gameObject);
         }
+    }
+
+    public InputType GetInputType()
+    {
+        return inputType;
     }
 
     public void SetDeliveryCount(int count)

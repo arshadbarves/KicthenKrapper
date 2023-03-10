@@ -68,11 +68,15 @@ public class ClientMusicPlayer : MonoBehaviour
     {
         m_source = GetComponent<AudioSource>();
 
-        if (Instance != null)
+        if (Instance != null && Instance != this)
         {
-            throw new System.Exception("Multiple ClientMusicPlayers!");
+            Destroy(gameObject);
         }
+        else
+        {
+            Instance = this;
+        }
+
         DontDestroyOnLoad(gameObject);
-        Instance = this;
     }
 }

@@ -43,6 +43,8 @@ public enum SceneType
 {
     Tutorial,
     MainMenu,
+    MultiPlayerMenu,
+    Lobby,
     Map_City_001,
 }
 

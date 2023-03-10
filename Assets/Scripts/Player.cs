@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using Unity.Netcode;
 using UnityEngine;
 
@@ -26,7 +27,9 @@ public class Player : NetworkBehaviour, IKitchenObjectParent
     [SerializeField] private float playerHeight = 2f;
     [SerializeField] private float interactDistance = 2f;
     [SerializeField] private LayerMask countersLayerMask;
+    [SerializeField] private LayerMask collisionsLayerMask;
     [SerializeField] private Transform kitchenObjectHoldPoint;
+    [SerializeField] private List<Vector3> spawnPoints;
 
     private bool isWalking = false;
     private Vector3 lastMovementDirection = Vector3.zero;
@@ -46,7 +49,22 @@ public class Player : NetworkBehaviour, IKitchenObjectParent
             LocalInstance = this;
         }
 
+        transform.position = spawnPoints[(int)OwnerClientId];
+
         OnAnyPlayerSpawned?.Invoke(this, EventArgs.Empty);
+
+        if (IsServer)
+        {
+            NetworkManager.Singleton.OnClientDisconnectCallback += NetworkManager_OnClientDisconnectCallback;
+        }
+    }
+
+    private void NetworkManager_OnClientDisconnectCallback(ulong clientId)
+    {
+        if (clientId == OwnerClientId && IsServer && HasKitchenObject())
+        {
+            KitchenObject.DestroyKitchenObject(GetKitchenObject());
+        }
     }
 
     private void GameInput_OnInteractAlternateAction(object sender, EventArgs e)
@@ -121,15 +139,14 @@ public class Player : NetworkBehaviour, IKitchenObjectParent
 
         float moveDistance = playerSpeed * Time.deltaTime;
 
-        bool canMove = !Physics.CapsuleCast(transform.position, transform.position + Vector3.up * playerHeight, playerRadius, movDir, moveDistance);
+        bool canMove = !Physics.BoxCast(transform.position, new Vector3(playerRadius, playerHeight / 2f, playerRadius), movDir, Quaternion.identity, moveDistance, collisionsLayerMask);
 
         if (!canMove)
         {
             // If we can't move, we check if we can move in the direction of the input vector 
             // but only in the horizontal plane
             Vector3 movDirX = new Vector3(movDir.x, 0f, 0f).normalized;
-            canMove = (movDir.x < -.5f || movDir.x > +.5f) && !Physics.CapsuleCast(transform.position, transform.position + Vector3.up * playerHeight, playerRadius, movDirX, moveDistance);
-
+            canMove = (movDir.x < -.5f || movDir.x > +.5f) && !Physics.BoxCast(transform.position, new Vector3(playerRadius, playerHeight / 2f, playerRadius), movDirX, Quaternion.identity, moveDistance, collisionsLayerMask);
             if (canMove)
             {
                 // Can move only in the X axis
@@ -139,7 +156,7 @@ public class Player : NetworkBehaviour, IKitchenObjectParent
             {
                 // Can't move in the X axis, so we check if we can move in the Z axis
                 Vector3 movDirZ = new Vector3(0f, 0f, movDir.z).normalized;
-                canMove = (movDir.z < -.5f || movDir.z > +.5f) && !Physics.CapsuleCast(transform.position, transform.position + Vector3.up * playerHeight, playerRadius, movDirZ, moveDistance);
+                canMove = (movDir.z < -.5f || movDir.z > +.5f) && !Physics.BoxCast(transform.position, new Vector3(playerRadius, playerHeight / 2f, playerRadius), movDirZ, Quaternion.identity, moveDistance, collisionsLayerMask);
 
                 if (canMove)
                 {

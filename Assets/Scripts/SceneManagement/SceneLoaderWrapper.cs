@@ -76,14 +76,18 @@ public class SceneLoaderWrapper : NetworkBehaviour
     {
         if (useNetworkSceneManager)
         {
-            if (IsSpawned && IsNetworkSceneManagementEnabled && !NetworkManager.ShutdownInProgress)
-            {
-                if (NetworkManager.IsServer)
-                {
-                    // If is active server and NetworkManager uses scene management, load scene using NetworkManager's SceneManager
-                    NetworkManager.SceneManager.LoadScene(sceneName, loadSceneMode);
-                }
-            }
+            // Check if NetworkSceneManager is enabled
+            // if (IsSpawned && IsNetworkSceneManagementEnabled && !NetworkManager.ShutdownInProgress)
+            // {
+            //     // If is active server and NetworkManager uses scene management, load scene using NetworkManager's SceneManager
+            //     if (NetworkManager.IsServer)
+            //     {
+            //         // If is active server and NetworkManager uses scene management, load scene using NetworkManager's SceneManager
+            //         NetworkManager.SceneManager.LoadScene(sceneName, loadSceneMode);
+            //     }
+            // }
+
+            NetworkManager.SceneManager.LoadScene(sceneName, loadSceneMode);
         }
         else
         {

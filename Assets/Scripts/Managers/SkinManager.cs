@@ -14,7 +14,14 @@ public class SkinManager : MonoBehaviour
 
     private void Awake()
     {
-        Instance = this;
+        if (Instance != null && Instance != this)
+        {
+            Destroy(gameObject);
+        }
+        else
+        {
+            Instance = this;
+        }
 
         // Load all the skins
         SkinSO[] allSkins = Resources.LoadAll<SkinSO>("Skins"); // Load all the skins from the "Skins" folder
