@@ -69,6 +69,7 @@ public class StartupUI : MonoBehaviour
 
             if (animationSequencerController != null)
             {
+                animationSequencerController.Kill();
                 animationSequencerController.Play();
             }
 

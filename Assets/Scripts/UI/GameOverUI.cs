@@ -15,7 +15,16 @@ public class GameOverUI : MonoBehaviour
     private void Awake()
     {
         animator = GetComponent<Animator>();
-        playAgainButton.onClick.AddListener(OnPlayAgainButtonClicked);
+
+        if (KitchenGameMultiplayer.playMultiplayer)
+        {
+            playAgainButton.onClick.AddListener(OnPlayAgainButtonClicked);
+        }
+        else
+        {
+            playAgainButton.gameObject.SetActive(false);
+        }
+
         quitButton.onClick.AddListener(OnQuitButtonClicked);
     }
 
@@ -64,6 +73,6 @@ public class GameOverUI : MonoBehaviour
 
     private void LoadScene(string sceneName)
     {
-        SceneLoaderWrapper.Instance.LoadScene(sceneName, GameDataSource.Instance.UseNetworkSceneManager());
+        SceneLoaderWrapper.Instance.LoadScene(sceneName, false);
     }
 }

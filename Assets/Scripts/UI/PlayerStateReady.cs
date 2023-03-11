@@ -51,7 +51,8 @@ public class PlayerStateReady : NetworkBehaviour
             if (allPlayersReady)
             {
                 // TODO - Map selection
-                SceneLoaderWrapper.Instance.LoadScene(SceneType.Map_City_001.ToString(), GameDataSource.Instance.UseNetworkSceneManager());
+                KitchenGameLobby.Instance.DeleteLobby();
+                SceneLoaderWrapper.Instance.LoadScene(SceneType.Map_City_001.ToString(), true);
             }
         }
     }

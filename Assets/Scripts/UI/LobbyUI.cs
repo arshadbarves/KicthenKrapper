@@ -2,6 +2,8 @@ using TMPro;
 using System;
 using UnityEngine;
 using UnityEngine.UI;
+using Unity.Services.Lobbies.Models;
+using Unity.Netcode;
 
 public class LobbyUI : MonoBehaviour
 {
@@ -17,6 +19,10 @@ public class LobbyUI : MonoBehaviour
     [Header("Vote Map Button")]
     [SerializeField] private Button voteMapButton;
 
+    [Header("Lobby Info")]
+    [SerializeField] private TextMeshProUGUI lobbyNameText;
+    [SerializeField] private TextMeshProUGUI lobbyCodeText;
+
     private void Awake()
     {
         readyButton.onClick.AddListener(OnReadyButtonClicked);
@@ -29,6 +35,11 @@ public class LobbyUI : MonoBehaviour
         // Set Ready Button to Not Ready
         readyText.text = "Not Ready";
         readyButton.GetComponent<Image>().sprite = onNotReadyButtonImage;
+
+        Lobby lobby = KitchenGameLobby.Instance.GetLobby();
+
+        lobbyNameText.text = lobby.Name;
+        lobbyCodeText.text = "Code: " + lobby.LobbyCode;
     }
 
     private void OnVoteMapButtonClicked()
@@ -38,6 +49,8 @@ public class LobbyUI : MonoBehaviour
 
     private void OnLeaveLobbyButtonClicked()
     {
+        KitchenGameLobby.Instance.LeaveLobby();
+        NetworkManager.Singleton.Shutdown();
         SceneLoaderWrapper.Instance.LoadScene(SceneType.MultiPlayerMenu.ToString(), false);
     }
 

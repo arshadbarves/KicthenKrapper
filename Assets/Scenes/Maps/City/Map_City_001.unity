@@ -2840,6 +2840,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   exitButton: {fileID: 141606593}
+  floatingJoystick: {fileID: 23323760}
 --- !u!1001 &473097334
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -5943,7 +5944,7 @@ MonoBehaviour:
   fastDeliveryTipAmount: 5
   rewardAmount: 10
   recipeDeliveryTime: 60
-  inputType: 0
+  gamePlayingTimerMax: 10
   playerPrefab: {fileID: 7618237399635741747, guid: 2cbd669050c0e8e459a7e823c89489bf,
     type: 3}
 --- !u!114 &1085456691
@@ -10584,7 +10585,7 @@ PrefabInstance:
     - target: {fileID: 9209846400508017882, guid: 8894fa072119644489eaa9b1bb2e0f5a,
         type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 9209846400528217722, guid: 8894fa072119644489eaa9b1bb2e0f5a,
         type: 3}

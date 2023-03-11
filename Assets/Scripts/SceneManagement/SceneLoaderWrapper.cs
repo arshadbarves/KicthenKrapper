@@ -188,4 +188,9 @@ public class SceneLoaderWrapper : NetworkBehaviour
     {
         m_ClientLoadingScreen.StopLoadingScreen();
     }
+
+    public string GetActiveSceneName()
+    {
+        return SceneManager.GetActiveScene().name;
+    }
 }

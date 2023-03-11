@@ -2,10 +2,12 @@ using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.UI;
 using BrunoMikoski.AnimationSequencer;
+using UniversalMobileController;
 
 public class HostDisconnectedUI : MonoBehaviour
 {
     [SerializeField] private Button exitButton;
+    [SerializeField] private GameObject floatingJoystick;
     private AnimationSequencerController animationSequencerController;
 
     private void Start()
@@ -31,6 +33,8 @@ public class HostDisconnectedUI : MonoBehaviour
 
     private void Show()
     {
+        floatingJoystick.gameObject.SetActive(false);
+        animationSequencerController.Kill();
         animationSequencerController.Play();
         gameObject.SetActive(true);
     }

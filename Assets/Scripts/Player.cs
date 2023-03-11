@@ -49,7 +49,8 @@ public class Player : NetworkBehaviour, IKitchenObjectParent
             LocalInstance = this;
         }
 
-        transform.position = spawnPoints[(int)OwnerClientId];
+        // transform.position = spawnPoints[KitchenGameMultiplayer.Instance.GetPlayerDataIndexFromPlayerId(OwnerClientId)];
+        transform.position = GetRandomSpawnPoint();
 
         OnAnyPlayerSpawned?.Invoke(this, EventArgs.Empty);
 
@@ -57,6 +58,22 @@ public class Player : NetworkBehaviour, IKitchenObjectParent
         {
             NetworkManager.Singleton.OnClientDisconnectCallback += NetworkManager_OnClientDisconnectCallback;
         }
+    }
+
+    // Spawn on random SpawnPoint which is not occupied by another player
+    private Vector3 GetRandomSpawnPoint()
+    {
+        List<Vector3> freeSpawnPoints = new List<Vector3>(spawnPoints);
+
+        foreach (Player player in FindObjectsOfType<Player>())
+        {
+            if (player != this)
+            {
+                freeSpawnPoints.Remove(player.transform.position);
+            }
+        }
+
+        return freeSpawnPoints[UnityEngine.Random.Range(0, freeSpawnPoints.Count)];
     }
 
     private void NetworkManager_OnClientDisconnectCallback(ulong clientId)

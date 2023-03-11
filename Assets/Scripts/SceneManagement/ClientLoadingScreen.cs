@@ -70,6 +70,7 @@ public class ClientLoadingScreen : MonoBehaviour
     public void StartLoadingScreen()
     {
         SetCanvasVisibility(true);
+        m_animationSequencerController.Kill();
         m_animationSequencerController.Play();
         m_LoadingScreenRunning = true;
         UpdateLoadingScreen();
