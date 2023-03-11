@@ -20,7 +20,13 @@ The Kitchen game is a simulation game where you run a kitchen and serve food to 
 - Serving customers and earning money
 - Upgrading your kitchen and equipment
 
-## Script Code
 
-Here's a sample code snippet from the game's script files:
+## Contributing
+
+If you're interested in contributing to the Kitchen game, please fork the project and submit a pull request with your changes. We welcome all contributions and suggestions!
+
+## License
+
+The Kitchen game is licensed under the [MIT License](LICENSE).
+
 
