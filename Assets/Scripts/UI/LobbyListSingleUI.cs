@@ -25,5 +25,6 @@ public class LobbyListSingleUI : MonoBehaviour
     {
         this.lobby = lobby;
         lobbyNameText.text = lobby.Name;
+        gameObject.SetActive(true);
     }
 }

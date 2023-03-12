@@ -2,7 +2,6 @@ using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.UI;
 using BrunoMikoski.AnimationSequencer;
-using UniversalMobileController;
 
 public class HostDisconnectedUI : MonoBehaviour
 {
@@ -16,6 +15,11 @@ public class HostDisconnectedUI : MonoBehaviour
         animationSequencerController = GetComponent<AnimationSequencerController>();
         NetworkManager.Singleton.OnClientDisconnectCallback += Singleton_OnClientDisconnectCallback;
         Hide();
+    }
+
+    private void OnDestroy()
+    {
+        NetworkManager.Singleton.OnClientDisconnectCallback -= Singleton_OnClientDisconnectCallback;
     }
 
     private void Singleton_OnClientDisconnectCallback(ulong clientId)

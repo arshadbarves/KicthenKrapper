@@ -38,6 +38,11 @@ public class LobbyUI : MonoBehaviour
 
         Lobby lobby = KitchenGameLobby.Instance.GetLobby();
 
+        if (lobby == null)
+        {
+            Debug.LogError("Lobby is null");
+        }
+
         lobbyNameText.text = lobby.Name;
         lobbyCodeText.text = "Code: " + lobby.LobbyCode;
     }
@@ -51,7 +56,7 @@ public class LobbyUI : MonoBehaviour
     {
         KitchenGameLobby.Instance.LeaveLobby();
         NetworkManager.Singleton.Shutdown();
-        SceneLoaderWrapper.Instance.LoadScene(SceneType.MultiPlayerMenu.ToString(), false);
+        SceneLoaderWrapper.Instance.LoadScene(SceneType.MultiplayerMenu.ToString(), false);
     }
 
     private void OnReadyButtonClicked()

@@ -24,15 +24,12 @@ public class MultiplayerLobbyMenuUI : MonoBehaviour
         createLobbyButton.onClick.AddListener(CreateGameButton_OnClick);
         quickJoinButton.onClick.AddListener(QuickJoinButton_OnClick);
         joinCodeButton.onClick.AddListener(JoinCodeButton_OnClick);
-
-        lobbyTemplate.gameObject.SetActive(false);
     }
 
     private void Start()
     {
         KitchenGameMultiplayer.Instance.OnTryingToJoinGame += KitchenGameMultiplayer_OnTryingToJoinGame;
         KitchenGameMultiplayer.Instance.OnFailedToJoinGame += KitchenGameMultiplayer_OnFailedToJoinGame;
-
         KitchenGameLobby.Instance.OnLobbyListChanged += KitchenGameLobby_OnLobbyListChanged;
         UpdateLobbyList(new List<Lobby>());
     }
@@ -44,9 +41,16 @@ public class MultiplayerLobbyMenuUI : MonoBehaviour
 
     private void OnDestroy()
     {
-        KitchenGameMultiplayer.Instance.OnTryingToJoinGame -= KitchenGameMultiplayer_OnTryingToJoinGame;
-        KitchenGameMultiplayer.Instance.OnFailedToJoinGame -= KitchenGameMultiplayer_OnFailedToJoinGame;
-        KitchenGameLobby.Instance.OnLobbyListChanged -= KitchenGameLobby_OnLobbyListChanged;
+        try
+        {
+            KitchenGameMultiplayer.Instance.OnTryingToJoinGame -= KitchenGameMultiplayer_OnTryingToJoinGame;
+            KitchenGameMultiplayer.Instance.OnFailedToJoinGame -= KitchenGameMultiplayer_OnFailedToJoinGame;
+            KitchenGameLobby.Instance.OnLobbyListChanged -= KitchenGameLobby_OnLobbyListChanged;
+        }
+        catch (Exception e)
+        {
+            Debug.Log(e);
+        }
     }
 
     private void KitchenGameMultiplayer_OnFailedToJoinGame(object sender, EventArgs e)
@@ -59,6 +63,7 @@ public class MultiplayerLobbyMenuUI : MonoBehaviour
         }
 
         messagePanel.ShowMessage(message);
+        quickJoinButton.interactable = true;
 
     }
 
@@ -79,6 +84,7 @@ public class MultiplayerLobbyMenuUI : MonoBehaviour
 
     private void QuickJoinButton_OnClick()
     {
+        quickJoinButton.interactable = false;
         KitchenGameMultiplayer.Instance.StartClient();
     }
 
@@ -89,17 +95,23 @@ public class MultiplayerLobbyMenuUI : MonoBehaviour
 
     private void UpdateLobbyList(List<Lobby> lobbies)
     {
+        // Remove all the old lobbies except the template
         foreach (Transform child in lobbyContainer)
         {
-            if (child.gameObject != lobbyTemplate)
+            if (child != lobbyTemplate)
+            {
                 Destroy(child.gameObject);
+            }
         }
 
+        // Add the new lobbies
         foreach (Lobby lobby in lobbies)
         {
-            Transform lobbyObject = Instantiate(lobbyTemplate, lobbyContainer);
-            lobbyObject.gameObject.SetActive(true);
-            lobbyObject.GetComponent<LobbyListSingleUI>().SetLobby(lobby);
+            Transform lobbyTransform = Instantiate(lobbyTemplate, lobbyContainer);
+            lobbyTransform.gameObject.SetActive(true);
+
+            LobbyListSingleUI lobbyUI = lobbyTransform.GetComponent<LobbyListSingleUI>();
+            lobbyUI.SetLobby(lobby);
         }
     }
 }

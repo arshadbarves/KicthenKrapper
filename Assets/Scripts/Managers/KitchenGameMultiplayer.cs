@@ -10,7 +10,6 @@ public class KitchenGameMultiplayer : NetworkBehaviour
     public static KitchenGameMultiplayer Instance { get; private set; }
 
 
-    public static bool playMultiplayer;
 
     public event EventHandler OnTryingToJoinGame;
     public event EventHandler OnFailedToJoinGame;
@@ -34,6 +33,14 @@ public class KitchenGameMultiplayer : NetworkBehaviour
         DontDestroyOnLoad(gameObject);
 
         playerDataNetworkList = new NetworkList<PlayerData>();
+    }
+
+    private void Start()
+    {
+        if (!GameDataSource.playMultiplayer)
+        {
+            SceneLoaderWrapper.Instance.LoadScene(SceneType.Map_City_001.ToString(), false);
+        }
         playerDataNetworkList.OnListChanged += PlayerDataNetworkList_OnListChanged;
     }
 
@@ -49,14 +56,6 @@ public class KitchenGameMultiplayer : NetworkBehaviour
         }
     }
 
-    private void Start()
-    {
-        if (!playMultiplayer)
-        {
-            SceneManager.LoadScene(SceneType.MainMenu.ToString());
-        }
-    }
-
     private void PlayerDataNetworkList_OnListChanged(NetworkListEvent<PlayerData> changeEvent)
     {
         OnPlayerDataNetworkListChanged?.Invoke(this, EventArgs.Empty);
@@ -64,10 +63,36 @@ public class KitchenGameMultiplayer : NetworkBehaviour
 
     public void StartHost()
     {
+        StopHost();
         NetworkManager.Singleton.ConnectionApprovalCallback += NetworkManager_ConnectionApprovalCallback;
         NetworkManager.Singleton.OnClientConnectedCallback += NetworkManager_OnClientConnectedCallback;
         NetworkManager.Singleton.OnClientDisconnectCallback += NetworkManager_Server_OnClientDisconnectCallback;
         NetworkManager.Singleton.StartHost();
+    }
+
+    public void StopHost()
+    {
+        // Unsubscribe from events
+        NetworkManager.Singleton.ConnectionApprovalCallback -= NetworkManager_ConnectionApprovalCallback;
+        NetworkManager.Singleton.OnClientConnectedCallback -= NetworkManager_OnClientConnectedCallback;
+        NetworkManager.Singleton.OnClientDisconnectCallback -= NetworkManager_Server_OnClientDisconnectCallback;
+    }
+
+    public void StartClient()
+    {
+        OnTryingToJoinGame?.Invoke(this, EventArgs.Empty);
+        StopClient();
+        NetworkManager.Singleton.OnClientDisconnectCallback += NetworkManager_Client_OnClientDisconnectCallback;
+        NetworkManager.Singleton.OnClientConnectedCallback += NetworkManager_Client_OnClientConnectedCallback;
+
+        NetworkManager.Singleton.StartClient();
+    }
+
+    public void StopClient()
+    {
+        // Unsubscribe from events
+        NetworkManager.Singleton.OnClientDisconnectCallback -= NetworkManager_Client_OnClientDisconnectCallback;
+        NetworkManager.Singleton.OnClientConnectedCallback -= NetworkManager_Client_OnClientConnectedCallback;
     }
 
     private void NetworkManager_Server_OnClientDisconnectCallback(ulong playerID)
@@ -90,7 +115,7 @@ public class KitchenGameMultiplayer : NetworkBehaviour
     private void NetworkManager_ConnectionApprovalCallback(NetworkManager.ConnectionApprovalRequest connectionApprovalRequest, NetworkManager.ConnectionApprovalResponse connectionApprovalResponse)
     {
         // Get Active Scene
-        if (SceneManager.GetActiveScene().name != SceneType.Lobby.ToString())
+        if (SceneLoaderWrapper.Instance.GetActiveSceneName() != SceneType.Lobby.ToString())
         {
             connectionApprovalResponse.Approved = false;
             connectionApprovalResponse.Reason = "Game is already in progress";
@@ -106,15 +131,6 @@ public class KitchenGameMultiplayer : NetworkBehaviour
         }
 
         connectionApprovalResponse.Approved = true;
-    }
-
-    public void StartClient()
-    {
-        OnTryingToJoinGame?.Invoke(this, EventArgs.Empty);
-
-        NetworkManager.Singleton.OnClientDisconnectCallback += NetworkManager_Client_OnClientDisconnectCallback;
-        NetworkManager.Singleton.OnClientConnectedCallback += NetworkManager_Client_OnClientConnectedCallback;
-        NetworkManager.Singleton.StartClient();
     }
 
     private void NetworkManager_Client_OnClientConnectedCallback(ulong clientId)

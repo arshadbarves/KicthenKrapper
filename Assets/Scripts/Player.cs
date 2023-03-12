@@ -40,9 +40,40 @@ public class Player : NetworkBehaviour, IKitchenObjectParent
     {
         GameInput.Instance.OnInteractAction += GameInput_OnInteractAction;
         GameInput.Instance.OnInteractAlternateAction += GameInput_OnInteractAlternateAction;
+
+        if (!GameDataSource.playMultiplayer)
+        {
+            SpawnPlayer();
+        }
+    }
+
+    public override void OnDestroy()
+    {
+        base.OnDestroy();
+
+        GameInput.Instance.OnInteractAction -= GameInput_OnInteractAction;
+        GameInput.Instance.OnInteractAlternateAction -= GameInput_OnInteractAlternateAction;
     }
 
     public override void OnNetworkSpawn()
+    {
+        SpawnPlayer();
+
+        if (IsServer)
+        {
+            NetworkManager.Singleton.OnClientDisconnectCallback += NetworkManager_OnClientDisconnectCallback;
+        }
+    }
+
+    public override void OnNetworkDespawn()
+    {
+        if (IsServer)
+        {
+            NetworkManager.Singleton.OnClientDisconnectCallback -= NetworkManager_OnClientDisconnectCallback;
+        }
+    }
+
+    public void SpawnPlayer()
     {
         if (IsOwner)
         {
@@ -53,11 +84,6 @@ public class Player : NetworkBehaviour, IKitchenObjectParent
         transform.position = GetRandomSpawnPoint();
 
         OnAnyPlayerSpawned?.Invoke(this, EventArgs.Empty);
-
-        if (IsServer)
-        {
-            NetworkManager.Singleton.OnClientDisconnectCallback += NetworkManager_OnClientDisconnectCallback;
-        }
     }
 
     // Spawn on random SpawnPoint which is not occupied by another player

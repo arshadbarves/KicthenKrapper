@@ -5,6 +5,9 @@ public class GameDataSource : MonoBehaviour
 {
     public static GameDataSource Instance { get; private set; }
 
+
+    public static bool playMultiplayer = true;
+
     [SerializeField] private bool m_useNetworkSceneManager = false;
     [SerializeField] private InputType inputType = InputType.Mobile;
 

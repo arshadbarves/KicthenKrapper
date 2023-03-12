@@ -96,8 +96,6 @@ public class SceneLoaderWrapper : NetworkBehaviour
             if (loadSceneMode == LoadSceneMode.Single)
             {
                 m_ClientLoadingScreen.StartLoadingScreen();
-
-                Debug.Log("Loading scene " + sceneName + " with loadSceneMode " + loadSceneMode);
                 m_LoadingProgressManager.LocalLoadOperation = loadOperation;
             }
         }

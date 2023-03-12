@@ -29,8 +29,8 @@ public class KitchenGameLobby : MonoBehaviour
     }
 
     private Lobby joinedLobby;
-    private float heartBeatTimer;
-    private float listLobbyTimer;
+    private float heartBeatTimer = 0f;
+    private float listLobbyTimer = 0f;
 
     private void Awake()
     {
@@ -61,7 +61,8 @@ public class KitchenGameLobby : MonoBehaviour
         {
             InitializationOptions options = new InitializationOptions();
             options.SetProfile("Profile" + UnityEngine.Random.Range(0, 1000000).ToString());
-            await UnityServices.InitializeAsync();
+            await UnityServices.InitializeAsync(options);
+            // await UnityServices.InitializeAsync();
 
             await AuthenticationService.Instance.SignInAnonymouslyAsync();
         }
@@ -76,14 +77,13 @@ public class KitchenGameLobby : MonoBehaviour
 
     private void HandlePeriodicLobbyUpdate()
     {
-        if (joinedLobby == null && AuthenticationService.Instance.IsSignedIn && SceneLoaderWrapper.Instance.GetActiveSceneName() == SceneType.Lobby.ToString())
+        if (joinedLobby == null && AuthenticationService.Instance.IsSignedIn && SceneLoaderWrapper.Instance.GetActiveSceneName() == SceneType.MultiplayerMenu.ToString())
         {
             listLobbyTimer -= Time.deltaTime;
             if (listLobbyTimer <= 0f)
             {
                 float listLobbyInterval = 5f;
                 listLobbyTimer = listLobbyInterval;
-
                 GetLobbies();
             }
         }
@@ -93,7 +93,8 @@ public class KitchenGameLobby : MonoBehaviour
     {
         if (joinedLobby == null)
             return;
-
+        if (!IsLobbyOwner())
+            return;
         if (heartBeatTimer <= 0f)
         {
             float heartBeatInterval = 15f;
@@ -295,7 +296,13 @@ public class KitchenGameLobby : MonoBehaviour
 
     public async void LeaveLobby()
     {
-        if (joinedLobby != null)
+        // If the player is the host, delete the lobby and stop the host connection
+        if (joinedLobby != null && joinedLobby.HostId == AuthenticationService.Instance.PlayerId)
+        {
+            DeleteLobby();
+            NetworkManager.Singleton.Shutdown();
+        }
+        else
         {
             try
             {
@@ -314,7 +321,7 @@ public class KitchenGameLobby : MonoBehaviour
         OnJoinedLobby?.Invoke(this, EventArgs.Empty);
         try
         {
-            joinedLobby = await LobbyService.Instance.JoinLobbyByCodeAsync(lobbyId);
+            joinedLobby = await LobbyService.Instance.JoinLobbyByIdAsync(lobbyId);
 
             string relayJoinCode = joinedLobby.Data[KEY_RELAY_JOIN_CODE].Value;
             JoinAllocation joinAllocation = await JoinRelay(relayJoinCode);

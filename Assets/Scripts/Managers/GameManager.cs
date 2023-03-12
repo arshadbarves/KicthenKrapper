@@ -31,7 +31,7 @@ public class GameManager : NetworkBehaviour
     [SerializeField] private float gamePlayingTimerMax = 10f;
     private Dictionary<ulong, bool> playerReadyDictionary;
 
-    [SerializeField] private Transform playerPrefab;
+    [SerializeField] private Player playerPrefab;
 
     private void Awake()
     {
@@ -49,6 +49,10 @@ public class GameManager : NetworkBehaviour
 
     private void Start()
     {
+        if (!GameDataSource.playMultiplayer)
+        {
+            var playerObject = Instantiate(playerPrefab, Vector3.zero, Quaternion.identity);
+        }
     }
 
     public override void OnNetworkSpawn()
@@ -58,6 +62,16 @@ public class GameManager : NetworkBehaviour
         if (IsServer)
         {
             NetworkManager.Singleton.SceneManager.OnLoadEventCompleted += SceneManager_OnLoadEventCompleted;
+        }
+    }
+
+    public override void OnNetworkDespawn()
+    {
+        gameState.OnValueChanged -= GameState_OnValueChanged;
+
+        if (IsServer)
+        {
+            NetworkManager.Singleton.SceneManager.OnLoadEventCompleted -= SceneManager_OnLoadEventCompleted;
         }
     }
 
@@ -75,17 +89,6 @@ public class GameManager : NetworkBehaviour
     {
         OnGameStateChanged?.Invoke(this, EventArgs.Empty);
     }
-
-    // private void GameInput_OnInteractAction(object sender, EventArgs e)
-    // {
-    //     if (gameState.Value == GameState.WaitingToStart)
-    //     {
-    //         isLocalPlayerReady = true;
-    //         OnLocalPlayerReadyChanged?.Invoke(this, EventArgs.Empty);
-
-    //         SetPlayerReadyServerRpc(isReady: isLocalPlayerReady);
-    //     }
-    // }
 
     [ServerRpc(RequireOwnership = false)]
     private void SetPlayerReadyServerRpc(bool isReady = false, ServerRpcParams serverRpcParams = default)

@@ -36,7 +36,7 @@ public class LobbyCreateUI : MonoBehaviour
         }
 
         KitchenGameLobby.Instance.CreateLobby(lobbyNameInputField.text, privateLobbyToggle.isOn);
-        SceneLoaderWrapper.Instance.LoadScene(SceneType.Lobby.ToString(), false);
+        Hide();
     }
 
     public void Show()

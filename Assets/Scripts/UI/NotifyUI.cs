@@ -18,6 +18,14 @@ public class NotifyUI : MonoBehaviour
         Hide();
     }
 
+    private void OnDestroy()
+    {
+        KitchenGameLobby.Instance.OnCreatedLobby -= KitchenGameLobby_OnCreatedLobby;
+        KitchenGameLobby.Instance.OnCreatedLobbyFailed -= KitchenGameLobby_OnCreatedLobbyFailed;
+        KitchenGameLobby.Instance.OnJoinedLobby -= KitchenGameLobby_OnJoinedLobby;
+        KitchenGameLobby.Instance.OnJoinedLobbyFailed -= KitchenGameLobby_OnJoinedLobbyFailed;
+    }
+
     private void KitchenGameLobby_OnJoinedLobbyFailed(object sender, EventArgs e)
     {
         if (NetworkManager.Singleton.DisconnectReason == "")

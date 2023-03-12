@@ -16,7 +16,7 @@ public class GameOverUI : MonoBehaviour
     {
         animator = GetComponent<Animator>();
 
-        if (KitchenGameMultiplayer.playMultiplayer)
+        if (GameDataSource.playMultiplayer)
         {
             playAgainButton.onClick.AddListener(OnPlayAgainButtonClicked);
         }

@@ -5944,8 +5944,8 @@ MonoBehaviour:
   fastDeliveryTipAmount: 5
   rewardAmount: 10
   recipeDeliveryTime: 60
-  gamePlayingTimerMax: 10
-  playerPrefab: {fileID: 7618237399635741747, guid: 2cbd669050c0e8e459a7e823c89489bf,
+  gamePlayingTimerMax: 180
+  playerPrefab: {fileID: 7618237399635741756, guid: 2cbd669050c0e8e459a7e823c89489bf,
     type: 3}
 --- !u!114 &1085456691
 MonoBehaviour:
