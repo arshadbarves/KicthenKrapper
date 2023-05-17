@@ -1,8 +1,9 @@
-using System;
 using System.Collections;
-using System.Net.NetworkInformation;
+using Epic.OnlineServices;
+using Epic.OnlineServices.Auth;
+using Epic.OnlineServices.Connect;
+using PlayEveryWare.EpicOnlineServices;
 using UnityEngine;
-using UnityEngine.Networking;
 
 // This class is the entry point for the application. It is responsible for
 // initializing the application and managing the application lifecycle.
@@ -11,8 +12,9 @@ using UnityEngine.Networking;
 
 public class ApplicationController : MonoBehaviour
 {
-    [SerializeField] private StartupUI m_startupUI;
-    [SerializeField] private float m_welcomePanelDisplayTime = 5.0f;
+    [SerializeField] private UniversalUI m_universalUI;
+
+    public UniversalUI UniversalUI { get { return m_universalUI; } }
 
     public static ApplicationController Instance { get; private set; }
 
@@ -45,93 +47,64 @@ public class ApplicationController : MonoBehaviour
 
     private void Start()
     {
-        // Initialize the application.
         InitializeApplication();
     }
 
-    private void InitializeApplication()
+    public void InitializeApplication()
     {
-        // Start couroutines for welcome panel display time.
-        // Load the game's configuration file and set up default settings.
-        // LoadConfigurationFile();
-
-        // Initialize the game's UI, including the main menu and HUD.
-        // InitializeUI();
-
-        // Set up and establish network connections to servers or other players.
-        InitializeNetworkConnection();
-
-        // Set up audio listeners and load audio assets.
-        // InitializeAudio();
-
-        // Load data files and initialize game variables and data structures.
-        // InitializeGameData();
-
-        // Initialize analytics and event tracking.
-        // InitializeAnalytics();
-
-        // Set up localization and translation systems.
-        // InitializeLocalization();
-
-        // Initialize logging and debugging tools.
-        // InitializeLogging();
-
-        // Set up crash and error reporting systems.
-        // InitializeCrashReporting();
-
-        // Initialize performance monitoring tools and set up metrics collection.
-        // InitializePerformanceMonitoring();
-
+        UniversalUI.OnPanelShow(UniversalUI.TitlePanel);
         // Check if the user has accepted the EULA and privacy policy.
-        if (!GameDataSource.Instance.GetEULAAndPrivacyPolicyAccepted())
+        if (!ClientPrefs.GetEULAAndPrivacyPolicyAccepted())
         {
             // Show the EULA and privacy policy.
-            StartCoroutine(ShowEULAAndPrivacyPolicy());
+            StartCoroutine(m_universalUI.ShowEULAAndPrivacyPolicy());
+            return;
         }
         else
         {
-            // Start the game.
-            StartGame();
+            StartApp();
         }
     }
 
-    private void InitializeNetworkConnection()
+    public void StartApp()
     {
+        // Set up and establish network connections to servers or other players.
         StartCoroutine(checkInternetConnection());
-    }
 
-    private IEnumerator ShowEULAAndPrivacyPolicy()
-    {
-        yield return new WaitForSeconds(1.0f);
-        // Show the EULA and privacy policy.
-        m_startupUI.OnPanelShow(m_startupUI.EULAPanel);
+        EOSAuth.Instance.Login();
+
+        ClientPrefs.Initialize();
     }
 
     public void StartGame()
     {
         // Start the game.
         m_gameStatus = GameStatus.GameStarted;
-        StartCoroutine(WelcomePanelDisplayTime());
-    }
-
-    private IEnumerator WelcomePanelDisplayTime()
-    {
-        yield return new WaitForSeconds(m_welcomePanelDisplayTime);
-        // Hide the welcome panel.
-        m_startupUI.OnPanelDismiss(m_startupUI.WelcomePanel);
+        m_universalUI.HideAllPanels();
 
         // Load the main menu scene if the high score is greater than 0 else load the tutorial scene.
         // if (GameDataSource.Instance.GetHighestTrophyCount() > 0)
         // {
-        //     SceneLoaderWrapper.Instance.LoadScene(SceneType.MainMenu.ToString(), GameDataSource.Instance.UseNetworkSceneManager());
+        //     SceneLoaderWrapper.Instance.LoadScene(SceneType.MainMenu.ToString(), false);
         // }
         // else
         // {
-        //     SceneLoaderWrapper.Instance.LoadScene(SceneType.Tutorial.ToString(), GameDataSource.Instance.UseNetworkSceneManager());
+        //     SceneLoaderWrapper.Instance.LoadScene(SceneType.Tutorial.ToString(), false);
         // }
 
-        // Load the main menu scene.
+        // TODO: Remove this line.
         SceneLoaderWrapper.Instance.LoadScene(SceneType.MainMenu.ToString(), false);
+    }
+
+    public void QuitGame()
+    {
+        // Quit the game.
+        m_gameStatus = GameStatus.GameQuit;
+#if UNITY_EDITOR
+        UnityEditor.EditorApplication.isPlaying = false;
+#else
+        Application.Quit();
+#endif
     }
 
     private IEnumerator checkInternetConnection()
@@ -140,15 +113,72 @@ public class ApplicationController : MonoBehaviour
         if (Application.internetReachability == NetworkReachability.NotReachable)
         {
             // Show the no internet connection panel.
-            m_startupUI.OnPanelShow(m_startupUI.NetworkErrorPanel);
+            m_universalUI.OnPanelShow(m_universalUI.NetworkErrorPanel);
         }
         else
         {
             // Hide the no internet connection panel.
-            m_startupUI.OnPanelDismiss(m_startupUI.NetworkErrorPanel);
+            m_universalUI.OnPanelHide(m_universalUI.NetworkErrorPanel);
         }
 
         yield return new WaitForSeconds(1.0f);
         StartCoroutine(checkInternetConnection());
+    }
+
+    private void ResetPlayerAuth()
+    {
+        var authInterface = EOSManager.Instance.GetEOSPlatformInterface().GetAuthInterface();
+        var options = new Epic.OnlineServices.Auth.DeletePersistentAuthOptions();
+
+        authInterface.DeletePersistentAuth(ref options, null, (ref DeletePersistentAuthCallbackInfo deletePersistentAuthCallbackInfo) =>
+        {
+            if (deletePersistentAuthCallbackInfo.ResultCode == Result.Success)
+            {
+                Debug.Log("Persistent auth deleted");
+            }
+            else
+            {
+                Debug.Log("Persistent auth not deleted");
+            }
+        });
+
+        var connectInterface = EOSManager.Instance.GetEOSPlatformInterface().GetConnectInterface();
+        var connectOptions = new Epic.OnlineServices.Connect.DeleteDeviceIdOptions();
+
+        connectInterface.DeleteDeviceId(ref connectOptions, null, (ref DeleteDeviceIdCallbackInfo deleteDeviceIdCallbackInfo) =>
+        {
+            if (deleteDeviceIdCallbackInfo.ResultCode == Result.Success)
+            {
+                Debug.Log("Device ID deleted");
+            }
+            else
+            {
+                Debug.Log("Device ID not deleted");
+            }
+        });
+    }
+
+    public void CleanupApplication()
+    {
+        // Reset the Game Data
+        GameDataSource.Instance.ResetGameData();
+
+        // Reset the game status.
+        m_gameStatus = GameStatus.None;
+
+        // Reset the ClientPrefs.
+        ClientPrefs.ResetClientPrefs();
+
+        // Reset the Player Authenticaion.
+        // ResetPlayerAuth();
+
+        // Reset the application.
+        InitializeApplication();
+
+        // Destroy the Singleton instance.
+        if (ApplicationManager.Instance != null)
+        {
+            Destroy(ApplicationManager.Instance.gameObject);
+        }
     }
 }

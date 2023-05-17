@@ -11,10 +11,15 @@ public class GameManager : NetworkBehaviour
     public event EventHandler OnGameStateChanged;
     public event EventHandler OnLocalPlayerReadyChanged;
 
-    [SerializeField] private int negativeCoinAmount = -5;
-    [SerializeField] private int fastDeliveryTipAmount = 5;
-    [SerializeField] private int rewardAmount = 10;
-    [SerializeField] private float recipeDeliveryTime = 10f;
+    [SerializeField] private GameModeSO gameModeSO;
+    [SerializeField] private Player playerPrefab;
+    private int negativeCoinAmount;
+    private int fastDeliveryTipAmount;
+    private int rewardAmount;
+    private float recipeDeliveryTime;
+    private float gamePlayingTimerMax;
+    private bool isLocalPlayerReady = false;
+    private Dictionary<ulong, bool> playerReadyDictionary;
 
     private enum GameState
     {
@@ -25,13 +30,9 @@ public class GameManager : NetworkBehaviour
     }
 
     private NetworkVariable<GameState> gameState = new NetworkVariable<GameState>(GameState.WaitingToStart);
-    private bool isLocalPlayerReady = false;
     private NetworkVariable<float> countdownToStartTimer = new NetworkVariable<float>(3f);
     private NetworkVariable<float> gamePlayingTimer = new NetworkVariable<float>(0f);
-    [SerializeField] private float gamePlayingTimerMax = 10f;
-    private Dictionary<ulong, bool> playerReadyDictionary;
 
-    [SerializeField] private Player playerPrefab;
 
     private void Awake()
     {
@@ -52,6 +53,15 @@ public class GameManager : NetworkBehaviour
         if (!GameDataSource.playMultiplayer)
         {
             var playerObject = Instantiate(playerPrefab, Vector3.zero, Quaternion.identity);
+        }
+
+        if (gameModeSO != null)
+        {
+            negativeCoinAmount = gameModeSO.NegativeCoinAmount;
+            fastDeliveryTipAmount = gameModeSO.FastDeliveryTipAmount;
+            rewardAmount = gameModeSO.RewardAmount;
+            recipeDeliveryTime = gameModeSO.RecipeDeliveryTime;
+            gamePlayingTimerMax = gameModeSO.GamePlayingTimerMax;
         }
     }
 
@@ -187,7 +197,7 @@ public class GameManager : NetworkBehaviour
 
     public int GetNegativeCoinAmount()
     {
-        return negativeCoinAmount;
+        return negativeCoinAmount * -1;
     }
 
     public int GetFastDeliveryTipAmount()

@@ -2,8 +2,7 @@ using TMPro;
 using System;
 using UnityEngine;
 using UnityEngine.UI;
-using Unity.Services.Lobbies.Models;
-using Unity.Netcode;
+using PlayEveryWare.EpicOnlineServices.Samples;
 
 public class LobbyUI : MonoBehaviour
 {
@@ -36,15 +35,17 @@ public class LobbyUI : MonoBehaviour
         readyText.text = "Not Ready";
         readyButton.GetComponent<Image>().sprite = onNotReadyButtonImage;
 
-        Lobby lobby = KitchenGameLobby.Instance.GetLobby();
+        Lobby lobby = EOSKitchenGameLobby.Instance.GetCurrentLobby();
 
         if (lobby == null)
         {
             Debug.LogError("Lobby is null");
         }
 
-        lobbyNameText.text = lobby.Name;
-        lobbyCodeText.text = "Code: " + lobby.LobbyCode;
+        // Get Level Name
+
+        // lobbyNameText.text = lobby.Attributes.Find(x => x.Key == EOSKitchenGameLobby.LOBBY_NAME).AsAttribute.Value.AsUtf8;
+        lobbyCodeText.text = "Code: " + lobby.Id;
     }
 
     private void OnVoteMapButtonClicked()
@@ -54,9 +55,9 @@ public class LobbyUI : MonoBehaviour
 
     private void OnLeaveLobbyButtonClicked()
     {
-        KitchenGameLobby.Instance.LeaveLobby();
-        NetworkManager.Singleton.Shutdown();
-        SceneLoaderWrapper.Instance.LoadScene(SceneType.MultiplayerMenu.ToString(), false);
+        EOSKitchenGameMultiplayer.Instance.DisconnectOnClick();
+        EOSKitchenGameLobby.Instance.LeaveLobby();
+        SceneLoaderWrapper.Instance.LoadScene(SceneType.MainMenu.ToString(), false);
     }
 
     private void OnReadyButtonClicked()

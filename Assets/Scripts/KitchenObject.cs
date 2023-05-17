@@ -84,11 +84,11 @@ public class KitchenObject : NetworkBehaviour
     public static void CreateKitchenObject(KitchenObjectSO kitchenObjectSO, IKitchenObjectParent kitchenObjectParent)
     {
 
-        KitchenGameMultiplayer.Instance.CreateKitchenObject(kitchenObjectSO, kitchenObjectParent);
+        EOSKitchenGameMultiplayer.Instance.CreateKitchenObject(kitchenObjectSO, kitchenObjectParent);
     }
 
     public static void DestroyKitchenObject(KitchenObject kitchenObject)
     {
-        KitchenGameMultiplayer.Instance.DestroyKitchenObject(kitchenObject);
+        EOSKitchenGameMultiplayer.Instance.DestroyKitchenObject(kitchenObject);
     }
 }

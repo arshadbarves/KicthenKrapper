@@ -6,7 +6,13 @@ using UnityEngine.UI;
 
 public class MainMenuUI : MonoBehaviour
 {
+    [Header("Panels")]
+    [SerializeField] private GameObject settingsPanel;
+    [SerializeField] private GameObject popupNamePanel;
+
+    [Header("Buttons")]
     [SerializeField] private Button playButton;
+    [SerializeField] private Button settingsButton;
 
     [Header("Multiplayer Toggle")]
     [SerializeField] private Toggle multiplayerToggle;
@@ -21,6 +27,7 @@ public class MainMenuUI : MonoBehaviour
     {
         // playButton.onClick.AddListener(OnPlayButtonClicked);
         multiplayerToggle.onValueChanged.AddListener(OnMultiplayerToggleValueChanged);
+        settingsButton.onClick.AddListener(OnSettingsButtonClicked);
         // MapButton.onClick.AddListener(OnNavigationButtonClicked(MapPanel));
         // ShopButton.onClick.AddListener(OnNavigationButtonClicked(ShopPanel));
     }
@@ -63,5 +70,15 @@ public class MainMenuUI : MonoBehaviour
     public void OnPlayButtonClicked()
     {
         SceneLoaderWrapper.Instance.LoadScene(SceneType.MultiplayerMenu.ToString(), false);
+    }
+
+    public void OnSettingsButtonClicked()
+    {
+        ShowPanel(settingsPanel);
+    }
+
+    public void ShowPopupNamePanel()
+    {
+        ShowPanel(popupNamePanel);
     }
 }

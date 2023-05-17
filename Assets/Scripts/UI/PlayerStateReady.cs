@@ -51,7 +51,7 @@ public class PlayerStateReady : NetworkBehaviour
             if (allPlayersReady)
             {
                 // TODO - Map selection
-                KitchenGameLobby.Instance.DeleteLobby();
+                // EOSKitchenGameLobby.Instance.DeleteLobby();
                 SceneLoaderWrapper.Instance.LoadScene(SceneType.Map_City_001.ToString(), true);
             }
         }

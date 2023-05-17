@@ -35,7 +35,7 @@ public class JoinCodeUI : MonoBehaviour
             return;
         }
 
-        KitchenGameLobby.Instance.JoinWithCode(joinCodeInput.text);
+        // EOSKitchenGameLobby.Instance.JoinWithCode(joinCodeInput.text);
     }
 
     public void Show()

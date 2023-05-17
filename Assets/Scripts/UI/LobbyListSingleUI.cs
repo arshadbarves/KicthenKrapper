@@ -1,30 +1,53 @@
-using System;
+using Epic.OnlineServices.Lobby;
+using PlayEveryWare.EpicOnlineServices.Samples;
 using TMPro;
-using Unity.Services.Lobbies.Models;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class LobbyListSingleUI : MonoBehaviour
 {
-    [SerializeField] private TextMeshProUGUI lobbyNameText;
 
-    private Lobby lobby;
+    [SerializeField] private TextMeshProUGUI OwnerNameTxt;
+    [SerializeField] private TextMeshProUGUI MembersTxt;
+    [SerializeField] private TextMeshProUGUI LobbyNameText;
+
+    public Button JoinButton;
+
+    // Metadata
+    [HideInInspector]
+    public string OwnerName = string.Empty;
+
+    [HideInInspector]
+    public int Members = 0;
+    [HideInInspector]
+    public int MaxMembers = 0;
+
+    [HideInInspector]
+    public string LobbyName = string.Empty;
+
+    [HideInInspector]
+    public Lobby LobbyRef;
+    [HideInInspector]
+    public LobbyDetails LobbyDetailsRef;
 
     private void Awake()
     {
-        GetComponent<Button>().onClick.AddListener(OnLobbyClicked);
+        JoinButton.onClick.AddListener(OnLobbyClicked);
         gameObject.SetActive(false);
     }
 
     private void OnLobbyClicked()
     {
-        KitchenGameLobby.Instance.JoinWithId(lobby.Id);
+        EOSKitchenGameLobby.Instance.JoinLobby(LobbyRef, LobbyDetailsRef);
     }
 
-    public void SetLobby(Lobby lobby)
+    public void UpdateUI()
     {
-        this.lobby = lobby;
-        lobbyNameText.text = lobby.Name;
+        OwnerNameTxt.text = OwnerName;
+        MembersTxt.text = string.Format("{0}/{1}", Members, MaxMembers);
+        LobbyNameText.text = LobbyName;
+
+        JoinButton.enabled = true;
         gameObject.SetActive(true);
     }
 }

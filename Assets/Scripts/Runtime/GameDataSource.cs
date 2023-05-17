@@ -5,12 +5,14 @@ public class GameDataSource : MonoBehaviour
 {
     public static GameDataSource Instance { get; private set; }
 
+    public event EventHandler OnPlayerDataChanged;
 
     public static bool playMultiplayer = true;
 
     [SerializeField] private bool m_useNetworkSceneManager = false;
     [SerializeField] private InputType inputType = InputType.Mobile;
 
+    private PlayerDataInventory m_PlayerData;
     private int m_DeliveryCount;
     private int m_TrophyCount;
     private int m_HighestTrophyCount;
@@ -29,6 +31,17 @@ public class GameDataSource : MonoBehaviour
         {
             Destroy(gameObject);
         }
+    }
+
+    public PlayerDataInventory GetPlayerData()
+    {
+        return m_PlayerData;
+    }
+
+    public void SetPlayerData(PlayerDataInventory playerData)
+    {
+        m_PlayerData = playerData;
+        OnPlayerDataChanged?.Invoke(this, EventArgs.Empty);
     }
 
     public InputType GetInputType()
@@ -106,13 +119,13 @@ public class GameDataSource : MonoBehaviour
         m_useNetworkSceneManager = useNetworkSceneManager;
     }
 
-    public bool GetEULAAndPrivacyPolicyAccepted()
+    public void ResetGameData()
     {
-        return PlayerPrefs.GetInt("EULAAndPrivacyPolicyAccepted", 0) == 1;
-    }
-
-    public void SetEULAAndPrivacyPolicyAccepted(bool accepted)
-    {
-        PlayerPrefs.SetInt("EULAAndPrivacyPolicyAccepted", accepted ? 1 : 0);
+        m_DeliveryCount = 0;
+        m_TrophyCount = 0;
+        m_HighestTrophyCount = 0;
+        m_CurrentMap = MapType.City;
+        m_Player = null;
+        m_PlayerSkin = null;
     }
 }

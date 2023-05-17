@@ -16,6 +16,18 @@ public static class ClientPrefs
     const float k_DefaultMasterVolume = 0.5f;
     const float k_DefaultMusicVolume = 0.8f;
 
+    public static void Initialize()
+    {
+        if (!PlayerPrefs.HasKey(k_MasterVolumeKey))
+        {
+            PlayerPrefs.SetFloat(k_MasterVolumeKey, k_DefaultMasterVolume);
+        }
+        if (!PlayerPrefs.HasKey(k_MusicVolumeKey))
+        {
+            PlayerPrefs.SetFloat(k_MusicVolumeKey, k_DefaultMusicVolume);
+        }
+    }
+
     public static float GetMasterVolume()
     {
         return PlayerPrefs.GetFloat(k_MasterVolumeKey, k_DefaultMasterVolume);
@@ -64,4 +76,45 @@ public static class ClientPrefs
         PlayerPrefs.SetString(k_AvailableProfilesKey, availableProfiles);
     }
 
+    public static bool GetEULAAndPrivacyPolicyAccepted()
+    {
+        return PlayerPrefs.GetInt("EULAAndPrivacyPolicyAccepted", 0) == 1;
+    }
+
+    public static void SetEULAAndPrivacyPolicyAccepted(bool accepted)
+    {
+        PlayerPrefs.SetInt("EULAAndPrivacyPolicyAccepted", accepted ? 1 : 0);
+    }
+
+    public static void ResetClientPrefs()
+    {
+        PlayerPrefs.DeleteAll();
+    }
+
+    public static void SetOpenIDToken(string openIDToken)
+    {
+        try
+        {
+            PlayerPrefs.SetString("OpenIDToken", openIDToken);
+        }
+        catch (System.Exception e)
+        {
+            Debug.Log("Error setting OpenIDToken: " + e.Message);
+        }
+    }
+
+    public static string GetOpenIDToken()
+    {
+        return PlayerPrefs.GetString("OpenIDToken", "");
+    }
+
+    public static void SetLoginType(string loginType)
+    {
+        PlayerPrefs.SetString("LoginType", loginType);
+    }
+
+    public static string GetLoginType()
+    {
+        return PlayerPrefs.GetString("LoginType", "");
+    }
 }

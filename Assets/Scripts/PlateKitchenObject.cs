@@ -25,7 +25,7 @@ public class PlateKitchenObject : KitchenObject
     {
         if (validIngredients.Contains(ingredient) && !ingredients.Contains(ingredient))
         {
-            AddIngredientServerRpc(KitchenGameMultiplayer.Instance.GetKitchenObjectSOIndex(ingredient));
+            AddIngredientServerRpc(EOSKitchenGameMultiplayer.Instance.GetKitchenObjectSOIndex(ingredient));
 
             return true;
         }
@@ -44,7 +44,7 @@ public class PlateKitchenObject : KitchenObject
     [ClientRpc]
     private void AddIngredientClientRpc(int kitchenObjectSOIndex)
     {
-        KitchenObjectSO ingredient = KitchenGameMultiplayer.Instance.GetKitchenObjectSOFromIndex(kitchenObjectSOIndex);
+        KitchenObjectSO ingredient = EOSKitchenGameMultiplayer.Instance.GetKitchenObjectSOFromIndex(kitchenObjectSOIndex);
 
         ingredients.Add(ingredient);
 

@@ -2,7 +2,6 @@ using System;
 using Unity.Netcode;
 using Unity.Services.Authentication;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 public class KitchenGameMultiplayer : NetworkBehaviour
 {

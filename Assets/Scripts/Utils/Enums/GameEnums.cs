@@ -41,6 +41,7 @@ public enum ResourceType
 
 public enum SceneType
 {
+    Startup,
     Tutorial,
     MainMenu,
     MultiplayerMenu,

@@ -6,4 +6,12 @@ public class DontDestroy : MonoBehaviour
     {
         DontDestroyOnLoad(gameObject);
     }
+
+    private void OnDestroy()
+    {
+        if (gameObject != null)
+        {
+            Destroy(gameObject);
+        }
+    }
 }

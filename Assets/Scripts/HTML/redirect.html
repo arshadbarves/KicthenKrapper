@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Redirecting...</title>
+  </head>
+  <style>
+    @import url("https://fonts.googleapis.com/css2?family=Comfortaa&family=Poppins&display=swap");
+
+    body {
+      font-family: Poppins, sans-serif;
+      font-size: 14px;
+      color: #333;
+      background-color: #fff;
+      margin: 0;
+      padding: 0;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    h1 {
+      font-size: 1.5em;
+      font-weight: normal;
+      margin: 0;
+      padding: 0.6em 0;
+    }
+
+    p {
+      margin: 0;
+      padding: 0.25em 0;
+    }
+  </style>
+  <body>
+    <h1>Redirecting...</h1>
+    <p>Please wait while we redirect you to the application.</p>
+    <p>
+      If you are not redirected within 5 seconds, please close this window
+      manually.
+    </p>
+    <script>
+      // Redirect to the android app if app installed\
+      // Otherwise, redirect to the play store
+      var userAgent = navigator.userAgent || navigator.vendor || window.opera;
+      if (/android/i.test(userAgent)) {
+        window.location.href =
+          "intent://#Intent;scheme=app;package=com.playcenter.kitchenkrappers;end";
+        setTimeout(function () {
+          window.location.href =
+            "https://play.google.com/store/apps/details?id=com.example.app";
+        }, 5000);
+      } else {
+        window.location.href =
+          "https://play.google.com/store/apps/details?id=com.example.app";
+      }
+    </script>
+  </body>
+</html>

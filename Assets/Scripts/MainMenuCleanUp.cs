@@ -10,14 +10,14 @@ public class MainMenuCleanUp : MonoBehaviour
             Destroy(NetworkManager.Singleton.gameObject);
         }
 
-        if (KitchenGameMultiplayer.Instance != null)
+        if (EOSKitchenGameMultiplayer.Instance != null)
         {
-            Destroy(KitchenGameMultiplayer.Instance.gameObject);
+            Destroy(EOSKitchenGameMultiplayer.Instance.gameObject);
         }
 
-        if (KitchenGameLobby.Instance != null)
+        if (EOSKitchenGameLobby.Instance != null)
         {
-            Destroy(KitchenGameLobby.Instance.gameObject);
+            Destroy(EOSKitchenGameLobby.Instance.gameObject);
         }
     }
 }

@@ -1,7 +1,11 @@
 using System;
 using System.Collections.Generic;
+using Epic.OnlineServices;
+using PlayEveryWare.EpicOnlineServices.Samples.Network;
+using TMPro;
 using Unity.Netcode;
 using UnityEngine;
+using Cinemachine;
 
 public class Player : NetworkBehaviour, IKitchenObjectParent
 {
@@ -30,6 +34,8 @@ public class Player : NetworkBehaviour, IKitchenObjectParent
     [SerializeField] private LayerMask collisionsLayerMask;
     [SerializeField] private Transform kitchenObjectHoldPoint;
     [SerializeField] private List<Vector3> spawnPoints;
+    [SerializeField] private TextMeshProUGUI displayNameText;
+    [SerializeField] private CinemachineVirtualCamera virtualCamera;
 
     private bool isWalking = false;
     private Vector3 lastMovementDirection = Vector3.zero;
@@ -55,6 +61,24 @@ public class Player : NetworkBehaviour, IKitchenObjectParent
         GameInput.Instance.OnInteractAlternateAction -= GameInput_OnInteractAlternateAction;
     }
 
+    public static void SetNetworkHostId(ProductUserId userId)
+    {
+        var transportLayer = NetworkManager.Singleton?.GetComponent<EOSTransport>();
+        if (transportLayer != null)
+        {
+            transportLayer.ServerUserIdToConnectTo = userId;
+            print($"SetNetworkHostId: {transportLayer.ServerUserIdToConnectTo}");
+        }
+    }
+
+    public static void DestoryNetworkManager()
+    {
+        if (NetworkManager.Singleton?.gameObject != null)
+        {
+            Destroy(NetworkManager.Singleton.gameObject);
+        }
+    }
+
     public override void OnNetworkSpawn()
     {
         SpawnPlayer();
@@ -62,6 +86,26 @@ public class Player : NetworkBehaviour, IKitchenObjectParent
         if (IsServer)
         {
             NetworkManager.Singleton.OnClientDisconnectCallback += NetworkManager_OnClientDisconnectCallback;
+        }
+
+        if (IsOwner)
+        {
+            displayNameText.text = GameDataSource.Instance.GetPlayerData().PlayerName;
+            displayNameText.color = Color.green;
+
+            // Get the Virtual Camera and follow the player
+            var virtualCamera = FindObjectOfType<CinemachineVirtualCamera>();
+            if (virtualCamera != null)
+            {
+                virtualCamera.Follow = transform;
+                virtualCamera.LookAt = transform;
+            }
+
+        }
+        else
+        {
+            displayNameText.text = EOSKitchenGameMultiplayer.Instance.GetPlayerDataFromPlayerId(OwnerClientId).playerName.ToString();
+            displayNameText.color = Color.red;
         }
     }
 
@@ -80,7 +124,7 @@ public class Player : NetworkBehaviour, IKitchenObjectParent
             LocalInstance = this;
         }
 
-        // transform.position = spawnPoints[KitchenGameMultiplayer.Instance.GetPlayerDataIndexFromPlayerId(OwnerClientId)];
+        // transform.position = spawnPoints[EOSKitchenGameMultiplayer.Instance.GetPlayerDataIndexFromPlayerId(OwnerClientId)];
         transform.position = GetRandomSpawnPoint();
 
         OnAnyPlayerSpawned?.Invoke(this, EventArgs.Empty);

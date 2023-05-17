@@ -1,0 +1,9 @@
+{
+    "installs": [
+        {
+            "name": "Common",
+            "version": "2.3.1",
+            "dependency": []
+        }
+    ]
+}
