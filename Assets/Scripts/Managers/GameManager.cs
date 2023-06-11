@@ -13,26 +13,19 @@ public class GameManager : NetworkBehaviour
 
     [SerializeField] private GameModeSO gameModeSO;
     [SerializeField] private Player playerPrefab;
+
     private int negativeCoinAmount;
     private int fastDeliveryTipAmount;
     private int rewardAmount;
     private float recipeDeliveryTime;
     private float gamePlayingTimerMax;
     private bool isLocalPlayerReady = false;
+    private GameMode gameMode;
     private Dictionary<ulong, bool> playerReadyDictionary;
-
-    private enum GameState
-    {
-        WaitingToStart,
-        CountdownToStart,
-        Playing,
-        GameOver
-    }
 
     private NetworkVariable<GameState> gameState = new NetworkVariable<GameState>(GameState.WaitingToStart);
     private NetworkVariable<float> countdownToStartTimer = new NetworkVariable<float>(3f);
     private NetworkVariable<float> gamePlayingTimer = new NetworkVariable<float>(0f);
-
 
     private void Awake()
     {
@@ -52,9 +45,14 @@ public class GameManager : NetworkBehaviour
     {
         if (!GameDataSource.playMultiplayer)
         {
-            var playerObject = Instantiate(playerPrefab, Vector3.zero, Quaternion.identity);
+            var playerObject = SpawnPlayerSinglePlayerMode();
         }
 
+        InitializeGameMode();
+    }
+
+    private void InitializeGameMode()
+    {
         if (gameModeSO != null)
         {
             negativeCoinAmount = gameModeSO.NegativeCoinAmount;
@@ -62,7 +60,23 @@ public class GameManager : NetworkBehaviour
             rewardAmount = gameModeSO.RewardAmount;
             recipeDeliveryTime = gameModeSO.RecipeDeliveryTime;
             gamePlayingTimerMax = gameModeSO.GamePlayingTimerMax;
+            gameMode = gameModeSO.GameMode;
         }
+
+        if (gameMode == GameMode.Tutorial)
+        {
+            gameState.Value = GameState.Playing;
+        }
+    }
+
+    public GameMode GetGameMode()
+    {
+        return gameMode;
+    }
+
+    public Player SpawnPlayerSinglePlayerMode()
+    {
+        return Instantiate(playerPrefab, Vector3.zero, Quaternion.identity);
     }
 
     public override void OnNetworkSpawn()
@@ -128,11 +142,15 @@ public class GameManager : NetworkBehaviour
     {
         if (!IsServer) return; // Only server should update game state
 
+        if (gameMode == GameMode.Tutorial)
+        {
+            Debug.Log("Tutorial mode, not updating game state");
+            return;
+        }
+
         switch (gameState.Value)
         {
             case GameState.WaitingToStart:
-                gameState.Value = GameState.CountdownToStart;
-                break;
             case GameState.CountdownToStart:
                 countdownToStartTimer.Value -= Time.deltaTime;
                 if (countdownToStartTimer.Value <= 0f)
@@ -149,8 +167,6 @@ public class GameManager : NetworkBehaviour
                 }
                 break;
             case GameState.GameOver:
-                break;
-            default:
                 break;
         }
     }
@@ -175,7 +191,7 @@ public class GameManager : NetworkBehaviour
         return gameState.Value == GameState.GameOver;
     }
 
-    public bool isLocalPlayerReadyToStart()
+    public bool IsLocalPlayerReadyToStart()
     {
         return isLocalPlayerReady;
     }
@@ -185,13 +201,13 @@ public class GameManager : NetworkBehaviour
         return countdownToStartTimer.Value;
     }
 
-    public float GetGamePlayingTimerNormalized()
+    public float GetGamePlayingTimer(bool normalized = false)
     {
-        return 1 - (gamePlayingTimer.Value / gamePlayingTimerMax);
-    }
+        if (normalized)
+        {
+            return 1 - (gamePlayingTimer.Value / gamePlayingTimerMax);
+        }
 
-    public float GetGamePlayingTimer()
-    {
         return gamePlayingTimer.Value;
     }
 

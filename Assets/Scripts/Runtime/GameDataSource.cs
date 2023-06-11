@@ -8,6 +8,7 @@ public class GameDataSource : MonoBehaviour
     public event EventHandler OnPlayerDataChanged;
 
     public static bool playMultiplayer = true;
+    public static bool playTutorial = false;
 
     [SerializeField] private bool m_useNetworkSceneManager = false;
     [SerializeField] private InputType inputType = InputType.Mobile;

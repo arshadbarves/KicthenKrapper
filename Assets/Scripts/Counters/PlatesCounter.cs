@@ -57,6 +57,8 @@ public class PlatesCounter : BaseCounter
             {
                 KitchenObject.CreateKitchenObject(platesKitchenObjectSO, player);
                 InteractServerRpc();
+
+                StepComplete();
             }
         }
     }

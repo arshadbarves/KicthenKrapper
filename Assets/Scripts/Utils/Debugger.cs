@@ -78,10 +78,10 @@ public class Debugger : MonoBehaviour
         }
 
         // Get Key R
-        if (Input.GetKeyDown(KeyCode.R))
-        {
-            EOSAuth.Instance.Login();
-        }
+        // if (Input.GetKeyDown(KeyCode.R))
+        // {
+        //     EOSAuth.Instance.Login();
+        // }
 
     }
 }

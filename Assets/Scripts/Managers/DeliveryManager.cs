@@ -36,7 +36,7 @@ public class DeliveryManager : NetworkBehaviour
     private void Update()
     {
         if (!IsServer) return; // Only the server can spawn recipes
-
+        if (GameManager.Instance.GetGameMode() == GameMode.Tutorial) return; // Single player mode doesn't need recipes
         SpawnRecipe();
         UpdateRecipeDeliveryTime();
     }

@@ -81,18 +81,6 @@ public class ApplicationController : MonoBehaviour
         // Start the game.
         m_gameStatus = GameStatus.GameStarted;
         m_universalUI.HideAllPanels();
-
-        // Load the main menu scene if the high score is greater than 0 else load the tutorial scene.
-        // if (GameDataSource.Instance.GetHighestTrophyCount() > 0)
-        // {
-        //     SceneLoaderWrapper.Instance.LoadScene(SceneType.MainMenu.ToString(), false);
-        // }
-        // else
-        // {
-        //     SceneLoaderWrapper.Instance.LoadScene(SceneType.Tutorial.ToString(), false);
-        // }
-
-        // TODO: Remove this line.
         SceneLoaderWrapper.Instance.LoadScene(SceneType.MainMenu.ToString(), false);
     }
 

@@ -6,6 +6,18 @@ public class BaseCounter : NetworkBehaviour, IKitchenObjectParent
 {
     public static event EventHandler OnAnyObjectPlacedOnCounter;
 
+    private int tutorialStepIndex;
+
+    public int GetTutorialStepIndex()
+    {
+        return tutorialStepIndex;
+    }
+
+    public void SetTutorialStepIndex(int tutorialStepIndex)
+    {
+        this.tutorialStepIndex = tutorialStepIndex;
+    }
+
     public static void ResetStaticData()
     {
         OnAnyObjectPlacedOnCounter = null;
@@ -57,5 +69,14 @@ public class BaseCounter : NetworkBehaviour, IKitchenObjectParent
     public NetworkObject GetNetworkObject()
     {
         return NetworkObject;
+    }
+
+    public void StepComplete()
+    {
+        
+        if (TutorialManager.Instance != null)
+        {
+            TutorialManager.Instance.CompleteTutorialStep(GetTutorialStepIndex());
+        }
     }
 }

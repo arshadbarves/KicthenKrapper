@@ -1,6 +1,8 @@
 
 public enum GameMode
 {
+    None,
+    Tutorial,
     SinglePlayer,
     MultiPlayer
 }
@@ -75,4 +77,12 @@ public enum GameStatus
     GameStarted,
     GameRestarted,
     GameQuit
+}
+
+public enum GameState
+{
+    WaitingToStart,
+    CountdownToStart,
+    Playing,
+    GameOver
 }

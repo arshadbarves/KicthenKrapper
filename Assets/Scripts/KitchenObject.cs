@@ -83,7 +83,6 @@ public class KitchenObject : NetworkBehaviour
 
     public static void CreateKitchenObject(KitchenObjectSO kitchenObjectSO, IKitchenObjectParent kitchenObjectParent)
     {
-
         EOSKitchenGameMultiplayer.Instance.CreateKitchenObject(kitchenObjectSO, kitchenObjectParent);
     }
 

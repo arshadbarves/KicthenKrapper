@@ -6,7 +6,10 @@ public class GameControllerUI : MonoBehaviour
 
     private void Start()
     {
-        GameManager.Instance.OnGameStateChanged += GameManager_OnGameStateChanged;
+        if (GameManager.Instance != null)
+        {
+            GameManager.Instance.OnGameStateChanged += GameManager_OnGameStateChanged;
+        }
         Hide();
     }
 
@@ -22,13 +25,15 @@ public class GameControllerUI : MonoBehaviour
         }
     }
 
-    private void Hide()
+    public void Hide()
     {
+        print("hiding game controller");
         gameObject.SetActive(false);
     }
 
-    private void Show()
+    public void Show()
     {
+        print("showing game controller");
         gameObject.SetActive(true);
     }
 }

@@ -31,7 +31,7 @@ public class ApplicationManager : MonoBehaviour
         if (playerData != null)
         {
             GameDataSource.Instance.SetPlayerData(JsonUtility.FromJson<PlayerDataInventory>(playerData));
-            print("[ApplicationManager]: Player Data Found: " + playerData);
+            Debug.Log("[ApplicationManager]: Player Data Found: " + playerData);
         }
         else
         {
@@ -40,18 +40,18 @@ public class ApplicationManager : MonoBehaviour
         }
     }
 
-    public void CreatePlayerData(string PlayerName)
+    public void CreatePlayerData(string playerName)
     {
-        if (string.IsNullOrEmpty(PlayerName))
+        if (string.IsNullOrEmpty(playerName))
         {
             Debug.Log("[ApplicationManager]: Player name is null or empty.");
             return;
         }
 
-        print("[ApplicationManager]: Creating Player Account: " + EOSManager.Instance.GetProductUserId().ToString());
+        Debug.Log("[ApplicationManager]: Creating Player Account: " + EOSManager.Instance.GetProductUserId().ToString());
         PlayerDataInventory playerDataInventory = new PlayerDataInventory();
         playerDataInventory.PlayerId = EOSManager.Instance.GetProductUserId().ToString();
-        playerDataInventory.PlayerName = PlayerName;
+        playerDataInventory.PlayerName = playerName;
 
         PlayerDataStorage.Instance.CreatePlayerData(playerDataInventory);
         PlayerDataStorage.Instance.GetPlayerData(OnGetPlayerData);

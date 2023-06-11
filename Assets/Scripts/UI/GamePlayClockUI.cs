@@ -9,7 +9,7 @@ public class GamePlayClockUI : MonoBehaviour
 
     private void Update()
     {
-        timerImage.fillAmount = GameManager.Instance.GetGamePlayingTimerNormalized();
+        timerImage.fillAmount = GameManager.Instance.GetGamePlayingTimer(true);
         float time = GameManager.Instance.GetGamePlayingTimer();
         // If time is less than or equal to 0, return
         if (time <= 0f)

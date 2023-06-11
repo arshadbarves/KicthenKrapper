@@ -68,7 +68,6 @@ public class KitchenGameLobby : MonoBehaviour
         }
     }
 
-
     private void Update()
     {
         HandleHeartBeat();

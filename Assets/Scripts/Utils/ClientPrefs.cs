@@ -117,4 +117,14 @@ public static class ClientPrefs
     {
         return PlayerPrefs.GetString("LoginType", "");
     }
+
+    public static bool GetTutorialCompleted()
+    {
+        return PlayerPrefs.GetInt("TutorialCompleted", 0) == 1;
+    }
+
+    public static void SetTutorialCompleted(bool completed)
+    {
+        PlayerPrefs.SetInt("TutorialCompleted", completed ? 1 : 0);
+    }
 }

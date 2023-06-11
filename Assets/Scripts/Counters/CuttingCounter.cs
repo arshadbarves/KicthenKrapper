@@ -29,8 +29,9 @@ public class CuttingCounter : BaseCounter, IHasProgress
                 {
                     KitchenObject kitchenObject = player.GetKitchenObject();
                     kitchenObject.SetKitchenObjectParent(this);
-
                     InteractServerRpc();
+
+                    StepComplete();
                 }
             }
             else
@@ -50,12 +51,16 @@ public class CuttingCounter : BaseCounter, IHasProgress
                     {
                         // Ingredient added to plate
                         KitchenObject.DestroyKitchenObject(GetKitchenObject());
+
+                        StepComplete();
                     }
                 }
             }
             else
             {
                 GetKitchenObject().SetKitchenObjectParent(player);
+
+                StepComplete();
             }
         }
     }
@@ -71,7 +76,6 @@ public class CuttingCounter : BaseCounter, IHasProgress
     {
         cuttingProgress = 0;
         OnProgressChanged?.Invoke(this, new IHasProgress.ProgressChangedEventArgs { progressNormalized = 0f });
-
     }
 
     public override void InteractAlternate(Player player)
@@ -120,6 +124,8 @@ public class CuttingCounter : BaseCounter, IHasProgress
             if (cuttingProgress >= cuttingRecipeSO.cuttingProgressRequired)
             {
                 // Cutting is complete, so spawn the output kitchen object
+                StepComplete();
+
                 KitchenObjectSO kitchenObjectSO = GetOutputKitchenObjectSO(GetKitchenObject().GetKitchenObjectSO());
 
                 KitchenObject.DestroyKitchenObject(GetKitchenObject());

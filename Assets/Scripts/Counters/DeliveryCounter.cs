@@ -25,6 +25,8 @@ public class DeliveryCounter : BaseCounter
                 // Player has a plate
                 DeliveryManager.Instance.DeliveryRecipe(plateKitchenObject);
                 KitchenObject.DestroyKitchenObject(player.GetKitchenObject());
+
+                StepComplete();
             }
         }
     }

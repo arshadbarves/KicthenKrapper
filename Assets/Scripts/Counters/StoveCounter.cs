@@ -79,6 +79,10 @@ public class StoveCounter : BaseCounter, IHasProgress
                     UpdateCooking();
                     break;
                 case StoveCounterState.Done:
+                    if (TutorialManager.Instance != null)
+                    {
+                        return;
+                    }
                     UpdateDone();
                     break;
                 case StoveCounterState.Burned:
@@ -101,6 +105,7 @@ public class StoveCounter : BaseCounter, IHasProgress
             stoveCounterState.Value = StoveCounterState.Done;
             burningTimer.Value = 0f;
             SetBurningRecipeSOClientRpc(EOSKitchenGameMultiplayer.Instance.GetKitchenObjectSOIndex(GetKitchenObject().GetKitchenObjectSO()));
+            StepComplete();
         }
     }
 
@@ -131,6 +136,7 @@ public class StoveCounter : BaseCounter, IHasProgress
                     kitchenObject.SetKitchenObjectParent(this);
 
                     InteractServerRpc(EOSKitchenGameMultiplayer.Instance.GetKitchenObjectSOIndex(kitchenObject.GetKitchenObjectSO()));
+                    StepComplete();
                 }
             }
             else
@@ -151,6 +157,7 @@ public class StoveCounter : BaseCounter, IHasProgress
                         // Ingredient added to plate
                         KitchenObject.DestroyKitchenObject(GetKitchenObject());
                         SetStoveCounterStateEmptyServerRpc();
+                        StepComplete();
                     }
                 }
             }
@@ -158,6 +165,7 @@ public class StoveCounter : BaseCounter, IHasProgress
             {
                 GetKitchenObject().SetKitchenObjectParent(player);
                 SetStoveCounterStateEmptyServerRpc();
+                StepComplete();
             }
         }
     }

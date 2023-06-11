@@ -13,6 +13,7 @@ public class ClearCounter : BaseCounter
             if (player.HasKitchenObject())
             {
                 player.GetKitchenObject().SetKitchenObjectParent(this);
+                StepComplete();
             }
             else
             {
@@ -32,6 +33,7 @@ public class ClearCounter : BaseCounter
                     {
                         // Ingredient added to plate
                         KitchenObject.DestroyKitchenObject(GetKitchenObject());
+                        StepComplete();
                     }
                 }
                 else
@@ -44,6 +46,7 @@ public class ClearCounter : BaseCounter
                         {
                             // Ingredient added to plate
                             KitchenObject.DestroyKitchenObject(player.GetKitchenObject());
+                            StepComplete();
                         }
                     }
                 }
@@ -52,6 +55,8 @@ public class ClearCounter : BaseCounter
             {
                 // Player doesn't have a kitchen object
                 GetKitchenObject().SetKitchenObjectParent(player);
+
+                StepComplete();
             }
         }
     }

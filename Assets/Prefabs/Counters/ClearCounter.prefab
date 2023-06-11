@@ -5,6 +5,7 @@ PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Modification:
+    serializedVersion: 3
     m_TransformParent: {fileID: 6770304353533359758}
     m_Modifications:
     - target: {fileID: 3984833892277163771, guid: 0004cb1e11ad014419b943c7da960724,
@@ -12,6 +13,11 @@ PrefabInstance:
       propertyPath: m_CastShadows
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 3984833892277163771, guid: 0004cb1e11ad014419b943c7da960724,
+        type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 8ef9a7b7f6cec6643a63448959983c27, type: 2}
     - target: {fileID: 4589716710238282922, guid: 0004cb1e11ad014419b943c7da960724,
         type: 3}
       propertyPath: m_Name
@@ -83,12 +89,22 @@ PrefabInstance:
       value: 2147483647
       objectReference: {fileID: 0}
     m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 0004cb1e11ad014419b943c7da960724, type: 3}
+--- !u!4 &25969201195984042 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 4589716710238282923, guid: 0004cb1e11ad014419b943c7da960724,
+    type: 3}
+  m_PrefabInstance: {fileID: 4606533560928452609}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &5494903082915583311
 PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Modification:
+    serializedVersion: 3
     m_TransformParent: {fileID: 6770304353533359758}
     m_Modifications:
     - target: {fileID: 3984833892277163771, guid: 0004cb1e11ad014419b943c7da960724,
@@ -202,10 +218,23 @@ PrefabInstance:
       value: 2147483647
       objectReference: {fileID: 0}
     m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 4589716710238282922, guid: 0004cb1e11ad014419b943c7da960724,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 5643261420057246687}
   m_SourcePrefab: {fileID: 100100000, guid: 0004cb1e11ad014419b943c7da960724, type: 3}
 --- !u!1 &4147297613633066496 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 8489276541531669327, guid: 0004cb1e11ad014419b943c7da960724,
+    type: 3}
+  m_PrefabInstance: {fileID: 5494903082915583311}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &8354214942501286372 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 4589716710238282923, guid: 0004cb1e11ad014419b943c7da960724,
     type: 3}
   m_PrefabInstance: {fileID: 5494903082915583311}
   m_PrefabAsset: {fileID: 0}
@@ -235,6 +264,7 @@ PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Modification:
+    serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
     - target: {fileID: 4591065016021434756, guid: 60b70eb2220039c41b776cf963bb11fe,
@@ -307,7 +337,27 @@ PrefabInstance:
       propertyPath: m_StaticEditorFlags
       value: 2147483647
       objectReference: {fileID: 0}
+    - target: {fileID: 8951040678234473590, guid: 60b70eb2220039c41b776cf963bb11fe,
+        type: 3}
+      propertyPath: GlobalObjectIdHash
+      value: 951099334
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects:
+    - targetCorrespondingSourceObject: {fileID: 4591065016021434757, guid: 60b70eb2220039c41b776cf963bb11fe,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 25969201195984042}
+    - targetCorrespondingSourceObject: {fileID: 4591065016021434757, guid: 60b70eb2220039c41b776cf963bb11fe,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 8354214942501286372}
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 4591065016021434756, guid: 60b70eb2220039c41b776cf963bb11fe,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 5478481510289719713}
   m_SourcePrefab: {fileID: 100100000, guid: 60b70eb2220039c41b776cf963bb11fe, type: 3}
 --- !u!4 &4637042139678611341 stripped
 Transform:

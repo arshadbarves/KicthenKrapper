@@ -12,6 +12,8 @@ public class ContainerCounter : BaseCounter
         {
             KitchenObject.CreateKitchenObject(kitchenObjectSO, player);
             InteractServerRpc();
+
+            StepComplete();
         }
     }
 

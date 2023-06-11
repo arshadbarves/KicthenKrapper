@@ -8,10 +8,12 @@ public class GameModeSO : ScriptableObject
     [SerializeField] private int rewardAmount;
     [SerializeField] private float recipeDeliveryTime;
     [SerializeField] private float gamePlayingTimerMax;
+    [SerializeField] private GameMode gameMode;
 
     public int NegativeCoinAmount => negativeCoinAmount;
     public int FastDeliveryTipAmount => fastDeliveryTipAmount;
     public int RewardAmount => rewardAmount;
     public float RecipeDeliveryTime => recipeDeliveryTime;
     public float GamePlayingTimerMax => gamePlayingTimerMax;
+    public GameMode GameMode => gameMode;
 }

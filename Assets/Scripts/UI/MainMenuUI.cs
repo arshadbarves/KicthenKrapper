@@ -43,14 +43,12 @@ public class MainMenuUI : MonoBehaviour
 
         if (GameDataSource.playMultiplayer)
         {
-            Debug.Log("Play Multiplayer");
             multiplayerText.text = "Multiplayer";
             // Set Toggle Background Color to #FE89FE
             multiplayerToggleBackground.color = new Color(254f / 255f, 137f / 255f, 254f / 255f);
         }
         else
         {
-            Debug.Log("Play Singleplayer");
             multiplayerText.text = "Singleplayer";
             // Set Toggle Background Color to #FFC0CB
             multiplayerToggleBackground.color = new Color(255f / 255f, 192f / 255f, 203f / 255f);
