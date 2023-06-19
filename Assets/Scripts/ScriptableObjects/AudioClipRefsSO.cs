@@ -20,7 +20,8 @@ public class AudioClipRefsSO : ScriptableObject
     public AudioClip[] levelCompleteSounds;
     public AudioClip[] levelFailedSounds;
     public AudioClip[] levelStartSounds;
-    public AudioClip[] coinSounds;
+    public AudioClip[] negativeCoinSounds;
+    public AudioClip[] positiveCoinSounds;
     public AudioClip[] expiredSounds;
 
 }

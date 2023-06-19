@@ -62,18 +62,18 @@ public class EOSAuth : MonoBehaviour
     private void ShowLoginPage()
     {
         HideLoader();
-        UniversalUI.Instance.OnPanelShow(UniversalUI.Instance.WelcomePanel);
-        UniversalUI.Instance.OnPanelHide(UniversalUI.Instance.TitlePanel);
+        UIManager.Instance.OnPanelShow(UIManager.Instance.WelcomePanel);
+        UIManager.Instance.OnPanelHide(UIManager.Instance.TitlePanel);
     }
 
     private void ShowLoader()
     {
-        UniversalUI.Instance.OnPanelShow(UniversalUI.Instance.LoadingPanel);
+        UIManager.Instance.OnPanelShow(UIManager.Instance.LoadingPanel);
     }
 
     private void HideLoader()
     {
-        UniversalUI.Instance.OnPanelHide(UniversalUI.Instance.LoadingPanel);
+        UIManager.Instance.OnPanelHide(UIManager.Instance.LoadingPanel);
     }
 
     public void LoginWithOpenID()
@@ -92,7 +92,7 @@ public class EOSAuth : MonoBehaviour
         {
             print(EOSManager.Instance.GetProductUserId());
             EOSManager.Instance.ClearConnectId(EOSManager.Instance.GetProductUserId());
-            ApplicationController.Instance.CleanupApplication();
+            GameManager.Instance.CleanupApplication();
             print("Logout Successful. [No User]");
             SceneLoaderWrapper.Instance.LoadScene(SceneType.Startup.ToString(), false);
             return;
@@ -104,7 +104,7 @@ public class EOSAuth : MonoBehaviour
             if (data.ResultCode == Result.Success)
             {
                 print("Logout Successful. [" + data.ResultCode + "]");
-                ApplicationController.Instance.CleanupApplication();
+                GameManager.Instance.CleanupApplication();
                 SceneLoaderWrapper.Instance.LoadScene(SceneType.Startup.ToString(), false);
             }
             else
@@ -176,7 +176,7 @@ public class EOSAuth : MonoBehaviour
                 ClientPrefs.SetLoginType(externalType.ToString());
                 ClientPrefs.SetOpenIDToken(m_refreshToken);
                 HideLoader();
-                ApplicationController.Instance.StartGame();
+                GameManager.Instance.StartGame();
             }
             else if (connectLoginCallbackInfo.ResultCode == Result.InvalidUser)
             {

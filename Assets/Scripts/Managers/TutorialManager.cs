@@ -8,18 +8,23 @@ using Unity.Netcode;
 public class TutorialManager : MonoBehaviour
 {
     public static TutorialManager Instance { get; private set; }
+
     [SerializeField] private TextMeshProUGUI tutorialText;
     [SerializeField] private GameObject tutorialOverUI;
     [SerializeField] private GameObject tutorialCanvas;
-    [SerializeField] private GameManager gameManager;
+    [SerializeField] private LevelManager gameManager;
     [SerializeField] private GameObject indicatorPrefab;
     [SerializeField] private Image backgroundImage;
     [SerializeField] private float padding = 10f;
     [SerializeField] private Vector3 offset = new Vector3(0, 0, 0);
-    [SerializeField] private Button AltInteractButton;
-    [SerializeField] private Button InteractButton;
-    [SerializeField] private GameControllerUI GameController;
+    [SerializeField] private Button altInteractButton;
+    [SerializeField] private Button interactButton;
+    [SerializeField] private GameControllerUI gameController;
     [SerializeField] private TutorialStep[] tutorialSteps;
+
+    private int currentStepIndex;
+    private GameObject indicator;
+    private bool tutorialCompleted;
 
     [System.Serializable]
     public struct TutorialStep
@@ -28,9 +33,7 @@ public class TutorialManager : MonoBehaviour
         public Transform objectPosition;
         public bool isAltInteract;
     }
-    private int currentStepIndex;
-    private GameObject indicator;
-    private bool tutorialCompleted;
+
     private void Awake()
     {
         if (Instance == null)
@@ -41,6 +44,7 @@ public class TutorialManager : MonoBehaviour
         indicator = Instantiate(indicatorPrefab, Vector3.zero, Quaternion.identity);
         indicator.SetActive(false);
     }
+
     private void Start()
     {
         // Check if the tutorial is completed
@@ -59,15 +63,14 @@ public class TutorialManager : MonoBehaviour
 
         EOSKitchenGameMultiplayer.Instance.StartHost();
 
-        // Instantiate the player
-        var player = gameManager.SpawnPlayerSinglePlayerMode();
-        player.SetIsTutorialPlayer(true);
         StartCoroutine(ShowGameController());
     }
+
     private void SetTutorialStep(int index)
     {
-        tutorialSteps[index].objectPosition.GetComponent<BaseCounter>().SetTutorialStepIndex(index);
+        tutorialSteps[index].objectPosition.GetComponent<BaseStation>().SetTutorialStepIndex(index);
     }
+
     public void ShowTutorialStep(TutorialStep step)
     {
         // Show Indicator on top of the object
@@ -76,11 +79,13 @@ public class TutorialManager : MonoBehaviour
 
         AdjustBackgroundSize();
     }
+
     IEnumerator ShowGameController()
     {
-        yield return new WaitForSeconds(1f);
-        GameController.Show();
+        yield return new WaitForSeconds(0.5f);
+        gameController.Show();
     }
+
     public void CompleteTutorialStep(int index)
     {
         if (index != currentStepIndex)
@@ -106,15 +111,16 @@ public class TutorialManager : MonoBehaviour
         // Show the interact button
         if (tutorialSteps[currentStepIndex].isAltInteract)
         {
-            AltInteractButton.GetComponent<AnimationSequencerController>().Play();
-            InteractButton.GetComponent<AnimationSequencerController>().ResetComplete();
+            altInteractButton.GetComponent<AnimationSequencerController>().Play();
+            interactButton.GetComponent<AnimationSequencerController>().ResetComplete();
         }
         else
         {
-            AltInteractButton.GetComponent<AnimationSequencerController>().ResetComplete();
-            InteractButton.GetComponent<AnimationSequencerController>().Play();
+            altInteractButton.GetComponent<AnimationSequencerController>().ResetComplete();
+            interactButton.GetComponent<AnimationSequencerController>().Play();
         }
     }
+
     public void ShowTutorialStep(TutorialSteps step, string text)
     {
         // Show Indicator on top of the object
@@ -123,6 +129,7 @@ public class TutorialManager : MonoBehaviour
 
         AdjustBackgroundSize();
     }
+
     private void ShowIndicator(Transform position)
     {
         // Set the indicator's position
@@ -137,7 +144,7 @@ public class TutorialManager : MonoBehaviour
     {
         NetworkManager.Singleton.Shutdown();
         print("Tutorial Completed");
-        GameController.Hide();
+        gameController.Hide();
         // Show the congratulatory message
         tutorialOverUI.gameObject.SetActive(true);
         PlayerPrefs.SetInt("TutorialCompleted", 1);
@@ -151,7 +158,6 @@ public class TutorialManager : MonoBehaviour
         float newHeight = tutorialText.preferredHeight + padding;
 
         // Set the size of the background image
-        backgroundImage = tutorialCanvas.GetComponentInChildren<Image>();
         backgroundImage.rectTransform.sizeDelta = new Vector2(newWidth, newHeight);
     }
 }

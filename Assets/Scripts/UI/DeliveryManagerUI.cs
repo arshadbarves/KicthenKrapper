@@ -13,39 +13,60 @@ public class DeliveryManagerUI : MonoBehaviour
 
     private void Start()
     {
-        DeliveryManager.Instance.OnRecipeSpawned += DeliveryManager_OnRecipeSpawned;
-        DeliveryManager.Instance.OnRecipeDelivered += DeliveryManager_OnRecipeDelivered;
-        DeliveryManager.Instance.OnRecipeExpired += DeliveryManager_OnRecipeExpired;
-        // UpdateVisual();
+        SubscribeToEvents();
+        UpdateVisual();
     }
 
-    private void DeliveryManager_OnRecipeSpawned(object sender, DeliveryManager.RecipeEventArgs e)
+    private void OnDestroy()
     {
-        AddRecipe(e.recipe);
+        UnsubscribeFromEvents();
     }
 
-    private void DeliveryManager_OnRecipeExpired(object sender, DeliveryManager.RecipeEventArgs e)
+    private void SubscribeToEvents()
     {
-        Debug.Log("Recipe expired" + e.recipe.GetRecipeSO().name);
-        RemoveRecipe(e.recipe);
+        DeliveryManager.Instance.OnRecipeSpawned += OnRecipeSpawned;
+        DeliveryManager.Instance.OnRecipeDelivered += OnRecipeDelivered;
+        DeliveryManager.Instance.OnRecipeExpired += OnRecipeExpired;
     }
 
-    private void DeliveryManager_OnRecipeDelivered(object sender, DeliveryManager.RecipeEventArgs e)
+    private void UnsubscribeFromEvents()
     {
-        RemoveRecipe(e.recipe);
+        DeliveryManager.Instance.OnRecipeSpawned -= OnRecipeSpawned;
+        DeliveryManager.Instance.OnRecipeDelivered -= OnRecipeDelivered;
+        DeliveryManager.Instance.OnRecipeExpired -= OnRecipeExpired;
+    }
+
+    private void OnRecipeSpawned(object sender, DeliveryManager.RecipeEventArgs e)
+    {
+        AddRecipe(e.Recipe);
+    }
+
+    private void OnRecipeExpired(object sender, DeliveryManager.RecipeEventArgs e)
+    {
+        RemoveRecipe(e.Recipe);
+    }
+
+    private void OnRecipeDelivered(object sender, DeliveryManager.RecipeEventArgs e)
+    {
+        RemoveRecipe(e.Recipe);
     }
 
     private void UpdateVisual()
+    {
+        ClearContainer();
+
+        foreach (Recipe recipe in DeliveryManager.Instance.GetWaitingRecipeList().Values)
+        {
+            AddRecipe(recipe);
+        }
+    }
+
+    private void ClearContainer()
     {
         foreach (Transform child in container)
         {
             if (child == recipeTemplate) continue;
             Destroy(child.gameObject);
-        }
-
-        foreach (Recipe recipe in DeliveryManager.Instance.GetWaitingRecipeSOList().Values)
-        {
-            AddRecipe(recipe);
         }
     }
 
@@ -61,7 +82,8 @@ public class DeliveryManagerUI : MonoBehaviour
         foreach (Transform child in container)
         {
             if (child == recipeTemplate) continue;
-            if (child.GetComponent<DeliveryManagerSingleUI>().GetRecipe().GetRecipeID() == recipe.GetRecipeID())
+            DeliveryManagerSingleUI recipeUI = child.GetComponent<DeliveryManagerSingleUI>();
+            if (recipeUI.GetRecipe().GetRecipeID() == recipe.GetRecipeID())
             {
                 Destroy(child.gameObject);
                 break;

@@ -2,7 +2,7 @@ using System;
 using Unity.Netcode;
 using UnityEngine;
 
-public class StoveCounter : BaseCounter, IHasProgress
+public class StoveCounter : BaseStation, IHasProgress
 {
     public event EventHandler<IHasProgress.ProgressChangedEventArgs> OnProgressChanged;
     public event EventHandler<StoveCounterStateChangeEventArgs> OnStoveCounterStateChange;

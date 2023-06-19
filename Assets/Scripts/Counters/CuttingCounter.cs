@@ -3,7 +3,7 @@ using System;
 using Unity.Netcode;
 using UnityEngine;
 
-public class CuttingCounter : BaseCounter, IHasProgress
+public class CuttingCounter : BaseStation, IHasProgress
 {
     public static event EventHandler OnAnyCut;
 

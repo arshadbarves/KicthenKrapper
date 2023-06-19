@@ -2,7 +2,7 @@ using System;
 using Unity.Netcode;
 using UnityEngine;
 
-public class ContainerCounter : BaseCounter
+public class ContainerCounter : BaseStation
 {
     public event EventHandler OnContainerCounterInteracted;
     [SerializeField] private KitchenObjectSO kitchenObjectSO;

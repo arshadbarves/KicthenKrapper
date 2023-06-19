@@ -1,7 +1,7 @@
 using System;
 using Unity.Netcode;
 
-public class TrashCounter : BaseCounter
+public class TrashCounter : BaseStation
 {
     public static event EventHandler OnAnyObjectTrashed;
 

@@ -1,3 +1,4 @@
+using System;
 using TMPro;
 using UnityEngine;
 
@@ -7,17 +8,17 @@ public class WalletUI : MonoBehaviour
 
     private void Start()
     {
-        WalletManager.Instance.OnWalletAmountChanged += Wallet_OnWalletChanged;
+        LevelManager.Instance.OnWalletAmountChanged += Wallet_OnWalletChanged;
         UpdateVisual();
     }
 
-    private void Wallet_OnWalletChanged(object sender, WalletManager.WalletEventArgs e)
+    private void Wallet_OnWalletChanged(object sender, int e)
     {
         UpdateVisual();
     }
 
     private void UpdateVisual()
     {
-        walletText.text = WalletManager.Instance.GetWalletAmount().ToString();
+        walletText.text = LevelManager.Instance.GetWalletAmount().ToString();
     }
 }

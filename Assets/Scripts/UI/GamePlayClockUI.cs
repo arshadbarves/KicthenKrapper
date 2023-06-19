@@ -9,13 +9,23 @@ public class GamePlayClockUI : MonoBehaviour
 
     private void Update()
     {
-        timerImage.fillAmount = GameManager.Instance.GetGamePlayingTimer(true);
-        float time = GameManager.Instance.GetGamePlayingTimer();
-        // If time is less than or equal to 0, return
+        UpdateTimerImage();
+        UpdateTimerText();
+    }
+
+    private void UpdateTimerImage()
+    {
+        timerImage.fillAmount = LevelManager.Instance.GetGamePlayingTimer(true);
+    }
+
+    private void UpdateTimerText()
+    {
+        float time = LevelManager.Instance.GetGamePlayingTimer();
         if (time <= 0f)
         {
             return;
         }
+
         int minutes = Mathf.FloorToInt(time / 60);
         int seconds = Mathf.RoundToInt(time % 60);
 

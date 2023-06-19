@@ -12,7 +12,7 @@ public class DeliveryManager : NetworkBehaviour
 
     public class RecipeEventArgs : EventArgs
     {
-        public Recipe recipe;
+        public Recipe Recipe { get; set; }
     }
 
     public static DeliveryManager Instance { get; private set; }
@@ -35,8 +35,9 @@ public class DeliveryManager : NetworkBehaviour
 
     private void Update()
     {
-        if (!IsServer) return; // Only the server can spawn recipes
-        if (GameManager.Instance.GetGameMode() == GameMode.Tutorial) return; // Single player mode doesn't need recipes
+        if (!IsServer || !LevelManager.Instance.IsPlaying() || LevelManager.Instance.GetGameMode() == GameMode.Tutorial)
+            return;
+
         SpawnRecipe();
         UpdateRecipeDeliveryTime();
     }
@@ -45,15 +46,15 @@ public class DeliveryManager : NetworkBehaviour
     {
         spawnRecipeTimer -= Time.deltaTime;
 
-        if (spawnRecipeTimer <= 0f)
+        if (spawnRecipeTimer <= 0f && waitingRecipeList.Count < waitingRecipeMaxCount)
         {
             spawnRecipeTimer = spawnRecipeTimerMax;
 
-            if (GameManager.Instance.IsPlaying() && waitingRecipeList.Count < waitingRecipeMaxCount)
-            {
-                int randomIndex = UnityEngine.Random.Range(0, recipeListSO.recipeSOList.Count);
-                SpawnRecipeClientRpc(randomIndex, RecipeIDGenerator.GetRecipeID(), GameManager.Instance.GetRecipeDeliveryTime());
-            }
+            int randomIndex = UnityEngine.Random.Range(0, recipeListSO.recipeSOList.Count);
+            int recipeID = RecipeIDGenerator.GetRecipeID();
+            float deliveryTime = LevelManager.Instance.GetRecipeDeliveryTime();
+
+            SpawnRecipeClientRpc(randomIndex, recipeID, deliveryTime);
         }
     }
 
@@ -62,18 +63,20 @@ public class DeliveryManager : NetworkBehaviour
     {
         Recipe recipe = new Recipe(recipeID, deliveryTime, recipeListSO.recipeSOList[randomIndex]);
         waitingRecipeList.Add(recipeID, recipe);
-        OnRecipeSpawned?.Invoke(this, new RecipeEventArgs { recipe = recipe });
+        OnRecipeSpawned?.Invoke(this, new RecipeEventArgs { Recipe = recipe });
     }
 
     private void UpdateRecipeDeliveryTime()
     {
         foreach (Recipe recipe in waitingRecipeList.Values)
         {
-            recipe.SetDeliveryTime(recipe.GetDeliveryTime() - Time.deltaTime);
+            float deliveryTime = recipe.GetDeliveryTime() - Time.deltaTime;
+            recipe.SetDeliveryTime(deliveryTime);
 
-            if (recipe.GetDeliveryTime() <= 0f)
+            if (deliveryTime <= 0f)
             {
-                RemoveExpiredRecipeClientRpc(recipe.GetRecipeID());
+                int recipeID = recipe.GetRecipeID();
+                RemoveExpiredRecipeClientRpc(recipeID);
                 return;
             }
         }
@@ -83,7 +86,7 @@ public class DeliveryManager : NetworkBehaviour
     public void RemoveExpiredRecipeClientRpc(int recipeID)
     {
         expiredDeliveryCount++;
-        OnRecipeExpired?.Invoke(this, new RecipeEventArgs { recipe = waitingRecipeList[recipeID] });
+        OnRecipeExpired?.Invoke(this, new RecipeEventArgs { Recipe = waitingRecipeList[recipeID] });
         RemoveRecipe(recipeID);
     }
 
@@ -97,7 +100,7 @@ public class DeliveryManager : NetworkBehaviour
     private void DeliveryCorrectRecipeClientRpc(int recipeID)
     {
         successfulDeliveryCount++;
-        OnRecipeDelivered?.Invoke(this, new RecipeEventArgs { recipe = waitingRecipeList[recipeID] });
+        OnRecipeDelivered?.Invoke(this, new RecipeEventArgs { Recipe = waitingRecipeList[recipeID] });
         RemoveRecipe(recipeID);
     }
 
@@ -123,36 +126,29 @@ public class DeliveryManager : NetworkBehaviour
             if (waitingRecipeSO.kitchenObjectSOList.Count == plateKitchenObject.TryGetIngredient().Count)
             {
                 bool plateContentsMatchRecipe = true;
+                List<KitchenObjectSO> plateIngredients = plateKitchenObject.TryGetIngredient();
+
                 foreach (KitchenObjectSO recipeKitchenObjectSO in waitingRecipeSO.kitchenObjectSOList)
                 {
-                    bool ingredientFound = false;
-
-                    foreach (KitchenObjectSO plateKitchenObjectSO in plateKitchenObject.TryGetIngredient())
+                    if (!plateIngredients.Contains(recipeKitchenObjectSO))
                     {
-                        if (recipeKitchenObjectSO == plateKitchenObjectSO)
-                        {
-                            ingredientFound = true;
-                            break;
-                        }
-                    }
-                    if (!ingredientFound)
-                    {
-                        // This is not the recipe you are looking for
                         plateContentsMatchRecipe = false;
+                        break;
                     }
                 }
+
                 if (plateContentsMatchRecipe)
                 {
-                    // This is the recipe you are looking for
                     DeliveryCorrectRecipeServerRpc(recipe.GetRecipeID());
                     return;
                 }
             }
         }
+
         DeliveryIncorrectRecipeServerRpc();
     }
 
-    public Dictionary<int, Recipe> GetWaitingRecipeSOList()
+    public Dictionary<int, Recipe> GetWaitingRecipeList()
     {
         return waitingRecipeList;
     }

@@ -2,7 +2,7 @@ using System;
 using Unity.Netcode;
 using UnityEngine;
 
-public class PlatesCounter : BaseCounter
+public class PlatesCounter : BaseStation
 {
     public event EventHandler OnPlateSpawned;
     public event EventHandler OnPlateRemoved;
@@ -29,7 +29,7 @@ public class PlatesCounter : BaseCounter
         if (spawnPlateTimer >= spawnPlateTime)
         {
             spawnPlateTimer = 0f;
-            if (GameManager.Instance.IsPlaying() && platesSpawned < maxPlates)
+            if (LevelManager.Instance.IsPlaying() && platesSpawned < maxPlates)
             {
                 SpawnPlateServerRpc();
             }

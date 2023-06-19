@@ -4,7 +4,7 @@ public class SinglePlayerLobbyUI : MonoBehaviour
 {
     private void Start()
     {
-        if (GameDataSource.playMultiplayer)
+        if (GameDataSource.PlayMultiplayer)
         {
             gameObject.SetActive(false);
         }

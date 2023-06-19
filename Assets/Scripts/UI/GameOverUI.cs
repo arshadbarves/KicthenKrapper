@@ -12,11 +12,12 @@ public class GameOverUI : MonoBehaviour
     [SerializeField] private Button quitButton;
 
     private Animator animator;
+
     private void Awake()
     {
         animator = GetComponent<Animator>();
 
-        if (GameDataSource.playMultiplayer)
+        if (GameDataSource.PlayMultiplayer)
         {
             playAgainButton.onClick.AddListener(OnPlayAgainButtonClicked);
         }
@@ -30,13 +31,28 @@ public class GameOverUI : MonoBehaviour
 
     private void Start()
     {
-        GameManager.Instance.OnGameStateChanged += GameManager_OnGameStateChanged;
+        SubscribeToGameStateEvents();
         Hide();
     }
 
-    private void GameManager_OnGameStateChanged(object sender, EventArgs e)
+    private void SubscribeToGameStateEvents()
     {
-        if (GameManager.Instance.IsGameOver())
+        LevelManager.Instance.OnGameStateChanged += HandleGameStateChanged;
+    }
+
+    private void UnsubscribeFromGameStateEvents()
+    {
+        LevelManager.Instance.OnGameStateChanged -= HandleGameStateChanged;
+    }
+
+    private void HandleGameStateChanged(object sender, EventArgs e)
+    {
+        UpdateVisibility();
+    }
+
+    private void UpdateVisibility()
+    {
+        if (LevelManager.Instance.IsGameOver())
         {
             Show();
             animator.SetTrigger(GAME_OVER_ANIMATION_TRIGGER);
@@ -60,19 +76,28 @@ public class GameOverUI : MonoBehaviour
 
     private void OnQuitButtonClicked()
     {
-        // Shutdown the NetworkManager
-        NetworkManager.Singleton.Shutdown();
-
-        SceneLoaderWrapper.Instance.LoadScene(SceneType.MainMenu.ToString(), false);
+        ShutdownNetworkManager();
+        LoadScene(SceneType.MainMenu.ToString());
     }
 
     private void OnPlayAgainButtonClicked()
     {
-        LoadScene(GameDataSource.Instance.GetCurrentMap().ToString());
+        string currentMap = GameDataSource.Instance.GetCurrentMap().ToString();
+        LoadScene(currentMap);
     }
 
     private void LoadScene(string sceneName)
     {
         SceneLoaderWrapper.Instance.LoadScene(sceneName, false);
+    }
+
+    private void ShutdownNetworkManager()
+    {
+        NetworkManager.Singleton.Shutdown();
+    }
+
+    private void OnDestroy()
+    {
+        UnsubscribeFromGameStateEvents();
     }
 }

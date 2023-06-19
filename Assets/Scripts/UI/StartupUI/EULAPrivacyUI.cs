@@ -4,60 +4,51 @@ using UnityEngine.UI;
 public class EULAPrivacyUI : MonoBehaviour
 {
     [Header("Urls")]
-    [SerializeField] private string m_termsOfUseUrl = "https://www.microsoft.com/en-us/servicesagreement/";
-    [SerializeField] private string m_privacyPolicyUrl = "https://privacy.microsoft.com/en-us/privacystatement";
+    [SerializeField] private string termsOfUseUrl = "https://www.microsoft.com/en-us/servicesagreement/";
+    [SerializeField] private string privacyPolicyUrl = "https://privacy.microsoft.com/en-us/privacystatement";
 
     [Header("Buttons")]
     [SerializeField] private Button closeButton;
-    [SerializeField] private Button m_acceptEULAButton;
-    [SerializeField] private Button m_declineEULAButton;
-    [SerializeField] private Button m_termsOfUseButton;
-    [SerializeField] private Button m_privacyPolicyButton;
+    [SerializeField] private Button acceptEULAButton;
+    [SerializeField] private Button declineEULAButton;
+    [SerializeField] private Button termsOfUseButton;
+    [SerializeField] private Button privacyPolicyButton;
 
     private void Awake()
     {
-        // Set the EULA and privacy policy buttons.
-        m_termsOfUseButton.onClick.AddListener(OnTermsOfUse);
-        m_privacyPolicyButton.onClick.AddListener(OnPrivacyPolicy);
-
-        // Set the EULA accept and decline buttons.
-        m_acceptEULAButton.onClick.AddListener(OnEULAAccept);
-        m_declineEULAButton.onClick.AddListener(OnEULADecline);
-
-        closeButton.onClick.AddListener(OnEULADecline);
+        SetButtonListeners();
     }
 
-    // A common method to handle the terms of use button that opens the terms of use URL.
-    public void OnTermsOfUse()
+    private void SetButtonListeners()
     {
-        Application.OpenURL(m_termsOfUseUrl);
+        termsOfUseButton.onClick.AddListener(OpenTermsOfUse);
+        privacyPolicyButton.onClick.AddListener(OpenPrivacyPolicy);
+        acceptEULAButton.onClick.AddListener(AcceptEULA);
+        declineEULAButton.onClick.AddListener(DeclineEULA);
+        closeButton.onClick.AddListener(DeclineEULA);
     }
 
-    // A common method to handle the privacy policy button that opens the privacy policy URL.
-    public void OnPrivacyPolicy()
+    public void OpenTermsOfUse()
     {
-        Application.OpenURL(m_privacyPolicyUrl);
+        Application.OpenURL(termsOfUseUrl);
     }
 
-    // A common method to handle the EULA accept button.
-    public void OnEULAAccept()
+    public void OpenPrivacyPolicy()
+    {
+        Application.OpenURL(privacyPolicyUrl);
+    }
+
+    public void AcceptEULA()
     {
         Hide();
-        // Set the EULA accepted flag.
         ClientPrefs.SetEULAAndPrivacyPolicyAccepted(true);
-        ApplicationController.Instance.StartApp();
+        GameManager.Instance.StartApp();
     }
 
-    // A common method to handle the EULA decline button.
-    public void OnEULADecline()
+    public void DeclineEULA()
     {
         Hide();
-        // Quit the application.
-        ApplicationController.Instance.QuitGame();
-    }
-    public void OnLogoutButtonClicked()
-    {
-        EOSAuth.Instance.Logout();
+        GameManager.Instance.QuitGame();
     }
 
     public void Hide()

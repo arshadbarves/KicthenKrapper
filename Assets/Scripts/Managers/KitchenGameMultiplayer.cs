@@ -36,7 +36,7 @@ public class KitchenGameMultiplayer : NetworkBehaviour
 
     private void Start()
     {
-        if (!GameDataSource.playMultiplayer)
+        if (!GameDataSource.PlayMultiplayer)
         {
             SceneLoaderWrapper.Instance.LoadScene(SceneType.Map_City_001.ToString(), false);
         }

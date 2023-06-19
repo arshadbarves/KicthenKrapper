@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class SelectedCounterVisual : MonoBehaviour
 {
-    [SerializeField] private BaseCounter baseCounter;
+    [SerializeField] private BaseStation baseCounter;
     [SerializeField] private GameObject[] visualGameObjectArray;
     private void Start()
     {

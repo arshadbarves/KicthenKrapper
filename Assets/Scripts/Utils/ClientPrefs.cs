@@ -1,79 +1,44 @@
 using UnityEngine;
 
-/// <summary>
-/// Singleton class which saves/loads local-client settings.
-/// (This is just a wrapper around the PlayerPrefs system,
-/// so that all the calls are in the same place.)
-/// </summary>
-
 public static class ClientPrefs
 {
-    const string k_MasterVolumeKey = "MasterVolume";
-    const string k_MusicVolumeKey = "MusicVolume";
-    const string k_ClientGUIDKey = "client_guid";
-    const string k_AvailableProfilesKey = "AvailableProfiles";
+    private const string MusicToggleKey = "MusicToggle";
+    private const string SoundEffectsToggleKey = "SoundEffectsToggle";
 
-    const float k_DefaultMasterVolume = 0.5f;
-    const float k_DefaultMusicVolume = 0.8f;
+    private const float DefaultMasterVolume = 0.5f;
+    private const float DefaultMusicVolume = 0.8f;
 
     public static void Initialize()
     {
-        if (!PlayerPrefs.HasKey(k_MasterVolumeKey))
+        if (!PlayerPrefs.HasKey(MusicToggleKey))
         {
-            PlayerPrefs.SetFloat(k_MasterVolumeKey, k_DefaultMasterVolume);
-        }
-        if (!PlayerPrefs.HasKey(k_MusicVolumeKey))
-        {
-            PlayerPrefs.SetFloat(k_MusicVolumeKey, k_DefaultMusicVolume);
-        }
-    }
-
-    public static float GetMasterVolume()
-    {
-        return PlayerPrefs.GetFloat(k_MasterVolumeKey, k_DefaultMasterVolume);
-    }
-
-    public static void SetMasterVolume(float volume)
-    {
-        PlayerPrefs.SetFloat(k_MasterVolumeKey, volume);
-    }
-
-    public static float GetMusicVolume()
-    {
-        return PlayerPrefs.GetFloat(k_MusicVolumeKey, k_DefaultMusicVolume);
-    }
-
-    public static void SetMusicVolume(float volume)
-    {
-        PlayerPrefs.SetFloat(k_MusicVolumeKey, volume);
-    }
-
-    /// <summary>
-    /// Either loads a Guid string from Unity preferences, or creates one and checkpoints it, then returns it.
-    /// </summary>
-    /// <returns>The Guid that uniquely identifies this client install, in string form. </returns>
-    public static string GetGuid()
-    {
-        if (PlayerPrefs.HasKey(k_ClientGUIDKey))
-        {
-            return PlayerPrefs.GetString(k_ClientGUIDKey);
+            PlayerPrefs.SetInt(MusicToggleKey, 1);
         }
 
-        var guid = System.Guid.NewGuid();
-        var guidString = guid.ToString();
-
-        PlayerPrefs.SetString(k_ClientGUIDKey, guidString);
-        return guidString;
+        if (!PlayerPrefs.HasKey(SoundEffectsToggleKey))
+        {
+            PlayerPrefs.SetInt(SoundEffectsToggleKey, 1);
+        }
     }
 
-    public static string GetAvailableProfiles()
+    public static bool GetMusicToggle()
     {
-        return PlayerPrefs.GetString(k_AvailableProfilesKey, "");
+        return PlayerPrefs.GetInt(MusicToggleKey, 1) == 1;
     }
 
-    public static void SetAvailableProfiles(string availableProfiles)
+    public static void SetMusicToggle(bool toggle)
     {
-        PlayerPrefs.SetString(k_AvailableProfilesKey, availableProfiles);
+        PlayerPrefs.SetInt(MusicToggleKey, toggle ? 1 : 0);
+    }
+
+    public static bool GetSoundEffectsToggle()
+    {
+        return PlayerPrefs.GetInt(SoundEffectsToggleKey, 1) == 1;
+    }
+
+    public static void SetSoundEffectsToggle(bool toggle)
+    {
+        PlayerPrefs.SetInt(SoundEffectsToggleKey, toggle ? 1 : 0);
     }
 
     public static bool GetEULAAndPrivacyPolicyAccepted()

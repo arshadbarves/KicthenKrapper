@@ -13,13 +13,13 @@ public class TutorialOverUI : MonoBehaviour
 
     private void Start()
     {
-        GameManager.Instance.OnGameStateChanged += GameManager_OnGameStateChanged;
+        LevelManager.Instance.OnGameStateChanged += GameManager_OnGameStateChanged;
         Hide();
     }
 
     private void GameManager_OnGameStateChanged(object sender, EventArgs e)
     {
-        if (GameManager.Instance.IsGameOver())
+        if (LevelManager.Instance.IsGameOver())
         {
             Show();
         }

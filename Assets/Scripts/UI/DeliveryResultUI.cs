@@ -24,10 +24,39 @@ public class DeliveryResultUI : MonoBehaviour
 
     private void Start()
     {
-        DeliveryManager.Instance.OnRecipeDelivered += DeliveryManager_OnRecipeDelivered;
-        DeliveryManager.Instance.OnRecipeDeliveryFailed += DeliveryManager_OnRecipeDeliveryFailed;
-
+        SubscribeToDeliveryEvents();
         Hide();
+    }
+
+    private void SubscribeToDeliveryEvents()
+    {
+        DeliveryManager.Instance.OnRecipeDelivered += HandleRecipeDelivered;
+        DeliveryManager.Instance.OnRecipeDeliveryFailed += HandleRecipeDeliveryFailed;
+    }
+
+    private void UnsubscribeFromDeliveryEvents()
+    {
+        DeliveryManager.Instance.OnRecipeDelivered -= HandleRecipeDelivered;
+        DeliveryManager.Instance.OnRecipeDeliveryFailed -= HandleRecipeDeliveryFailed;
+    }
+
+    private void ShowDeliveryResult(Color backgroundColor, Sprite iconSprite, string resultMessage)
+    {
+        Show();
+        animator.SetTrigger(DELIVERY_RESULT_ANIMATION_TRIGGER);
+        backgroundImage.color = backgroundColor;
+        iconImage.sprite = iconSprite;
+        resultText.text = resultMessage;
+    }
+
+    private void HandleRecipeDeliveryFailed(object sender, EventArgs e)
+    {
+        ShowDeliveryResult(failColor, failSprite, "DELIVERY\nFAILED");
+    }
+
+    private void HandleRecipeDelivered(object sender, EventArgs e)
+    {
+        ShowDeliveryResult(successColor, successSprite, "DELIVERY\nSUCCESS");
     }
 
     private void Show()
@@ -40,21 +69,8 @@ public class DeliveryResultUI : MonoBehaviour
         gameObject.SetActive(false);
     }
 
-    private void DeliveryManager_OnRecipeDeliveryFailed(object sender, EventArgs e)
+    private void OnDestroy()
     {
-        Show();
-        animator.SetTrigger(DELIVERY_RESULT_ANIMATION_TRIGGER);
-        backgroundImage.color = failColor;
-        iconImage.sprite = failSprite;
-        resultText.text = "DELIVERY\nFAILED";
-    }
-
-    private void DeliveryManager_OnRecipeDelivered(object sender, EventArgs e)
-    {
-        Show();
-        animator.SetTrigger(DELIVERY_RESULT_ANIMATION_TRIGGER);
-        backgroundImage.color = successColor;
-        iconImage.sprite = successSprite;
-        resultText.text = "DELIVERY\nSUCCESS";
+        UnsubscribeFromDeliveryEvents();
     }
 }

@@ -3,37 +3,69 @@ using UnityEngine;
 
 public class GameControllerUI : MonoBehaviour
 {
+    private LevelManager gameManager;
+
+    private void Awake()
+    {
+        gameManager = LevelManager.Instance;
+    }
 
     private void Start()
     {
-        if (GameManager.Instance != null)
-        {
-            GameManager.Instance.OnGameStateChanged += GameManager_OnGameStateChanged;
-        }
-        Hide();
+        SubscribeToGameStateEvents();
+        UpdateVisibility();
     }
 
-    private void GameManager_OnGameStateChanged(object sender, EventArgs e)
+    private void SubscribeToGameStateEvents()
     {
-        if (GameManager.Instance.IsGameOver())
+        if (gameManager != null)
         {
-            Hide();
+            gameManager.OnGameStateChanged += HandleGameStateChanged;
         }
-        else
+    }
+
+    private void UnsubscribeFromGameStateEvents()
+    {
+        if (gameManager != null)
         {
-            Show();
+            gameManager.OnGameStateChanged -= HandleGameStateChanged;
+        }
+    }
+
+    private void HandleGameStateChanged(object sender, EventArgs e)
+    {
+        UpdateVisibility();
+    }
+
+    private void UpdateVisibility()
+    {
+        if (gameManager != null)
+        {
+            if (gameManager.IsGameOver())
+            {
+                Hide();
+            }
+            else
+            {
+                Show();
+            }
         }
     }
 
     public void Hide()
     {
-        print("hiding game controller");
+        Debug.Log("Hiding game controller");
         gameObject.SetActive(false);
     }
 
     public void Show()
     {
-        print("showing game controller");
+        Debug.Log("Showing game controller");
         gameObject.SetActive(true);
+    }
+
+    private void OnDestroy()
+    {
+        UnsubscribeFromGameStateEvents();
     }
 }

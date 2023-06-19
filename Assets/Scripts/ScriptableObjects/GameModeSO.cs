@@ -9,6 +9,7 @@ public class GameModeSO : ScriptableObject
     [SerializeField] private float recipeDeliveryTime;
     [SerializeField] private float gamePlayingTimerMax;
     [SerializeField] private GameMode gameMode;
+    [SerializeField] private AudioClip music;
 
     public int NegativeCoinAmount => negativeCoinAmount;
     public int FastDeliveryTipAmount => fastDeliveryTipAmount;
@@ -16,4 +17,5 @@ public class GameModeSO : ScriptableObject
     public float RecipeDeliveryTime => recipeDeliveryTime;
     public float GamePlayingTimerMax => gamePlayingTimerMax;
     public GameMode GameMode => gameMode;
+    public AudioClip Music => music;
 }

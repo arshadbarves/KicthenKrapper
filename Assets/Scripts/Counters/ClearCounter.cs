@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class ClearCounter : BaseCounter
+public class ClearCounter : BaseStation
 {
     [SerializeField] private KitchenObjectSO kitchenObjectSO;
 

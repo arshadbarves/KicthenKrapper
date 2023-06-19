@@ -56,7 +56,7 @@ public class StoveCounterSound : MonoBehaviour
                 float warningSoundTimerMax = 0.2f;
                 warningSoundTimer = warningSoundTimerMax;
 
-                SoundManager.Instance.PlayWarningSound(stoveCounter.transform.position);
+                LevelManager.Instance.PlayWarningSound();
             }
         }
     }

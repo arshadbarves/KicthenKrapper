@@ -2,7 +2,7 @@ using System;
 using Unity.Netcode;
 using UnityEngine;
 
-public class BaseCounter : NetworkBehaviour, IKitchenObjectParent
+public class BaseStation : NetworkBehaviour, IKitchenObjectParent
 {
     public static event EventHandler OnAnyObjectPlacedOnCounter;
 
@@ -73,7 +73,7 @@ public class BaseCounter : NetworkBehaviour, IKitchenObjectParent
 
     public void StepComplete()
     {
-        
+
         if (TutorialManager.Instance != null)
         {
             TutorialManager.Instance.CompleteTutorialStep(GetTutorialStepIndex());

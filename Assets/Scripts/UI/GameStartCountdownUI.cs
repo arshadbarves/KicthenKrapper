@@ -9,7 +9,7 @@ public class GameStartCountdownUI : MonoBehaviour
     [SerializeField] private TextMeshProUGUI countdownText;
 
     private Animator animator;
-    private int previuosCountdown = 0;
+    private int previousCountdown = 0;
 
     private void Awake()
     {
@@ -18,13 +18,14 @@ public class GameStartCountdownUI : MonoBehaviour
 
     private void Start()
     {
-        GameManager.Instance.OnGameStateChanged += GameManager_OnGameStateChanged;
+        LevelManager.Instance.OnGameStateChanged += GameManager_OnGameStateChanged;
         Hide();
     }
 
     private void GameManager_OnGameStateChanged(object sender, EventArgs e)
     {
-        if (GameManager.Instance.IsCountdownToStart())
+        bool isCountdownToStart = LevelManager.Instance.IsCountdownToStart();
+        if (isCountdownToStart)
         {
             Show();
         }
@@ -46,14 +47,29 @@ public class GameStartCountdownUI : MonoBehaviour
 
     private void Update()
     {
-        int countdown = Mathf.CeilToInt(GameManager.Instance.GetCountdownToStartTimer());
-        countdownText.text = countdown.ToString();
+        int countdown = Mathf.CeilToInt(LevelManager.Instance.GetCountdownToStartTimer());
+        UpdateCountdownText(countdown);
 
-        if (countdown != previuosCountdown)
+        if (countdown != previousCountdown)
         {
-            previuosCountdown = countdown;
-            animator.SetTrigger(COUNTDOWN_ANIMATION_TRIGGER);
-            SoundManager.Instance.PlayCountdownSound();
+            previousCountdown = countdown;
+            TriggerCountdownAnimation();
+            PlayCountdownSound();
         }
+    }
+
+    private void UpdateCountdownText(int countdown)
+    {
+        countdownText.text = countdown.ToString();
+    }
+
+    private void TriggerCountdownAnimation()
+    {
+        animator.SetTrigger(COUNTDOWN_ANIMATION_TRIGGER);
+    }
+
+    private void PlayCountdownSound()
+    {
+        LevelManager.Instance.PlayCountdownSound();
     }
 }

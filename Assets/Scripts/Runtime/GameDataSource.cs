@@ -7,19 +7,30 @@ public class GameDataSource : MonoBehaviour
 
     public event EventHandler OnPlayerDataChanged;
 
-    public static bool playMultiplayer = true;
-    public static bool playTutorial = false;
+    public static bool PlayMultiplayer { get; set; } = true;
+    public static bool PlayTutorial { get; set; } = false;
 
-    [SerializeField] private bool m_useNetworkSceneManager = false;
     [SerializeField] private InputType inputType = InputType.Mobile;
 
-    private PlayerDataInventory m_PlayerData;
-    private int m_DeliveryCount;
-    private int m_TrophyCount;
-    private int m_HighestTrophyCount;
-    private MapType m_CurrentMap;
-    private GameObject m_Player;
-    private GameObject m_PlayerSkin;
+    public struct GameSettings
+    {
+        public bool isMusicOn;
+        public bool isSoundOn;
+        public bool isVibrationOn;
+        public bool isNotificationsOn;
+        public float musicVolume;
+        public float soundEffectsVolume;
+    }
+
+    public GameSettings gameSettings;
+
+    private PlayerDataInventory playerData;
+    private int deliveryCount;
+    private int trophyCount;
+    private int highestTrophyCount;
+    private MapType currentMap;
+    private GameObject player;
+    private GameObject playerSkin;
 
     private void Awake()
     {
@@ -34,14 +45,24 @@ public class GameDataSource : MonoBehaviour
         }
     }
 
-    public PlayerDataInventory GetPlayerData()
+    public void Initialize()
     {
-        return m_PlayerData;
+        gameSettings.isMusicOn = ClientPrefs.GetMusicToggle();
+        gameSettings.isSoundOn = ClientPrefs.GetSoundEffectsToggle();
+        gameSettings.isVibrationOn = false;
+        gameSettings.isNotificationsOn = true;
+        gameSettings.musicVolume = 0.5f;
+        gameSettings.soundEffectsVolume = 0.5f;
     }
 
-    public void SetPlayerData(PlayerDataInventory playerData)
+    public PlayerDataInventory GetPlayerData()
     {
-        m_PlayerData = playerData;
+        return playerData;
+    }
+
+    public void SetPlayerData(PlayerDataInventory data)
+    {
+        playerData = data;
         OnPlayerDataChanged?.Invoke(this, EventArgs.Empty);
     }
 
@@ -52,81 +73,71 @@ public class GameDataSource : MonoBehaviour
 
     public void SetDeliveryCount(int count)
     {
-        m_DeliveryCount = count;
+        deliveryCount = count;
     }
 
     public int GetDeliveryCount()
     {
-        return m_DeliveryCount;
+        return deliveryCount;
     }
 
     public void SetTrophyCount(int count)
     {
-        m_TrophyCount = count;
+        trophyCount = count;
     }
 
     public int GetTrophyCount()
     {
-        return m_TrophyCount;
+        return trophyCount;
     }
 
     public void SetHighestTrophyCount(int count)
     {
-        m_HighestTrophyCount = count;
+        highestTrophyCount = count;
     }
 
     public int GetHighestTrophyCount()
     {
-        return m_HighestTrophyCount;
+        return highestTrophyCount;
     }
 
     public void SetCurrentMap(MapType map)
     {
-        m_CurrentMap = map;
+        currentMap = map;
     }
 
     public MapType GetCurrentMap()
     {
-        return m_CurrentMap;
+        return currentMap;
     }
 
-    public void SetPlayer(GameObject player)
+    public void SetPlayer(GameObject playerObj)
     {
-        m_Player = player;
+        player = playerObj;
     }
 
     public GameObject GetPlayer()
     {
-        return m_Player;
+        return player;
     }
 
-    public void SetPlayerSkin(GameObject playerSkin)
+    public void SetPlayerSkin(GameObject skin)
     {
-        m_PlayerSkin = playerSkin;
+        playerSkin = skin;
     }
 
     public GameObject GetPlayerSkin()
     {
-        return m_PlayerSkin;
-    }
-
-    public bool UseNetworkSceneManager()
-    {
-        return m_useNetworkSceneManager;
-    }
-
-    public void SetUseNetworkSceneManager(bool useNetworkSceneManager)
-    {
-        m_useNetworkSceneManager = useNetworkSceneManager;
+        return playerSkin;
     }
 
     public void ResetGameData()
     {
-        m_DeliveryCount = 0;
-        m_TrophyCount = 0;
-        m_HighestTrophyCount = 0;
-        m_CurrentMap = MapType.City;
-        m_Player = null;
-        m_PlayerSkin = null;
+        deliveryCount = 0;
+        trophyCount = 0;
+        highestTrophyCount = 0;
+        currentMap = MapType.City;
+        player = null;
+        playerSkin = null;
     }
 }

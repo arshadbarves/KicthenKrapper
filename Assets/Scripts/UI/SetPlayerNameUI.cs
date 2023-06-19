@@ -16,7 +16,7 @@ public class SetPlayerNameUI : MonoBehaviour
     {
         if (m_playerNameText.text.Length > 0)
         {
-            ApplicationManager.Instance.CreatePlayerData(m_playerNameText.text);
+            GameManager.Instance.CreatePlayerData(m_playerNameText.text);
             gameObject.SetActive(false);
         }
         else

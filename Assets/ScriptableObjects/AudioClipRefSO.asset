@@ -53,8 +53,9 @@ MonoBehaviour:
   levelFailedSounds:
   - {fileID: 8300000, guid: da7b96a55821cff40b65255404219538, type: 3}
   levelStartSounds: []
-  coinSounds:
+  negativeCoinSounds:
   - {fileID: 8300000, guid: 27be0df0751ce69469b658980acdbd80, type: 3}
+  positiveCoinSounds:
   - {fileID: 8300000, guid: 1d855afb6a519d14ca9341fdff94b3c2, type: 3}
   expiredSounds:
   - {fileID: 8300000, guid: f2b127b8d33de174eb2b94d8a594fdc4, type: 3}

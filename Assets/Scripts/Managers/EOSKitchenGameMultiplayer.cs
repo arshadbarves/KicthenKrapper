@@ -8,14 +8,14 @@ using UnityEngine;
 
 public class P2PTransportPresenceData
 {
-    public const string ValidIdenfier = "P2PTRANSPORT";
+    public const string ValidIdentifier = "P2PTRANSPORT";
 
     public string SceneIdentifier;
     public string ServerUserId;
 
     public bool IsValid()
     {
-        return SceneIdentifier == ValidIdenfier;
+        return SceneIdentifier == ValidIdentifier;
     }
 }
 
@@ -31,7 +31,7 @@ public class EOSKitchenGameMultiplayer : NetworkBehaviour
     [SerializeField] private KitchenObjectListSO kitchenObjectListSO;
 
     private EOSTransportManager transportManager = null;
-    private NetworkList<PlayerData> playerDataNetworkList;
+    private NetworkList<PlayerData> playerDataNetworkList = new NetworkList<PlayerData>();
     private bool isHost = false;
     private bool isClient = false;
 
@@ -41,21 +41,23 @@ public class EOSKitchenGameMultiplayer : NetworkBehaviour
         {
             Destroy(gameObject);
         }
-        else
-        {
-            Instance = this;
-        }
+
+        Instance = this;
 
         DontDestroyOnLoad(gameObject);
-
-        playerDataNetworkList = new NetworkList<PlayerData>();
     }
 
     private void Start()
     {
-        if (!GameDataSource.playMultiplayer)
+        if (!GameDataSource.PlayMultiplayer)
         {
             SceneLoaderWrapper.Instance.LoadScene(SceneType.Map_City_001.ToString(), false);
+        }
+        if (!ClientPrefs.GetTutorialCompleted())
+        {
+            SceneLoaderWrapper.Instance.LoadScene(SceneType.Tutorial.ToString(), false);
+            // StartHost();
+
         }
         transportManager = EOSManager.Instance.GetOrCreateManager<EOSTransportManager>();
         playerDataNetworkList.OnListChanged += PlayerDataNetworkList_OnListChanged;
@@ -74,7 +76,7 @@ public class EOSKitchenGameMultiplayer : NetworkBehaviour
 
         transportManager?.Disconnect();
 
-        Player.DestoryNetworkManager();
+        Player.DestroyNetworkManager();
     }
 
     private void PlayerDataNetworkList_OnListChanged(NetworkListEvent<PlayerData> changeEvent)
@@ -94,6 +96,7 @@ public class EOSKitchenGameMultiplayer : NetworkBehaviour
         {
             isHost = true;
             RegisterHostCallbacks();
+            if (!ClientPrefs.GetTutorialCompleted()) return;
             SetJoinInfo(EOSManager.Instance.GetProductUserId());
             SceneLoaderWrapper.Instance.LoadScene(SceneType.Lobby.ToString(), true);
         }
@@ -135,7 +138,7 @@ public class EOSKitchenGameMultiplayer : NetworkBehaviour
     {
         var joinData = new P2PTransportPresenceData()
         {
-            SceneIdentifier = P2PTransportPresenceData.ValidIdenfier,
+            SceneIdentifier = P2PTransportPresenceData.ValidIdentifier,
             ServerUserId = serverUserId.ToString()
         };
 

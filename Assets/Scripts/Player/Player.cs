@@ -23,7 +23,7 @@ public class Player : NetworkBehaviour, IKitchenObjectParent
     public event EventHandler<OnSelectedCounterChangedEventArgs> OnSelectedCounterChanged;
     public class OnSelectedCounterChangedEventArgs : EventArgs
     {
-        public BaseCounter selectedCounter;
+        public BaseStation selectedCounter;
     }
     [SerializeField] private float playerSpeed = 7f;
     [SerializeField] private float playerRotationSpeed = 10f;
@@ -40,7 +40,7 @@ public class Player : NetworkBehaviour, IKitchenObjectParent
 
     private bool isWalking = false;
     private Vector3 lastMovementDirection = Vector3.zero;
-    private BaseCounter selectedCounter = null;
+    private BaseStation selectedCounter = null;
     private KitchenObject kitchenObject = null;
 
     private void Start()
@@ -48,7 +48,7 @@ public class Player : NetworkBehaviour, IKitchenObjectParent
         GameInput.Instance.OnInteractAction += GameInput_OnInteractAction;
         GameInput.Instance.OnInteractAlternateAction += GameInput_OnInteractAlternateAction;
 
-        if (!GameDataSource.playMultiplayer)
+        if (!GameDataSource.PlayMultiplayer)
         {
             SpawnPlayer();
         }
@@ -77,7 +77,7 @@ public class Player : NetworkBehaviour, IKitchenObjectParent
         }
     }
 
-    public static void DestoryNetworkManager()
+    public static void DestroyNetworkManager()
     {
         if (NetworkManager.Singleton?.gameObject != null)
         {
@@ -162,7 +162,7 @@ public class Player : NetworkBehaviour, IKitchenObjectParent
 
     private void GameInput_OnInteractAlternateAction(object sender, EventArgs e)
     {
-        if (!TutorialManager.Instance && !GameManager.Instance.IsPlaying()) return;
+        if (!TutorialManager.Instance && !LevelManager.Instance.IsPlaying()) return;
 
         if (selectedCounter != null)
         {
@@ -172,7 +172,7 @@ public class Player : NetworkBehaviour, IKitchenObjectParent
 
     private void GameInput_OnInteractAction(object sender, EventArgs e)
     {
-        if (!TutorialManager.Instance && !GameManager.Instance.IsPlaying()) return;
+        if (!TutorialManager.Instance && !LevelManager.Instance.IsPlaying()) return;
 
         if (selectedCounter != null)
         {
@@ -208,7 +208,7 @@ public class Player : NetworkBehaviour, IKitchenObjectParent
 
         if (Physics.Raycast(transform.position, lastMovementDirection, out RaycastHit raycastHit, interactDistance, countersLayerMask))
         {
-            if (raycastHit.transform.TryGetComponent(out BaseCounter baseCounter))
+            if (raycastHit.transform.TryGetComponent(out BaseStation baseCounter))
             {
                 if (baseCounter != selectedCounter)
                 {
@@ -276,7 +276,7 @@ public class Player : NetworkBehaviour, IKitchenObjectParent
         transform.forward = Vector3.Slerp(transform.forward, movDir, Time.deltaTime * playerRotationSpeed);
     }
 
-    private void SetSelectedCounter(BaseCounter selectedCounter)
+    private void SetSelectedCounter(BaseStation selectedCounter)
     {
         this.selectedCounter = selectedCounter;
 

@@ -72,11 +72,10 @@ public enum GameStatus
     None,
     GameOver,
     GameWon,
-    GamePaused,
-    GameResumed,
     GameStarted,
     GameRestarted,
-    GameQuit
+    GameQuit,
+    GameMainMenu
 }
 
 public enum GameState

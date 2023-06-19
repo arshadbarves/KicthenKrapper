@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class DeliveryCounter : BaseCounter
+public class DeliveryCounter : BaseStation
 {
     public static DeliveryCounter Instance { get; private set; }
 

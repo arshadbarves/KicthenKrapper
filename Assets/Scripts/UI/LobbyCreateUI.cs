@@ -2,16 +2,14 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 using BrunoMikoski.AnimationSequencer;
-// using PlayEveryWare.EpicOnlineServices.Samples;
+using PlayEveryWare.EpicOnlineServices.Samples;
 using Epic.OnlineServices;
 using Epic.OnlineServices.Lobby;
-using PlayEveryWare.EpicOnlineServices.Samples;
 
 namespace Playcenter.KitchenGame.UI
 {
     public class LobbyCreateUI : MonoBehaviour
     {
-
         [Header("Lobbies UI - Create Options")]
         [SerializeField] public int MaxPlayersVal;
         [SerializeField] private Button createLobbyButton;
@@ -49,20 +47,12 @@ namespace Playcenter.KitchenGame.UI
                 return;
             }
 
-            if (EOSKitchenGameLobby.BUCKET_ID.Length == 0)
-            {
-                Debug.LogError("Tried to create new lobby but missing BucketId!");
-                return;
-            }
-
             Lobby lobbyProperties = new Lobby();
-            // Bucket Id
+            // Set lobby properties
             lobbyProperties.BucketId = EOSKitchenGameLobby.BUCKET_ID;
-
-            // Max Players
             lobbyProperties.MaxNumLobbyMembers = uint.Parse(MaxPlayersVal.ToString());
 
-            // Level Attributes
+            // Set lobby attribute
             LobbyAttribute lobbyAttribute = new LobbyAttribute();
             lobbyAttribute.Key = EOSKitchenGameLobby.LOBBY_NAME;
             lobbyAttribute.AsString = lobbyNameInputField.text;
@@ -70,7 +60,7 @@ namespace Playcenter.KitchenGame.UI
             lobbyAttribute.Visibility = LobbyAttributeVisibility.Public;
             lobbyProperties.Attributes.Add(lobbyAttribute);
 
-            // Lobby visibility
+            // Set lobby visibility
             if (privateLobbyToggle.isOn)
             {
                 Debug.Log("Creating private lobby");
@@ -82,12 +72,9 @@ namespace Playcenter.KitchenGame.UI
                 lobbyProperties.LobbyPermissionLevel = LobbyPermissionLevel.Publicadvertised;
             }
 
-            // Allow Invites
+            // Set additional lobby properties
             lobbyProperties.AllowInvites = true;
-
-            // Presence Enabled
             lobbyProperties.PresenceEnabled = false;
-
             lobbyProperties.RTCRoomEnabled = false;
 
             EOSKitchenGameLobby.Instance.CreateLobby(lobbyProperties);

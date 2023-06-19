@@ -13,16 +13,16 @@ public class HostDisconnectedUI : MonoBehaviour
     {
         exitButton.onClick.AddListener(ExitButton_OnClick);
         animationSequencerController = GetComponent<AnimationSequencerController>();
-        NetworkManager.Singleton.OnClientDisconnectCallback += Singleton_OnClientDisconnectCallback;
+        NetworkManager.Singleton.OnClientDisconnectCallback += OnClientDisconnectCallback;
         Hide();
     }
 
     private void OnDestroy()
     {
-        NetworkManager.Singleton.OnClientDisconnectCallback -= Singleton_OnClientDisconnectCallback;
+        NetworkManager.Singleton.OnClientDisconnectCallback -= OnClientDisconnectCallback;
     }
 
-    private void Singleton_OnClientDisconnectCallback(ulong clientId)
+    private void OnClientDisconnectCallback(ulong clientId)
     {
         if (clientId == NetworkManager.ServerClientId)
         {
@@ -32,19 +32,29 @@ public class HostDisconnectedUI : MonoBehaviour
 
     private void ExitButton_OnClick()
     {
-        SceneLoaderWrapper.Instance.LoadScene(SceneType.MainMenu.ToString(), false);
+        LoadMainMenuScene();
     }
 
     private void Show()
     {
-        floatingJoystick.gameObject.SetActive(false);
-        animationSequencerController.Kill();
-        animationSequencerController.Play();
+        floatingJoystick.SetActive(false);
+        KillAndPlayAnimation();
         gameObject.SetActive(true);
     }
 
     private void Hide()
     {
         gameObject.SetActive(false);
+    }
+
+    private void KillAndPlayAnimation()
+    {
+        animationSequencerController.Kill();
+        animationSequencerController.Play();
+    }
+
+    private void LoadMainMenuScene()
+    {
+        SceneLoaderWrapper.Instance.LoadScene(SceneType.MainMenu.ToString(), false);
     }
 }

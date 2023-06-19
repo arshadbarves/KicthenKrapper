@@ -1,13 +1,11 @@
-using System;
 using TMPro;
 using UnityEngine;
-using UnityEngine.Events;
 using UnityEngine.UI;
 
 public class MainMenuUI : MonoBehaviour
 {
     [Header("Panels")]
-    [SerializeField] private GameObject settingsPanel;
+    [SerializeField] private GameObject popupSettingsPanel;
     [SerializeField] private GameObject popupNamePanel;
 
     [Header("Buttons")]
@@ -18,46 +16,33 @@ public class MainMenuUI : MonoBehaviour
     [SerializeField] private Toggle multiplayerToggle;
     [SerializeField] private Image multiplayerToggleBackground;
     [SerializeField] private TextMeshProUGUI multiplayerText;
-    // [SerializeField] private Button MapButton;
-    // [SerializeField] private Button ShopButton;
-    // [SerializeField] private GameObject MapPanel;
-    // [SerializeField] private GameObject ShopPanel;
 
     private void Awake()
     {
-        // playButton.onClick.AddListener(OnPlayButtonClicked);
+        playButton.onClick.AddListener(OnPlayButtonClicked);
         multiplayerToggle.onValueChanged.AddListener(OnMultiplayerToggleValueChanged);
         settingsButton.onClick.AddListener(OnSettingsButtonClicked);
-        // MapButton.onClick.AddListener(OnNavigationButtonClicked(MapPanel));
-        // ShopButton.onClick.AddListener(OnNavigationButtonClicked(ShopPanel));
     }
 
     private void Start()
     {
-        OnMultiplayerToggleValueChanged(GameDataSource.playMultiplayer);
+        OnMultiplayerToggleValueChanged(GameDataSource.PlayMultiplayer);
     }
 
     private void OnMultiplayerToggleValueChanged(bool isMultiplayer)
     {
-        GameDataSource.playMultiplayer = isMultiplayer;
+        GameDataSource.PlayMultiplayer = isMultiplayer;
 
-        if (GameDataSource.playMultiplayer)
+        if (GameDataSource.PlayMultiplayer)
         {
             multiplayerText.text = "Multiplayer";
-            // Set Toggle Background Color to #FE89FE
             multiplayerToggleBackground.color = new Color(254f / 255f, 137f / 255f, 254f / 255f);
         }
         else
         {
             multiplayerText.text = "Singleplayer";
-            // Set Toggle Background Color to #FFC0CB
             multiplayerToggleBackground.color = new Color(255f / 255f, 192f / 255f, 203f / 255f);
         }
-    }
-
-    private UnityAction OnNavigationButtonClicked(GameObject mapPanel)
-    {
-        return () => ShowPanel(mapPanel);
     }
 
     private void ShowPanel(GameObject panel)
@@ -72,7 +57,7 @@ public class MainMenuUI : MonoBehaviour
 
     public void OnSettingsButtonClicked()
     {
-        ShowPanel(settingsPanel);
+        ShowPanel(popupSettingsPanel);
     }
 
     public void ShowPopupNamePanel()
