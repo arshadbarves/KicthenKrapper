@@ -1,0 +1,23 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <Style src="project://database/Assets/UI%20Toolkit/Styles/buttons.uss?fileID=7433441132597879392&amp;guid=9c3963e279039324aa9fed518cf2ddaa&amp;type=3#Buttons" />
+    <ui:VisualElement name="Layout" style="flex-grow: 1; background-color: rgba(0, 0, 0, 0); flex-direction: row;">
+        <ui:VisualElement name="SideMenu" style="flex-grow: 1; background-color: rgba(0, 0, 0, 0); width: 109px; justify-content: center; align-items: center; align-self: stretch; -unity-text-align: middle-center; border-left-width: 0; border-right-width: 0; border-top-width: 0; border-bottom-width: 0;">
+            <ui:GroupBox>
+                <ui:Button text="SHOP" display-tooltip-when-elided="true" name="ShopBtn" class="sideMenuButton" style="height: 105px; width: 280px;" />
+                <ui:Button text="INVENTORY" display-tooltip-when-elided="true" name="InventoryBtn" class="sideMenuButton" />
+                <ui:Button text="NEWS" display-tooltip-when-elided="true" name="NewsBtn" class="sideMenuButton" />
+            </ui:GroupBox>
+        </ui:VisualElement>
+        <ui:VisualElement name="Main" style="flex-grow: 10; background-color: rgba(0, 0, 0, 0); flex-shrink: 1; flex-direction: column; align-self: flex-start;">
+            <ui:VisualElement name="Top" style="flex-grow: 1; background-color: rgba(0, 0, 0, 0); flex-direction: row;">
+                <ui:VisualElement class="container" style="flex-grow: 1; background-color: rgba(0, 0, 0, 0);" />
+                <ui:VisualElement class="container" style="flex-grow: 1; background-color: rgb(27, 27, 27); background-image: url(&apos;project://database/Assets/UI/Textures/RenderTextures/BgBlur.renderTexture?fileID=8400000&amp;guid=8342a0385459f4d43b702123f9dee7fc&amp;type=2#BgBlur&apos;); border-top-left-radius: 10px; border-bottom-left-radius: 10px; border-top-right-radius: 10px; border-bottom-right-radius: 10px; border-left-width: 3px; border-right-width: 3px; border-top-width: 3px; border-bottom-width: 3px; flex-direction: row;">
+                    <ui:VisualElement style="flex-grow: 1; background-color: rgba(0, 0, 0, 0); align-items: center; justify-content: space-around; align-self: center; background-image: url(&apos;project://database/Assets/Third%20Party%20Assets/GUI%20PRO%20Kit%20-%20Simple%20Casual/Sprite/Demo/Demo_Icon/Icon_ColorIcon_Coin_l.png?fileID=2800000&amp;guid=1e0204e4d32684272b7718888c21dd55&amp;type=3#Icon_ColorIcon_Coin_l&apos;); border-left-width: 0; border-right-width: 0; border-top-width: 0; border-bottom-width: 0; -unity-slice-scale: 1px; width: auto; height: auto; flex-direction: column;" />
+                    <ui:Label tabindex="-1" text="Label" display-tooltip-when-elided="true" style="align-items: flex-end; justify-content: center; align-self: center; -unity-font-definition: url(&apos;project://database/Assets/Third%20Party%20Assets/GUI%20PRO%20Kit%20-%20Casual%20Game/ResourcesData/Fonts/LilitaOne-Regular%20SDF%201.asset?fileID=11400000&amp;guid=3698d87c2a78fe14cbe7ada27ffd1b2a&amp;type=2#LilitaOne-Regular SDF 1&apos;); color: rgb(236, 240, 241);" />
+                    <ui:VisualElement style="flex-grow: 1; background-color: rgba(0, 0, 0, 0); align-self: center; align-items: flex-end; justify-content: center;" />
+                </ui:VisualElement>
+            </ui:VisualElement>
+            <ui:VisualElement name="MainView" style="flex-grow: 25; background-color: rgba(0, 0, 0, 0);" />
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>

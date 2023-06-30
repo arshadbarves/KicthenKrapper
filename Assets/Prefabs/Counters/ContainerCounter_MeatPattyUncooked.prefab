@@ -5,8 +5,15 @@ PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Modification:
+    serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 352236314715501429, guid: fc7acbe62d075fd47a8755ce19c57b22,
+        type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: aa1bacc24dde76e47b2ec0dd4e82385b,
+        type: 3}
     - target: {fileID: 667133531819892753, guid: fc7acbe62d075fd47a8755ce19c57b22,
         type: 3}
       propertyPath: kitchenObjectSO
@@ -139,6 +146,11 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 21300000, guid: aa1bacc24dde76e47b2ec0dd4e82385b,
         type: 3}
+    - target: {fileID: 7726021228419200949, guid: fc7acbe62d075fd47a8755ce19c57b22,
+        type: 3}
+      propertyPath: GlobalObjectIdHash
+      value: 951099334
+      objectReference: {fileID: 0}
     - target: {fileID: 8434476040476448371, guid: fc7acbe62d075fd47a8755ce19c57b22,
         type: 3}
       propertyPath: m_StaticEditorFlags
@@ -150,4 +162,7 @@ PrefabInstance:
       value: 2147483647
       objectReference: {fileID: 0}
     m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: fc7acbe62d075fd47a8755ce19c57b22, type: 3}

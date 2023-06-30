@@ -112,11 +112,11 @@ public class TutorialManager : MonoBehaviour
         if (tutorialSteps[currentStepIndex].isAltInteract)
         {
             altInteractButton.GetComponent<AnimationSequencerController>().Play();
-            interactButton.GetComponent<AnimationSequencerController>().ResetComplete();
+            // interactButton.GetComponent<AnimationSequencerController>().ResetComplete();
         }
         else
         {
-            altInteractButton.GetComponent<AnimationSequencerController>().ResetComplete();
+            // altInteractButton.GetComponent<AnimationSequencerController>().ResetComplete();
             interactButton.GetComponent<AnimationSequencerController>().Play();
         }
     }

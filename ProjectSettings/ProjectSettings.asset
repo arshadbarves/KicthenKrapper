@@ -138,9 +138,7 @@ PlayerSettings:
   vulkanEnableCommandBufferRecycling: 1
   loadStoreDebugModeEnabled: 0
   bundleVersion: 0.1.0
-  preloadedAssets:
-  - {fileID: 9176288620847186452, guid: ac7fce12b76d3fb48862ac2ec5975b23, type: 2}
-  - {fileID: 11400000, guid: e1667a5265e8faa4bb61f82ab09170a7, type: 2}
+  preloadedAssets: []
   metroInputSource: 0
   wsaTransparentSwapchain: 0
   m_HolographicPauseOnTrackingLoss: 1
@@ -169,7 +167,7 @@ PlayerSettings:
   overrideDefaultApplicationIdentifier: 1
   AndroidBundleVersionCode: 1
   AndroidMinSdkVersion: 23
-  AndroidTargetSdkVersion: 0
+  AndroidTargetSdkVersion: 33
   AndroidPreferredInstallLocation: 1
   aotOptions: 
   stripEngineCode: 1
@@ -810,10 +808,22 @@ PlayerSettings:
   webGLMemoryGeometricGrowthCap: 96
   webGLPowerPreference: 2
   scriptingDefineSymbols:
-    Android: DOTWEEN_ENABLED;UNITY_PIPELINE_URP
+    Android: DOTWEEN_ENABLED;UNITY_PIPELINE_URP;UNITY_POST_PROCESSING_STACK_V2
+    EmbeddedLinux: UNITY_POST_PROCESSING_STACK_V2
+    GameCoreScarlett: UNITY_POST_PROCESSING_STACK_V2
+    GameCoreXboxOne: UNITY_POST_PROCESSING_STACK_V2
+    LinuxHeadlessSimulation: UNITY_POST_PROCESSING_STACK_V2
+    Nintendo Switch: UNITY_POST_PROCESSING_STACK_V2
+    PS4: UNITY_POST_PROCESSING_STACK_V2
+    PS5: UNITY_POST_PROCESSING_STACK_V2
+    QNX: UNITY_POST_PROCESSING_STACK_V2
     Server: 
-    Standalone: UNITY_PIPELINE_URP;DOTWEEN_ENABLED
-    WebGL: UNITY_PIPELINE_URP;DOTWEEN_ENABLED
+    Stadia: UNITY_POST_PROCESSING_STACK_V2
+    Standalone: UNITY_PIPELINE_URP;DOTWEEN_ENABLED;UNITY_POST_PROCESSING_STACK_V2
+    WebGL: UNITY_PIPELINE_URP;DOTWEEN_ENABLED;UNITY_POST_PROCESSING_STACK_V2
+    Windows Store Apps: UNITY_POST_PROCESSING_STACK_V2
+    XboxOne: UNITY_POST_PROCESSING_STACK_V2
+    tvOS: UNITY_POST_PROCESSING_STACK_V2
   additionalCompilerArguments: {}
   platformArchitecture: {}
   scriptingBackend:
