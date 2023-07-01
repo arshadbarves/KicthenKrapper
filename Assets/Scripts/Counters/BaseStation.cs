@@ -6,35 +6,16 @@ public class BaseStation : NetworkBehaviour, IKitchenObjectParent
 {
     public static event EventHandler OnAnyObjectPlacedOnCounter;
 
+    [SerializeField] private Transform counterTopPoint;
+
     private int tutorialStepIndex;
+    private KitchenObject kitchenObject;
 
-    public int GetTutorialStepIndex()
-    {
-        return tutorialStepIndex;
-    }
-
-    public void SetTutorialStepIndex(int tutorialStepIndex)
-    {
-        this.tutorialStepIndex = tutorialStepIndex;
-    }
+    public int TutorialStepIndex => tutorialStepIndex;
 
     public static void ResetStaticData()
     {
         OnAnyObjectPlacedOnCounter = null;
-    }
-
-    [SerializeField] private Transform counterTopPoint;
-
-    private KitchenObject kitchenObject;
-
-    public virtual void Interact(Player player)
-    {
-        Debug.LogException(new System.Exception("Interact() not implemented in " + this.GetType().Name));
-    }
-
-    public virtual void InteractAlternate(Player player)
-    {
-        // Debug.LogException(new System.Exception("InteractAlternate() not implemented in " + this.GetType().Name));
     }
 
     public Transform GetKitchenObjectFollowTransform()
@@ -73,10 +54,26 @@ public class BaseStation : NetworkBehaviour, IKitchenObjectParent
 
     public void StepComplete()
     {
+        TutorialManager.Instance?.CompleteTutorialStep(TutorialStepIndex);
+    }
 
-        if (TutorialManager.Instance != null)
-        {
-            TutorialManager.Instance.CompleteTutorialStep(GetTutorialStepIndex());
-        }
+    public virtual void Interact(Player player)
+    {
+        Debug.LogException(new System.Exception("Interact() not implemented in " + GetType().Name));
+    }
+
+    public virtual void InteractAlternate(Player player)
+    {
+        // Optional implementation
+    }
+
+    public int GetTutorialStepIndex()
+    {
+        return tutorialStepIndex;
+    }
+
+    public void SetTutorialStepIndex(int tutorialStepIndex)
+    {
+        this.tutorialStepIndex = tutorialStepIndex;
     }
 }

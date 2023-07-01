@@ -19,7 +19,7 @@ MonoBehaviour:
     width: 1366
     height: 677
   m_ShowMode: 4
-  m_Title: Project
+  m_Title: Game
   m_RootView: {fileID: 2}
   m_MinSize: {x: 875, y: 300}
   m_MaxSize: {x: 10000, y: 10000}
@@ -250,7 +250,7 @@ MonoBehaviour:
   - {fileID: 16}
   - {fileID: 17}
   m_Selected: 0
-  m_LastSelected: 0
+  m_LastSelected: 1
 --- !u!114 &11
 MonoBehaviour:
   m_ObjectHideFlags: 52
@@ -890,9 +890,9 @@ MonoBehaviour:
   m_PlayAudio: 0
   m_AudioPlay: 0
   m_Position:
-    m_Target: {x: 12.155735, y: 3.8418832, z: -11.583139}
+    m_Target: {x: -4.1395984, y: 2.2025251, z: 4.5374565}
     speed: 2
-    m_Value: {x: 12.155735, y: 3.8418832, z: -11.583139}
+    m_Value: {x: -4.1395984, y: 2.2025251, z: 4.5374565}
   m_RenderMode: 0
   m_CameraMode:
     drawMode: 0
@@ -938,13 +938,13 @@ MonoBehaviour:
     m_GridAxis: 1
     m_gridOpacity: 0.5
   m_Rotation:
-    m_Target: {x: 0.027331842, y: 0.4439588, z: -0.013881738, w: 0.89580524}
+    m_Target: {x: 0.22379303, y: -0.11275255, z: 0.025662523, w: 0.9680153}
     speed: 2
-    m_Value: {x: 0.027331844, y: 0.4439588, z: -0.013881738, w: 0.8958053}
+    m_Value: {x: 0.22373614, y: -0.11272389, z: 0.025656, w: 0.9677692}
   m_Size:
-    m_Target: 7.2273855
+    m_Target: 3.831751
     speed: 2
-    m_Value: 7.2273855
+    m_Value: 3.831751
   m_Ortho:
     m_Target: 0
     speed: 2
@@ -1006,10 +1006,10 @@ MonoBehaviour:
     m_OverlaysVisible: 1
   m_SceneHierarchy:
     m_TreeViewState:
-      scrollPos: {x: 0, y: 69}
-      m_SelectedIDs: 5a7b0000
-      m_LastClickedID: 0
-      m_ExpandedIDs: b6faffff
+      scrollPos: {x: 0, y: 165}
+      m_SelectedIDs: 58b50000
+      m_LastClickedID: 46424
+      m_ExpandedIDs: b0e3ffffb6faffff48c50000
       m_RenameOverlay:
         m_UserAcceptedRename: 0
         m_Name: 
@@ -1079,7 +1079,7 @@ MonoBehaviour:
     m_SkipHidden: 0
     m_SearchArea: 1
     m_Folders:
-    - Assets/Scripts/Game
+    - Assets/PSG
     m_Globs: []
     m_OriginalText: 
     m_ImportLogFlags: 0
@@ -1087,16 +1087,16 @@ MonoBehaviour:
   m_ViewMode: 1
   m_StartGridSize: 16
   m_LastFolders:
-  - Assets/Scripts/Game
+  - Assets/PSG
   m_LastFoldersGridSize: 16
   m_LastProjectPath: D:\Project\Games\Unity projects\Clone
   m_LockTracker:
     m_IsLocked: 0
   m_FolderTreeState:
-    scrollPos: {x: 0, y: 372}
-    m_SelectedIDs: e0a80000
-    m_LastClickedID: 43232
-    m_ExpandedIDs: 0000000038a800003aa800003ca800003ea8000040a8000042a8000044a8000046a8000048a800004aa800004ca800004ea8000050a8000052a8000054a8000056a8000058a800005aa800005ca800005ea8000060a8000062a8000064a8000066a8000068a800006aa800006ca800006ea8000070a8000072a8000074a8000076a8000078a800007aa800007ca800007ea8000080a8000082a8000084a8000086a8000088a800008aa800008ca800008ea8000090a80000c6a8000000ca9a3b
+    scrollPos: {x: 0, y: 120}
+    m_SelectedIDs: 9ed10000
+    m_LastClickedID: 53662
+    m_ExpandedIDs: 0000000038a800003aa800003ca800003ea8000040a8000042a8000044a8000046a8000048a800004aa800004ca800004ea8000050a8000052a8000054a8000056a8000058a800005aa800005ca800005ea8000060a8000062a8000064a8000066a8000068a800006aa800006ca800006ea8000070a8000072a8000074a8000076a8000078a800007aa800007ca800007ea8000080a8000082a8000084a8000086a8000088a800008aa800008ca800008ea8000090a80000c2a80000c4a80000c6a80000faa8000000ca9a3b
     m_RenameOverlay:
       m_UserAcceptedRename: 0
       m_Name: 
