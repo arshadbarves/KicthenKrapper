@@ -3,11 +3,12 @@ using UnityEngine;
 public class PlacementSystem : MonoBehaviour
 {
     public static PlacementSystem Instance { get; private set; }
-    [SerializeField] private GameObject mouseIndicator, cellIndicator;
+    [SerializeField] private GameObject mouseIndicator, cellIndicator, stationIndicator;
     [SerializeField] private InputManager inputManager;
     [SerializeField] private Grid grid;
     [SerializeField] private GameObject gridVisuals;
     [SerializeField] private Player player;
+    [SerializeField] private Material validMaterial, invalidMaterial;
     private bool isPlacingStation = false;
 
     private void Awake()
@@ -39,9 +40,14 @@ public class PlacementSystem : MonoBehaviour
         cellIndicator.transform.position = grid.CellToWorld(gridPos);
     }
 
-    public void StartPlacingStation(Player player)
+    public void StartPlacingStation(Player player, BaseStation prefab)
     {
         Debug.Log("Start placing station");
+        if (cellIndicator != null)
+            Destroy(cellIndicator);
+        cellIndicator = Instantiate(prefab.gameObject, Vector3.zero, Quaternion.identity);
+        cellIndicator.GetComponentInChildren<MeshRenderer>().material = validMaterial;
+        cellIndicator.GetComponentInChildren<Collider>().enabled = false;
         isPlacingStation = true;
         this.player = player;
         gridVisuals.SetActive(true);

@@ -202,10 +202,9 @@ public class Player : NetworkBehaviour, IKitchenObjectParent
     private void GrabStationObject(BaseStation station)
     {
         grabbedStationObject = station;
+        PlacementSystem.Instance.StartPlacingStation(this, grabbedStationObject);
         grabbedStationObject.SetStationParent(this);
         grabbedStationObject.GetComponent<Collider>().enabled = false;
-
-        PlacementSystem.Instance.StartPlacingStation(this);
         print("GrabStationObject" + grabbedStationObject);
     }
 

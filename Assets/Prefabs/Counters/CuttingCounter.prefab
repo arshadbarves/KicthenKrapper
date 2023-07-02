@@ -78,6 +78,11 @@ PrefabInstance:
       propertyPath: m_Materials.Array.data[0]
       value: 
       objectReference: {fileID: 2100000, guid: 1a0afd856a35421469b28b916116fd9c, type: 2}
+    - target: {fileID: -5754084199372789682, guid: a6cde97ffabb4524d979efa4dda4b4a0,
+        type: 3}
+      propertyPath: m_Mesh
+      value: 
+      objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: a6cde97ffabb4524d979efa4dda4b4a0,
         type: 3}
       propertyPath: m_Name
@@ -201,10 +206,21 @@ PrefabInstance:
       propertyPath: m_ConstrainProportionsScale
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: -5754084199372789682, guid: a6cde97ffabb4524d979efa4dda4b4a0,
+        type: 3}
+      propertyPath: m_Mesh
+      value: 
+      objectReference: {fileID: 4723784886265247870, guid: a6cde97ffabb4524d979efa4dda4b4a0,
+        type: 3}
     - target: {fileID: 919132149155446097, guid: a6cde97ffabb4524d979efa4dda4b4a0,
         type: 3}
       propertyPath: m_Name
       value: EmptyStation
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: a6cde97ffabb4524d979efa4dda4b4a0,
+        type: 3}
+      propertyPath: m_Layer
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: a6cde97ffabb4524d979efa4dda4b4a0,
         type: 3}

@@ -83,10 +83,21 @@ PrefabInstance:
       propertyPath: m_ConstrainProportionsScale
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: -5754084199372789682, guid: a6cde97ffabb4524d979efa4dda4b4a0,
+        type: 3}
+      propertyPath: m_Mesh
+      value: 
+      objectReference: {fileID: 4723784886265247870, guid: a6cde97ffabb4524d979efa4dda4b4a0,
+        type: 3}
     - target: {fileID: 919132149155446097, guid: a6cde97ffabb4524d979efa4dda4b4a0,
         type: 3}
       propertyPath: m_Name
       value: EmptyStation
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: a6cde97ffabb4524d979efa4dda4b4a0,
+        type: 3}
+      propertyPath: m_Layer
+      value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: a6cde97ffabb4524d979efa4dda4b4a0,
         type: 3}
@@ -187,6 +198,11 @@ PrefabInstance:
       propertyPath: m_Materials.Array.data[0]
       value: 
       objectReference: {fileID: 2100000, guid: 1a0afd856a35421469b28b916116fd9c, type: 2}
+    - target: {fileID: -5754084199372789682, guid: a6cde97ffabb4524d979efa4dda4b4a0,
+        type: 3}
+      propertyPath: m_Mesh
+      value: 
+      objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: a6cde97ffabb4524d979efa4dda4b4a0,
         type: 3}
       propertyPath: m_Name
@@ -502,6 +518,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4591065016021434756, guid: 60b70eb2220039c41b776cf963bb11fe,
         type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4591065016021434756, guid: 60b70eb2220039c41b776cf963bb11fe,
+        type: 3}
       propertyPath: m_StaticEditorFlags
       value: 0
       objectReference: {fileID: 0}
@@ -513,17 +534,17 @@ PrefabInstance:
     - target: {fileID: 4591065016021434757, guid: 60b70eb2220039c41b776cf963bb11fe,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0
+      value: -4
       objectReference: {fileID: 0}
     - target: {fileID: 4591065016021434757, guid: 60b70eb2220039c41b776cf963bb11fe,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0
+      value: 0.03999976
       objectReference: {fileID: 0}
     - target: {fileID: 4591065016021434757, guid: 60b70eb2220039c41b776cf963bb11fe,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0
+      value: 2.0000002
       objectReference: {fileID: 0}
     - target: {fileID: 4591065016021434757, guid: 60b70eb2220039c41b776cf963bb11fe,
         type: 3}

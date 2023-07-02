@@ -115,6 +115,8 @@ public class BaseStation : NetworkBehaviour, IKitchenObjectParent
         }
 
         this.kitchenObjectParent = kitchenObjectParent;
+        // set the size to small
+        transform.localScale = transform.localScale * 0.5f;
 
         followTransform.SetTargetTransform(kitchenObjectParent.GetKitchenObjectFollowTransform());
     }
@@ -143,5 +145,21 @@ public class BaseStation : NetworkBehaviour, IKitchenObjectParent
         print(followTransform);
         transform.position = position;
         transform.rotation = Quaternion.identity;
+        transform.localScale = transform.localScale * 2f;
+    }
+
+    public Mesh GetMesh()
+    {
+        // Filter children Mesh by Layer
+        MeshFilter[] meshFilters = GetComponentsInChildren<MeshFilter>();
+        foreach (MeshFilter meshFilter in meshFilters)
+        {
+            if (meshFilter.gameObject.layer == LayerMask.NameToLayer("GhostMesh"))
+            {
+                return meshFilter.mesh;
+            }
+        }
+
+        return null;
     }
 }
