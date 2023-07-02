@@ -73,6 +73,16 @@ PrefabInstance:
       propertyPath: m_Name
       value: TrashStation
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 0f8dc0bfc6cef5e4b9d1c31c5d889953,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 0f8dc0bfc6cef5e4b9d1c31c5d889953,
+        type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -81,6 +91,12 @@ PrefabInstance:
 --- !u!4 &2720815872998484810 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 0f8dc0bfc6cef5e4b9d1c31c5d889953,
+    type: 3}
+  m_PrefabInstance: {fileID: 2470504648804191393}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &3353377640233955824 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 0f8dc0bfc6cef5e4b9d1c31c5d889953,
     type: 3}
   m_PrefabInstance: {fileID: 2470504648804191393}
   m_PrefabAsset: {fileID: 0}
@@ -96,6 +112,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Selected
+      objectReference: {fileID: 0}
+    - target: {fileID: 4589716710238282922, guid: c4e141bc61e807b4b832b850d92f5fd7,
+        type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4589716710238282923, guid: c4e141bc61e807b4b832b850d92f5fd7,
         type: 3}
@@ -222,7 +243,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   baseCounter: {fileID: 5937191273797950149}
   visualGameObjectArray:
-  - {fileID: 0}
+  - {fileID: 3353377640233955824}
 --- !u!1001 &7184431099008543270
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -406,6 +427,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: TrashStation
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 0f8dc0bfc6cef5e4b9d1c31c5d889953,
+        type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -429,6 +455,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: TrashCounter_Visual
+      objectReference: {fileID: 0}
+    - target: {fileID: 4589716710238282922, guid: c4e141bc61e807b4b832b850d92f5fd7,
+        type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4589716710238282923, guid: c4e141bc61e807b4b832b850d92f5fd7,
         type: 3}

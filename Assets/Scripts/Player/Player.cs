@@ -13,8 +13,6 @@ public class Player : NetworkBehaviour, IKitchenObjectParent
 
     public static event EventHandler OnAnyPlayerSpawned;
     public static event EventHandler OnAnyPickupObject;
-    public static event EventHandler OnAnyStationGrabbed;
-    public static event EventHandler OnAnyStationPlaced;
 
     public static void ResetStaticData()
     {
@@ -167,56 +165,51 @@ public class Player : NetworkBehaviour, IKitchenObjectParent
 
     private void GameInput_OnInteractAlternateAction(object sender, EventArgs e)
     {
-        if (!TutorialManager.Instance && !LevelManager.Instance.IsPlaying()) return;
-
-        if (selectedCounter != null)
+        if (!LevelManager.Instance.isDebugMode)
         {
-            if (LevelManager.Instance.IsPlaying())
+            if (!TutorialManager.Instance && !LevelManager.Instance.IsPlaying()) return;
+        }
+        if (selectedCounter != null && grabbedStationObject == null)
+        {
+            if (LevelManager.Instance.IsPlaying() && !LevelManager.Instance.isDebugMode)
             {
                 selectedCounter.InteractAlternate(this);
             }
             else
             {
-                // Check if the player already has a station
-                if(IsHoldingStationObject())
-                {
-                    // Place the station
-                    PlaceStationObject();
-                    OnAnyStationPlaced?.Invoke(this, EventArgs.Empty);
-                }
-                else
-                {
-                    // Grab the station
-                    GrabStationObject(selectedCounter);
-                    OnAnyStationGrabbed?.Invoke(this, EventArgs.Empty);
-                }
+                GrabStationObject(selectedCounter);
             }
         }
+        else
+        {
+            if (HasStationObject())
+            {
+                print("GameInput_OnInteractAlternateAction: HasStationObject");
+                PlaceStationObject();
+            }
+        }
+
     }
 
     private void PlaceStationObject()
     {
-        if (IsHoldingStationObject())
-        {
-            grabbedStationObject.transform.SetParent(null);
-            grabbedStationObject.GetComponent<Collider>().enabled = true;
-            grabbedStationObject = null;
-        }
+        RemoveKitchenObject();
+        grabbedStationObject.GetComponent<Collider>().enabled = true;
+        PlacementSystem.Instance.PlaceStationObject(grabbedStationObject);
+        grabbedStationObject = null;
     }
 
     private void GrabStationObject(BaseStation station)
     {
-        if (!IsHoldingStationObject())
-        {
-            grabbedStationObject = station;
-            grabbedStationObject.transform.SetParent(transform);
-            grabbedStationObject.transform.localPosition = stationHoldOffset;
-            grabbedStationObject.transform.localRotation = Quaternion.identity;
-            grabbedStationObject.GetComponent<Collider>().enabled = false;
-        }
+        grabbedStationObject = station;
+        grabbedStationObject.SetStationParent(this);
+        grabbedStationObject.GetComponent<Collider>().enabled = false;
+
+        PlacementSystem.Instance.StartPlacingStation(this);
+        print("GrabStationObject" + grabbedStationObject);
     }
 
-    private bool IsHoldingStationObject()
+    private bool HasStationObject()
     {
         return grabbedStationObject != null;
     }
@@ -277,7 +270,6 @@ public class Player : NetworkBehaviour, IKitchenObjectParent
     private void HandleMovement()
     {
         Vector2 inputVector = GameInput.Instance.GetMovementInputNormalized();
-        print(inputVector);
 
         Vector3 movDir = new Vector3(inputVector.x, 0f, inputVector.y);
 

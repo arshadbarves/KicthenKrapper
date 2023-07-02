@@ -392,6 +392,11 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 4806119690854645520}
     m_Modifications:
+    - target: {fileID: 697635542877001267, guid: ebe5421887105884ebb12a58c6b424d2,
+        type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 1183030990972470064, guid: ebe5421887105884ebb12a58c6b424d2,
         type: 3}
       propertyPath: m_Color.b
@@ -416,6 +421,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: ProgressBarUI
+      objectReference: {fileID: 0}
+    - target: {fileID: 2124070724060502005, guid: ebe5421887105884ebb12a58c6b424d2,
+        type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4218840040631341139, guid: ebe5421887105884ebb12a58c6b424d2,
         type: 3}
@@ -527,6 +537,11 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 8845554908395545050, guid: ebe5421887105884ebb12a58c6b424d2,
+        type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 8845554908395545051, guid: ebe5421887105884ebb12a58c6b424d2,
         type: 3}
       propertyPath: m_AnchorMax.x
@@ -540,6 +555,21 @@ PrefabInstance:
     - target: {fileID: 8845554908395545051, guid: ebe5421887105884ebb12a58c6b424d2,
         type: 3}
       propertyPath: m_AnchorMin.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8845554908906382988, guid: ebe5421887105884ebb12a58c6b424d2,
+        type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8845554909109677867, guid: ebe5421887105884ebb12a58c6b424d2,
+        type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8942473068965547845, guid: ebe5421887105884ebb12a58c6b424d2,
+        type: 3}
+      propertyPath: m_StaticEditorFlags
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
@@ -699,6 +729,11 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 4589716710238282922, guid: 93af8b85a17635f40a5b76ed82a86c18,
+        type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 4589716710238282923, guid: 93af8b85a17635f40a5b76ed82a86c18,
         type: 3}
       propertyPath: m_RootOrder
@@ -827,9 +862,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   baseCounter: {fileID: 6142351462576448313}
   visualGameObjectArray:
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
+  - {fileID: 1976011172105914377}
 --- !u!4 &3951465011474027081 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4589716710238282923, guid: 93af8b85a17635f40a5b76ed82a86c18,
@@ -929,6 +962,11 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 5d209546bd03128419e824bcff9b7147,
+        type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -937,6 +975,12 @@ PrefabInstance:
 --- !u!4 &1164148744726500019 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 5d209546bd03128419e824bcff9b7147,
+    type: 3}
+  m_PrefabInstance: {fileID: 1706119206327465304}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &1976011172105914377 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 5d209546bd03128419e824bcff9b7147,
     type: 3}
   m_PrefabInstance: {fileID: 1706119206327465304}
   m_PrefabAsset: {fileID: 0}
@@ -956,6 +1000,11 @@ PrefabInstance:
     - target: {fileID: 17251720544094567, guid: 93af8b85a17635f40a5b76ed82a86c18,
         type: 3}
       propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 17251720544094567, guid: 93af8b85a17635f40a5b76ed82a86c18,
+        type: 3}
+      propertyPath: m_StaticEditorFlags
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 17251720544094571, guid: 93af8b85a17635f40a5b76ed82a86c18,
@@ -1023,6 +1072,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: StoveCounter_Visual
       objectReference: {fileID: 0}
+    - target: {fileID: 4589716710238282922, guid: 93af8b85a17635f40a5b76ed82a86c18,
+        type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 4589716710238282923, guid: 93af8b85a17635f40a5b76ed82a86c18,
         type: 3}
       propertyPath: m_RootOrder
@@ -1081,6 +1135,11 @@ PrefabInstance:
     - target: {fileID: 5220305274835918574, guid: 93af8b85a17635f40a5b76ed82a86c18,
         type: 3}
       propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5220305274835918574, guid: 93af8b85a17635f40a5b76ed82a86c18,
+        type: 3}
+      propertyPath: m_StaticEditorFlags
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
@@ -1231,6 +1290,11 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: db7cd30441eb64444aa522b989748f5d,
+        type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -1330,6 +1394,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: Pan
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: afb98c7b0c7b9354eba4bd065238799e,
+        type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -1408,6 +1477,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: StoveStation
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 5d209546bd03128419e824bcff9b7147,
+        type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

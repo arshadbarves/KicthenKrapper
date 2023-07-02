@@ -5,13 +5,22 @@ using UnityEngine;
 public class BaseStation : NetworkBehaviour, IKitchenObjectParent
 {
     public static event EventHandler OnAnyObjectPlacedOnCounter;
+    private IKitchenObjectParent kitchenObjectParent;
 
     [SerializeField] private Transform counterTopPoint;
 
     private int tutorialStepIndex;
     private KitchenObject kitchenObject;
 
+    private FollowTransform followTransform;
+
     public int TutorialStepIndex => tutorialStepIndex;
+
+    protected virtual void Awake()
+    {
+        followTransform = GetComponent<FollowTransform>();
+        print(followTransform);
+    }
 
     public static void ResetStaticData()
     {
@@ -75,5 +84,64 @@ public class BaseStation : NetworkBehaviour, IKitchenObjectParent
     public void SetTutorialStepIndex(int tutorialStepIndex)
     {
         this.tutorialStepIndex = tutorialStepIndex;
+    }
+
+    public void SetStationParent(IKitchenObjectParent kitchenObjectParent)
+    {
+        SetStationParentServerRpc(kitchenObjectParent.GetNetworkObject());
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    private void SetStationParentServerRpc(NetworkObjectReference stationNetworkObjectReference)
+    {
+        SetStationParentClientRpc(stationNetworkObjectReference);
+    }
+
+    [ClientRpc]
+    private void SetStationParentClientRpc(NetworkObjectReference stationParentNetworkObjectReference)
+    {
+        stationParentNetworkObjectReference.TryGet(out NetworkObject kitchenObjectParentNetworkObject);
+        IKitchenObjectParent kitchenObjectParent = kitchenObjectParentNetworkObject.GetComponent<IKitchenObjectParent>();
+
+        if (kitchenObjectParent.HasKitchenObject())
+        {
+            return;
+        }
+
+        // If the kitchen object parent already has a kitchen object, destroy this one
+        if (this.kitchenObjectParent != null)
+        {
+            this.kitchenObjectParent.RemoveKitchenObject();
+        }
+
+        this.kitchenObjectParent = kitchenObjectParent;
+
+        followTransform.SetTargetTransform(kitchenObjectParent.GetKitchenObjectFollowTransform());
+    }
+
+    public void RemoveStationParent(Vector3 position)
+    {
+        RemoveStationParentServerRpc(position);
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    private void RemoveStationParentServerRpc(Vector3 position)
+    {
+        RemoveStationParentClientRpc(position);
+    }
+
+    [ClientRpc]
+    private void RemoveStationParentClientRpc(Vector3 position)
+    {
+        if (kitchenObjectParent != null)
+        {
+            kitchenObjectParent.RemoveKitchenObject();
+        }
+
+        kitchenObjectParent = null;
+        followTransform.SetTargetTransform(null);
+        print(followTransform);
+        transform.position = position;
+        transform.rotation = Quaternion.identity;
     }
 }

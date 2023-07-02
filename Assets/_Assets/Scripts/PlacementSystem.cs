@@ -1,33 +1,65 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class PlacementSystem : MonoBehaviour
 {
+    public static PlacementSystem Instance { get; private set; }
     [SerializeField] private GameObject mouseIndicator, cellIndicator;
     [SerializeField] private InputManager inputManager;
     [SerializeField] private Grid grid;
     [SerializeField] private GameObject gridVisuals;
     [SerializeField] private Player player;
+    private bool isPlacingStation = false;
+
+    private void Awake()
+    {
+        if (Instance == null)
+            Instance = this;
+        else
+            Destroy(gameObject);
+    }
+
+    private void Start()
+    {
+        StopPlacingStation();
+    }
 
     private void Update()
     {
-        // Vector3 mousePos = inputManager.GetSelectedMapPosition();
-        Vector3 mousePos = player.GetPlayerPostionOffset();
-        mousePos.y = 0;
-        Vector3Int gridPos = grid.WorldToCell(mousePos);
-        mouseIndicator.transform.position = mousePos;
-        cellIndicator.transform.position = grid.CellToWorld(gridPos);   
+        if (isPlacingStation)
+        {
+            UpdateStationPlacement();
+        }
     }
 
-    public void StartPlacing(GameObject prefab)
+    private void UpdateStationPlacement()
     {
+        Vector3 playerOffsetPos = player.GetPlayerPostionOffset();
+        Vector3Int gridPos = grid.WorldToCell(playerOffsetPos);
+        mouseIndicator.transform.position = playerOffsetPos;
+        cellIndicator.transform.position = grid.CellToWorld(gridPos);
+    }
+
+    public void StartPlacingStation(Player player)
+    {
+        Debug.Log("Start placing station");
+        isPlacingStation = true;
+        this.player = player;
         gridVisuals.SetActive(true);
         cellIndicator.SetActive(true);
     }
 
-    public void StopPlacing()
+    public void PlaceStationObject(BaseStation prefab)
     {
+        Vector3 playerOffsetPos = player.GetPlayerPostionOffset();
+        Vector3Int gridPos = grid.WorldToCell(playerOffsetPos);
+        prefab.RemoveStationParent(grid.CellToWorld(gridPos));
+        StopPlacingStation();
+    }
+
+    public void StopPlacingStation()
+    {
+        Debug.Log("Stop placing station");
+        isPlacingStation = false;
         gridVisuals.SetActive(false);
         cellIndicator.SetActive(false);
     }

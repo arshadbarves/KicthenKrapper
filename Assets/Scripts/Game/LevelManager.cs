@@ -44,7 +44,8 @@ public class LevelManager : NetworkBehaviour
             Instance = this;
         }
 
-        if(isDebugMode){
+        if (isDebugMode)
+        {
             return;
         }
 
@@ -53,10 +54,6 @@ public class LevelManager : NetworkBehaviour
 
     private void Start()
     {
-        if (isDebugMode)
-        {
-            return;
-        }
         if (!GameDataSource.PlayMultiplayer)
         {
             SpawnPlayerSinglePlayerMode();
@@ -295,6 +292,7 @@ public class LevelManager : NetworkBehaviour
                 }
                 break;
             case GameState.Playing:
+                if (isDebugMode) return;
                 gamePlayingTimer.Value -= Time.deltaTime;
                 if (gamePlayingTimer.Value <= 0f)
                 {
