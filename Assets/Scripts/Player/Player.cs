@@ -13,6 +13,8 @@ public class Player : NetworkBehaviour, IKitchenObjectParent
 
     public static event EventHandler OnAnyPlayerSpawned;
     public static event EventHandler OnAnyPickupObject;
+    public static event EventHandler OnAnyStationGrabbed;
+    public static event EventHandler OnAnyStationPlaced;
 
     public static void ResetStaticData()
     {
@@ -25,11 +27,11 @@ public class Player : NetworkBehaviour, IKitchenObjectParent
     {
         public BaseStation selectedCounter;
     }
-    [SerializeField] private float playerSpeed = 7f;
-    [SerializeField] private float playerRotationSpeed = 10f;
-    [SerializeField] private float playerRadius = 0.7f;
-    [SerializeField] private float playerHeight = 2f;
-    [SerializeField] private float interactDistance = 2f;
+    [SerializeField] private readonly float playerSpeed = 7f;
+    [SerializeField] private readonly float playerRotationSpeed = 10f;
+    [SerializeField] private readonly float playerRadius = 0.7f;
+    [SerializeField] private readonly float playerHeight = 2f;
+    [SerializeField] private readonly float interactDistance = 2f;
     [SerializeField] private LayerMask countersLayerMask;
     [SerializeField] private LayerMask collisionsLayerMask;
     [SerializeField] private Transform kitchenObjectHoldPoint;
@@ -37,11 +39,14 @@ public class Player : NetworkBehaviour, IKitchenObjectParent
     [SerializeField] private TextMeshProUGUI displayNameText;
     [SerializeField] private CinemachineVirtualCamera virtualCamera;
     [SerializeField] private bool isTutorialPlayer = false;
+    [SerializeField] private Vector3 stationHoldOffset = Vector3.zero;
+    [SerializeField] private GameObject stationHoldPrefab;
 
     private bool isWalking = false;
     private Vector3 lastMovementDirection = Vector3.zero;
     private BaseStation selectedCounter = null;
     private KitchenObject kitchenObject = null;
+    private BaseStation grabbedStationObject;
 
     private void Start()
     {
@@ -166,18 +171,61 @@ public class Player : NetworkBehaviour, IKitchenObjectParent
 
         if (selectedCounter != null)
         {
-            selectedCounter.InteractAlternate(this);
+            if (LevelManager.Instance.IsPlaying())
+            {
+                selectedCounter.InteractAlternate(this);
+            }
+            else
+            {
+                // Check if the player already has a station
+                if(IsHoldingStationObject())
+                {
+                    // Place the station
+                    PlaceStationObject();
+                    OnAnyStationPlaced?.Invoke(this, EventArgs.Empty);
+                }
+                else
+                {
+                    // Grab the station
+                    GrabStationObject(selectedCounter);
+                    OnAnyStationGrabbed?.Invoke(this, EventArgs.Empty);
+                }
+            }
         }
+    }
+
+    private void PlaceStationObject()
+    {
+        if (IsHoldingStationObject())
+        {
+            grabbedStationObject.transform.SetParent(null);
+            grabbedStationObject.GetComponent<Collider>().enabled = true;
+            grabbedStationObject = null;
+        }
+    }
+
+    private void GrabStationObject(BaseStation station)
+    {
+        if (!IsHoldingStationObject())
+        {
+            grabbedStationObject = station;
+            grabbedStationObject.transform.SetParent(transform);
+            grabbedStationObject.transform.localPosition = stationHoldOffset;
+            grabbedStationObject.transform.localRotation = Quaternion.identity;
+            grabbedStationObject.GetComponent<Collider>().enabled = false;
+        }
+    }
+
+    private bool IsHoldingStationObject()
+    {
+        return grabbedStationObject != null;
     }
 
     private void GameInput_OnInteractAction(object sender, EventArgs e)
     {
         if (!TutorialManager.Instance && !LevelManager.Instance.IsPlaying()) return;
 
-        if (selectedCounter != null)
-        {
-            selectedCounter.Interact(this);
-        }
+        selectedCounter?.Interact(this);
     }
 
     private void Update()
@@ -229,6 +277,7 @@ public class Player : NetworkBehaviour, IKitchenObjectParent
     private void HandleMovement()
     {
         Vector2 inputVector = GameInput.Instance.GetMovementInputNormalized();
+        print(inputVector);
 
         Vector3 movDir = new Vector3(inputVector.x, 0f, inputVector.y);
 
@@ -321,5 +370,10 @@ public class Player : NetworkBehaviour, IKitchenObjectParent
     public void SetIsTutorialPlayer(bool isTutorialPlayer)
     {
         this.isTutorialPlayer = isTutorialPlayer;
+    }
+
+    public Vector3 GetPlayerPostionOffset()
+    {
+        return transform.position + stationHoldOffset;
     }
 }

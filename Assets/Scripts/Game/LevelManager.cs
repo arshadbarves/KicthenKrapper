@@ -14,6 +14,7 @@ public class LevelManager : NetworkBehaviour
 
     [SerializeField] private GameModeSO gameModeSO;
     [SerializeField] private Player playerPrefab;
+    public bool isDebugMode = false;
 
     private Dictionary<ulong, bool> playerReadyDictionary;
 
@@ -43,11 +44,19 @@ public class LevelManager : NetworkBehaviour
             Instance = this;
         }
 
+        if(isDebugMode){
+            return;
+        }
+
         playerReadyDictionary = new Dictionary<ulong, bool>();
     }
 
     private void Start()
     {
+        if (isDebugMode)
+        {
+            return;
+        }
         if (!GameDataSource.PlayMultiplayer)
         {
             SpawnPlayerSinglePlayerMode();
@@ -63,6 +72,10 @@ public class LevelManager : NetworkBehaviour
 
     public override void OnDestroy()
     {
+        if (isDebugMode)
+        {
+            return;
+        }
         UnsubscribeFromEvents();
     }
 
