@@ -118,7 +118,7 @@ public class LevelManager : NetworkBehaviour
     private void DeliveryManager_OnRecipeExpired(object sender, DeliveryManager.RecipeEventArgs e)
     {
         RemoveFromWallet(GetNegativeCoinAmount());
-        AudioManager.Instance.PlaySoundEffect(soundEffectsAudioClipRefs.deliveryFailSounds);
+        // AudioManager.Instance.PlaySoundEffect(soundEffectsAudioClipRefs.deliveryFailSounds);
     }
 
     private void DeliveryManager_OnRecipeFailed(object sender, EventArgs e)

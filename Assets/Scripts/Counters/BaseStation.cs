@@ -1,5 +1,6 @@
 using System;
 using Unity.Netcode;
+using DG.Tweening;
 using UnityEngine;
 
 public class BaseStation : NetworkBehaviour, IKitchenObjectParent
@@ -8,7 +9,6 @@ public class BaseStation : NetworkBehaviour, IKitchenObjectParent
     private IKitchenObjectParent kitchenObjectParent;
 
     [SerializeField] private Transform counterTopPoint;
-
     private int tutorialStepIndex;
     private KitchenObject kitchenObject;
 
@@ -86,19 +86,19 @@ public class BaseStation : NetworkBehaviour, IKitchenObjectParent
         this.tutorialStepIndex = tutorialStepIndex;
     }
 
-    public void SetStationParent(IKitchenObjectParent kitchenObjectParent)
+    public void PickStationParent(IKitchenObjectParent kitchenObjectParent)
     {
-        SetStationParentServerRpc(kitchenObjectParent.GetNetworkObject());
+        PickStationServerRpc(kitchenObjectParent.GetNetworkObject());
     }
 
     [ServerRpc(RequireOwnership = false)]
-    private void SetStationParentServerRpc(NetworkObjectReference stationNetworkObjectReference)
+    private void PickStationServerRpc(NetworkObjectReference stationNetworkObjectReference)
     {
-        SetStationParentClientRpc(stationNetworkObjectReference);
+        PickStationClientRpc(stationNetworkObjectReference);
     }
 
     [ClientRpc]
-    private void SetStationParentClientRpc(NetworkObjectReference stationParentNetworkObjectReference)
+    private void PickStationClientRpc(NetworkObjectReference stationParentNetworkObjectReference)
     {
         stationParentNetworkObjectReference.TryGet(out NetworkObject kitchenObjectParentNetworkObject);
         IKitchenObjectParent kitchenObjectParent = kitchenObjectParentNetworkObject.GetComponent<IKitchenObjectParent>();
@@ -109,10 +109,7 @@ public class BaseStation : NetworkBehaviour, IKitchenObjectParent
         }
 
         // If the kitchen object parent already has a kitchen object, destroy this one
-        if (this.kitchenObjectParent != null)
-        {
-            this.kitchenObjectParent.RemoveKitchenObject();
-        }
+        this.kitchenObjectParent?.RemoveKitchenObject();
 
         this.kitchenObjectParent = kitchenObjectParent;
         // set the size to small
@@ -121,28 +118,25 @@ public class BaseStation : NetworkBehaviour, IKitchenObjectParent
         followTransform.SetTargetTransform(kitchenObjectParent.GetKitchenObjectFollowTransform());
     }
 
-    public void RemoveStationParent(Vector3 position)
+    public void DropStationParent(Vector3 position)
     {
-        RemoveStationParentServerRpc(position);
+        DropStationServerRpc(position);
     }
 
     [ServerRpc(RequireOwnership = false)]
-    private void RemoveStationParentServerRpc(Vector3 position)
+    private void DropStationServerRpc(Vector3 position)
     {
-        RemoveStationParentClientRpc(position);
+        DropStationClientRpc(position);
     }
 
     [ClientRpc]
-    private void RemoveStationParentClientRpc(Vector3 position)
+    private void DropStationClientRpc(Vector3 position)
     {
-        if (kitchenObjectParent != null)
-        {
-            kitchenObjectParent.RemoveKitchenObject();
-        }
+        kitchenObjectParent?.RemoveKitchenObject();
 
         kitchenObjectParent = null;
         followTransform.SetTargetTransform(null);
-        print(followTransform);
+        WobbleEffect();
         transform.position = position;
         transform.rotation = Quaternion.identity;
         transform.localScale = transform.localScale * 2f;
@@ -161,5 +155,9 @@ public class BaseStation : NetworkBehaviour, IKitchenObjectParent
         }
 
         return null;
+    }
+    public void WobbleEffect()
+    {  
+       this.transform.DOShakeScale(0.3f, 0.2f, 10, 90, false);
     }
 }

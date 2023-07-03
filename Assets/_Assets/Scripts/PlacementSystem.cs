@@ -1,3 +1,5 @@
+using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class PlacementSystem : MonoBehaviour
@@ -9,6 +11,9 @@ public class PlacementSystem : MonoBehaviour
     [SerializeField] private GameObject gridVisuals;
     [SerializeField] private Player player;
     [SerializeField] private Material validMaterial, invalidMaterial;
+    private GridData gridData = new();
+    private Renderer previewRenderer;
+    private List<GameObject> placedObjects = new();
     private bool isPlacingStation = false;
 
     private void Awake()
@@ -36,7 +41,9 @@ public class PlacementSystem : MonoBehaviour
     {
         Vector3 playerOffsetPos = player.GetPlayerPostionOffset();
         Vector3Int gridPos = grid.WorldToCell(playerOffsetPos);
-        mouseIndicator.transform.position = playerOffsetPos;
+
+        bool placementValidity = CheckPlacementValidity(gridPos);
+        previewRenderer.material.color = placementValidity ? Color.white : Color.red;
         cellIndicator.transform.position = grid.CellToWorld(gridPos);
     }
 
@@ -46,7 +53,8 @@ public class PlacementSystem : MonoBehaviour
         if (cellIndicator != null)
             Destroy(cellIndicator);
         cellIndicator = Instantiate(prefab.gameObject, Vector3.zero, Quaternion.identity);
-        cellIndicator.GetComponentInChildren<MeshRenderer>().material = validMaterial;
+        previewRenderer = cellIndicator.GetComponentInChildren<Renderer>();
+        // cellIndicator.GetComponentInChildren<MeshRenderer>().material = validMaterial;
         cellIndicator.GetComponentInChildren<Collider>().enabled = false;
         isPlacingStation = true;
         this.player = player;
@@ -54,12 +62,18 @@ public class PlacementSystem : MonoBehaviour
         cellIndicator.SetActive(true);
     }
 
-    public void PlaceStationObject(BaseStation prefab)
+    public bool PlaceStationObject(BaseStation prefab)
     {
         Vector3 playerOffsetPos = player.GetPlayerPostionOffset();
         Vector3Int gridPos = grid.WorldToCell(playerOffsetPos);
-        prefab.RemoveStationParent(grid.CellToWorld(gridPos));
+        if (!CheckPlacementValidity(gridPos))
+            // play wrong sound
+            return false;
+        prefab.DropStationParent(grid.CellToWorld(gridPos));
+        placedObjects.Add(cellIndicator);
+        gridData.AddObjectAt(gridPos);
         StopPlacingStation();
+        return true;
     }
 
     public void StopPlacingStation()
@@ -68,5 +82,10 @@ public class PlacementSystem : MonoBehaviour
         isPlacingStation = false;
         gridVisuals.SetActive(false);
         cellIndicator.SetActive(false);
+    }
+
+    private bool CheckPlacementValidity(Vector3Int gridPosition)
+    {
+        return gridData.CanPlaceObejctAt(gridPosition);
     }
 }

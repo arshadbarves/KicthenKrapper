@@ -195,15 +195,17 @@ public class Player : NetworkBehaviour, IKitchenObjectParent
     {
         RemoveKitchenObject();
         grabbedStationObject.GetComponent<Collider>().enabled = true;
-        PlacementSystem.Instance.PlaceStationObject(grabbedStationObject);
-        grabbedStationObject = null;
+        if(PlacementSystem.Instance.PlaceStationObject(grabbedStationObject))
+        {
+            grabbedStationObject = null;
+        }
     }
 
     private void GrabStationObject(BaseStation station)
     {
         grabbedStationObject = station;
         PlacementSystem.Instance.StartPlacingStation(this, grabbedStationObject);
-        grabbedStationObject.SetStationParent(this);
+        grabbedStationObject.PickStationParent(this);
         grabbedStationObject.GetComponent<Collider>().enabled = false;
         print("GrabStationObject" + grabbedStationObject);
     }
