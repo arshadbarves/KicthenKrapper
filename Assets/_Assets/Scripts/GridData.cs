@@ -22,7 +22,7 @@ public class GridData
         return returnVal;
     }
 
-    public bool CanPlaceObejctAt(Vector3Int gridPosition)
+    public bool CanPlaceObjectAt(Vector3Int gridPosition)
     {
         Vector3Int pos = CalculatePositions(gridPosition);
         if (placedObjects.ContainsKey(pos))

@@ -113,7 +113,9 @@ public class BaseStation : NetworkBehaviour, IKitchenObjectParent
 
         this.kitchenObjectParent = kitchenObjectParent;
         // set the size to small
-        transform.localScale = transform.localScale * 0.5f;
+        this.transform.localScale = transform.localScale * 0.5f;
+
+        this.transform.GetComponent<Collider>().enabled = false;
 
         followTransform.SetTargetTransform(kitchenObjectParent.GetKitchenObjectFollowTransform());
     }
@@ -137,27 +139,14 @@ public class BaseStation : NetworkBehaviour, IKitchenObjectParent
         kitchenObjectParent = null;
         followTransform.SetTargetTransform(null);
         WobbleEffect();
-        transform.position = position;
-        transform.rotation = Quaternion.identity;
-        transform.localScale = transform.localScale * 2f;
+        this.transform.position = position;
+        this.transform.rotation = Quaternion.identity;
+        this.transform.localScale = transform.localScale * 2f;
+        this.transform.GetComponent<Collider>().enabled = true;
     }
 
-    public Mesh GetMesh()
-    {
-        // Filter children Mesh by Layer
-        MeshFilter[] meshFilters = GetComponentsInChildren<MeshFilter>();
-        foreach (MeshFilter meshFilter in meshFilters)
-        {
-            if (meshFilter.gameObject.layer == LayerMask.NameToLayer("GhostMesh"))
-            {
-                return meshFilter.mesh;
-            }
-        }
-
-        return null;
-    }
     public void WobbleEffect()
-    {  
-       this.transform.DOShakeScale(0.3f, 0.2f, 10, 90, false);
+    {
+        this.transform.DOShakeScale(0.3f, 0.2f, 10, 90, false);
     }
 }

@@ -99,7 +99,7 @@ public class Player : NetworkBehaviour, IKitchenObjectParent
 
         if (IsOwner)
         {
-            displayNameText.text = GameDataSource.Instance.GetPlayerData().PlayerName;
+            displayNameText.text = "GameDataSource.Instance.GetPlayerData().PlayerName";
             displayNameText.color = Color.green;
 
             // Get the Virtual Camera and follow the player
@@ -194,8 +194,7 @@ public class Player : NetworkBehaviour, IKitchenObjectParent
     private void PlaceStationObject()
     {
         RemoveKitchenObject();
-        grabbedStationObject.GetComponent<Collider>().enabled = true;
-        if(PlacementSystem.Instance.PlaceStationObject(grabbedStationObject))
+        if (PlacementSystem.Instance.PlaceStationObject(grabbedStationObject))
         {
             grabbedStationObject = null;
         }
@@ -206,8 +205,6 @@ public class Player : NetworkBehaviour, IKitchenObjectParent
         grabbedStationObject = station;
         PlacementSystem.Instance.StartPlacingStation(this, grabbedStationObject);
         grabbedStationObject.PickStationParent(this);
-        grabbedStationObject.GetComponent<Collider>().enabled = false;
-        print("GrabStationObject" + grabbedStationObject);
     }
 
     private bool HasStationObject()
@@ -247,7 +244,7 @@ public class Player : NetworkBehaviour, IKitchenObjectParent
             lastMovementDirection = movDir;
         }
 
-        Vector3 raycastOrigin = transform.position;
+        Vector3 raycastOrigin = transform.position + Vector3.up * 0.5f;
         if (HasStationObject())
         {
             raycastOrigin += stationHoldOffset;

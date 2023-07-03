@@ -11,9 +11,10 @@ public class PlacementSystem : MonoBehaviour
     [SerializeField] private GameObject gridVisuals;
     [SerializeField] private Player player;
     [SerializeField] private Material validMaterial, invalidMaterial;
-    private GridData gridData = new();
+
+    private GridData gridData = new GridData();
     private Renderer previewRenderer;
-    private List<GameObject> placedObjects = new();
+    private List<GameObject> placedObjects = new List<GameObject>();
     private bool isPlacingStation = false;
 
     private void Awake()
@@ -43,7 +44,12 @@ public class PlacementSystem : MonoBehaviour
         Vector3Int gridPos = grid.WorldToCell(playerOffsetPos);
 
         bool placementValidity = CheckPlacementValidity(gridPos);
-        previewRenderer.material.color = placementValidity ? Color.white : Color.red;
+        // Update visuals for all meshes in previewRenderer
+        foreach (MeshFilter meshFilter in previewRenderer.GetComponentsInChildren<MeshFilter>())
+        {
+            meshFilter.gameObject.GetComponent<Renderer>().material = placementValidity ? validMaterial : invalidMaterial;
+        }
+        // previewRenderer.material = placementValidity ? validMaterial : invalidMaterial;
         cellIndicator.transform.position = grid.CellToWorld(gridPos);
     }
 
@@ -67,7 +73,7 @@ public class PlacementSystem : MonoBehaviour
         Vector3 playerOffsetPos = player.GetPlayerPostionOffset();
         Vector3Int gridPos = grid.WorldToCell(playerOffsetPos);
         if (!CheckPlacementValidity(gridPos))
-            // play wrong sound
+            // TODO: play wrong sound
             return false;
         prefab.DropStationParent(grid.CellToWorld(gridPos));
         placedObjects.Add(cellIndicator);
@@ -86,6 +92,6 @@ public class PlacementSystem : MonoBehaviour
 
     private bool CheckPlacementValidity(Vector3Int gridPosition)
     {
-        return gridData.CanPlaceObejctAt(gridPosition);
+        return gridData.CanPlaceObjectAt(gridPosition);
     }
 }
