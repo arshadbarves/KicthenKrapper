@@ -44,23 +44,19 @@ public class PlacementSystem : MonoBehaviour
         Vector3Int gridPos = grid.WorldToCell(playerOffsetPos);
 
         bool placementValidity = CheckPlacementValidity(gridPos);
-        // Update visuals for all meshes in previewRenderer
         foreach (MeshFilter meshFilter in previewRenderer.GetComponentsInChildren<MeshFilter>())
         {
             meshFilter.gameObject.GetComponent<Renderer>().material = placementValidity ? validMaterial : invalidMaterial;
         }
-        // previewRenderer.material = placementValidity ? validMaterial : invalidMaterial;
         cellIndicator.transform.position = grid.CellToWorld(gridPos);
     }
 
     public void StartPlacingStation(Player player, BaseStation prefab)
     {
-        Debug.Log("Start placing station");
         if (cellIndicator != null)
             Destroy(cellIndicator);
         cellIndicator = Instantiate(prefab.gameObject, Vector3.zero, Quaternion.identity);
         previewRenderer = cellIndicator.GetComponentInChildren<Renderer>();
-        // cellIndicator.GetComponentInChildren<MeshRenderer>().material = validMaterial;
         cellIndicator.GetComponentInChildren<Collider>().enabled = false;
         isPlacingStation = true;
         this.player = player;
@@ -84,7 +80,6 @@ public class PlacementSystem : MonoBehaviour
 
     public void StopPlacingStation()
     {
-        Debug.Log("Stop placing station");
         isPlacingStation = false;
         gridVisuals.SetActive(false);
         cellIndicator.SetActive(false);
