@@ -238,7 +238,6 @@ public class Player : NetworkBehaviour, IKitchenObjectParent
     private void HandleInteractions()
     {
         Vector2 inputVector = GameInput.Instance.GetMovementInputNormalized();
-
         Vector3 movDir = new Vector3(inputVector.x, 0f, inputVector.y);
 
         if (movDir != Vector3.zero)
@@ -246,7 +245,13 @@ public class Player : NetworkBehaviour, IKitchenObjectParent
             lastMovementDirection = movDir;
         }
 
-        if (Physics.Raycast(transform.position, lastMovementDirection, out RaycastHit raycastHit, interactDistance, countersLayerMask))
+        Vector3 raycastOrigin = transform.position;
+        if (HasStationObject())
+        {
+            raycastOrigin += stationHoldOffset;
+        }
+
+        if (Physics.Raycast(raycastOrigin, lastMovementDirection, out RaycastHit raycastHit, interactDistance, countersLayerMask))
         {
             if (raycastHit.transform.TryGetComponent(out BaseStation baseCounter))
             {
@@ -257,14 +262,17 @@ public class Player : NetworkBehaviour, IKitchenObjectParent
             }
             else
             {
+                print("HandleInteractions: SetSelectedCounter(null)2");
                 SetSelectedCounter(null);
             }
         }
         else
         {
+            print("HandleInteractions: SetSelectedCounter(null)");
             SetSelectedCounter(null);
         }
     }
+
 
     private void HandleMovement()
     {
