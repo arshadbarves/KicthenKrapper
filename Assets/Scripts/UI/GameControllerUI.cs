@@ -3,11 +3,11 @@ using UnityEngine;
 
 public class GameControllerUI : MonoBehaviour
 {
-    private LevelManager gameManager;
+    private LevelManager levelManager;
 
     private void Awake()
     {
-        gameManager = LevelManager.Instance;
+        levelManager = LevelManager.Instance;
     }
 
     private void Start()
@@ -18,17 +18,17 @@ public class GameControllerUI : MonoBehaviour
 
     private void SubscribeToGameStateEvents()
     {
-        if (gameManager != null)
+        if (levelManager != null)
         {
-            gameManager.OnGameStateChanged += HandleGameStateChanged;
+            levelManager.OnGameStateChanged += HandleGameStateChanged;
         }
     }
 
     private void UnsubscribeFromGameStateEvents()
     {
-        if (gameManager != null)
+        if (levelManager != null)
         {
-            gameManager.OnGameStateChanged -= HandleGameStateChanged;
+            levelManager.OnGameStateChanged -= HandleGameStateChanged;
         }
     }
 
@@ -39,10 +39,11 @@ public class GameControllerUI : MonoBehaviour
 
     private void UpdateVisibility()
     {
-        if (gameManager != null)
+        if (levelManager != null)
         {
-            if (gameManager.IsGameOver())
+            if (levelManager.IsGameOver())
             {
+                print("Game over");
                 Hide();
             }
             else

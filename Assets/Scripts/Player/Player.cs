@@ -25,11 +25,11 @@ public class Player : NetworkBehaviour, IKitchenObjectParent
     {
         public BaseStation selectedCounter;
     }
-    [SerializeField] private float playerSpeed = 7f;
-    [SerializeField] private float playerRotationSpeed = 10f;
-    [SerializeField] private float playerRadius = 0.7f;
-    [SerializeField] private float playerHeight = 2f;
-    [SerializeField] private float interactDistance = 2f;
+    [SerializeField] private readonly float playerSpeed = 7f;
+    [SerializeField] private readonly float playerRotationSpeed = 10f;
+    [SerializeField] private readonly float playerRadius = 0.7f;
+    [SerializeField] private readonly float playerHeight = 2f;
+    [SerializeField] private readonly float interactDistance = 2f;
     [SerializeField] private LayerMask countersLayerMask;
     [SerializeField] private LayerMask collisionsLayerMask;
     [SerializeField] private Transform kitchenObjectHoldPoint;
@@ -37,11 +37,14 @@ public class Player : NetworkBehaviour, IKitchenObjectParent
     [SerializeField] private TextMeshProUGUI displayNameText;
     [SerializeField] private CinemachineVirtualCamera virtualCamera;
     [SerializeField] private bool isTutorialPlayer = false;
+    [SerializeField] private Vector3 stationHoldOffset = Vector3.zero;
+    [SerializeField] private GameObject stationHoldPrefab;
 
     private bool isWalking = false;
     private Vector3 lastMovementDirection = Vector3.zero;
     private BaseStation selectedCounter = null;
     private KitchenObject kitchenObject = null;
+    private BaseStation grabbedStationObject;
 
     private void Start()
     {
@@ -96,7 +99,7 @@ public class Player : NetworkBehaviour, IKitchenObjectParent
 
         if (IsOwner)
         {
-            displayNameText.text = GameDataSource.Instance.GetPlayerData().PlayerName;
+            displayNameText.text = "GameDataSource.Instance.GetPlayerData().PlayerName";
             displayNameText.color = Color.green;
 
             // Get the Virtual Camera and follow the player
@@ -162,22 +165,58 @@ public class Player : NetworkBehaviour, IKitchenObjectParent
 
     private void GameInput_OnInteractAlternateAction(object sender, EventArgs e)
     {
-        if (!TutorialManager.Instance && !LevelManager.Instance.IsPlaying()) return;
-
-        if (selectedCounter != null)
+        if (!LevelManager.Instance.isDebugMode)
         {
-            selectedCounter.InteractAlternate(this);
+            if (!TutorialManager.Instance && !LevelManager.Instance.IsPlaying()) return;
         }
+        if (selectedCounter != null && grabbedStationObject == null)
+        {
+            if (LevelManager.Instance.IsPlaying() && !LevelManager.Instance.isDebugMode)
+            {
+                selectedCounter.InteractAlternate(this);
+            }
+            else
+            {
+                GrabStationObject(selectedCounter);
+            }
+        }
+        else
+        {
+            if (HasStationObject())
+            {
+                print("GameInput_OnInteractAlternateAction: HasStationObject");
+                PlaceStationObject();
+            }
+        }
+
+    }
+
+    private void PlaceStationObject()
+    {
+        RemoveKitchenObject();
+        if (PlacementSystem.Instance.PlaceStationObject(grabbedStationObject))
+        {
+            grabbedStationObject = null;
+        }
+    }
+
+    private void GrabStationObject(BaseStation station)
+    {
+        grabbedStationObject = station;
+        PlacementSystem.Instance.StartPlacingStation(this, grabbedStationObject);
+        grabbedStationObject.PickStationParent(this);
+    }
+
+    private bool HasStationObject()
+    {
+        return grabbedStationObject != null;
     }
 
     private void GameInput_OnInteractAction(object sender, EventArgs e)
     {
         if (!TutorialManager.Instance && !LevelManager.Instance.IsPlaying()) return;
 
-        if (selectedCounter != null)
-        {
-            selectedCounter.Interact(this);
-        }
+        selectedCounter?.Interact(this);
     }
 
     private void Update()
@@ -198,7 +237,6 @@ public class Player : NetworkBehaviour, IKitchenObjectParent
     private void HandleInteractions()
     {
         Vector2 inputVector = GameInput.Instance.GetMovementInputNormalized();
-
         Vector3 movDir = new Vector3(inputVector.x, 0f, inputVector.y);
 
         if (movDir != Vector3.zero)
@@ -206,7 +244,13 @@ public class Player : NetworkBehaviour, IKitchenObjectParent
             lastMovementDirection = movDir;
         }
 
-        if (Physics.Raycast(transform.position, lastMovementDirection, out RaycastHit raycastHit, interactDistance, countersLayerMask))
+        Vector3 raycastOrigin = transform.position + Vector3.up * 0.5f;
+        if (HasStationObject())
+        {
+            raycastOrigin += stationHoldOffset;
+        }
+
+        if (Physics.Raycast(raycastOrigin, lastMovementDirection, out RaycastHit raycastHit, interactDistance, countersLayerMask))
         {
             if (raycastHit.transform.TryGetComponent(out BaseStation baseCounter))
             {
@@ -217,14 +261,17 @@ public class Player : NetworkBehaviour, IKitchenObjectParent
             }
             else
             {
+                print("HandleInteractions: SetSelectedCounter(null)2");
                 SetSelectedCounter(null);
             }
         }
         else
         {
+            print("HandleInteractions: SetSelectedCounter(null)");
             SetSelectedCounter(null);
         }
     }
+
 
     private void HandleMovement()
     {
@@ -321,5 +368,10 @@ public class Player : NetworkBehaviour, IKitchenObjectParent
     public void SetIsTutorialPlayer(bool isTutorialPlayer)
     {
         this.isTutorialPlayer = isTutorialPlayer;
+    }
+
+    public Vector3 GetPlayerPostionOffset()
+    {
+        return transform.position + stationHoldOffset;
     }
 }

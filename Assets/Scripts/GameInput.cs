@@ -15,7 +15,7 @@ public class GameInput : MonoBehaviour
 
     public PlayerInputActions playerInputActions;
 
-    private InputType inputType;
+    [SerializeField] private InputType inputType;
 
     private void Awake()
     {
@@ -37,6 +37,9 @@ public class GameInput : MonoBehaviour
 
     private void Start()
     {
+        if(LevelManager.Instance.isDebugMode == true){
+            return;
+        }
         inputType = GameDataSource.Instance.GetInputType();
     }
 

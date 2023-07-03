@@ -19,7 +19,7 @@ public class ProceduralSceneGenerator : MonoBehaviour
     public Vector2Int playgroundSize;
     public Vector2Int gridSize;
 
-    public int cellSize = 1;
+    public float cellSize = 1;
     public List<Cell> cells;
 
     [Header("Generation")]

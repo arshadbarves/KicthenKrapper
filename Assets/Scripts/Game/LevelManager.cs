@@ -14,6 +14,7 @@ public class LevelManager : NetworkBehaviour
 
     [SerializeField] private GameModeSO gameModeSO;
     [SerializeField] private Player playerPrefab;
+    public bool isDebugMode = false;
 
     private Dictionary<ulong, bool> playerReadyDictionary;
 
@@ -43,6 +44,11 @@ public class LevelManager : NetworkBehaviour
             Instance = this;
         }
 
+        if (isDebugMode)
+        {
+            return;
+        }
+
         playerReadyDictionary = new Dictionary<ulong, bool>();
     }
 
@@ -63,6 +69,10 @@ public class LevelManager : NetworkBehaviour
 
     public override void OnDestroy()
     {
+        if (isDebugMode)
+        {
+            return;
+        }
         UnsubscribeFromEvents();
     }
 
@@ -108,7 +118,7 @@ public class LevelManager : NetworkBehaviour
     private void DeliveryManager_OnRecipeExpired(object sender, DeliveryManager.RecipeEventArgs e)
     {
         RemoveFromWallet(GetNegativeCoinAmount());
-        AudioManager.Instance.PlaySoundEffect(soundEffectsAudioClipRefs.deliveryFailSounds);
+        // AudioManager.Instance.PlaySoundEffect(soundEffectsAudioClipRefs.deliveryFailSounds);
     }
 
     private void DeliveryManager_OnRecipeFailed(object sender, EventArgs e)
@@ -282,6 +292,7 @@ public class LevelManager : NetworkBehaviour
                 }
                 break;
             case GameState.Playing:
+                if (isDebugMode) return;
                 gamePlayingTimer.Value -= Time.deltaTime;
                 if (gamePlayingTimer.Value <= 0f)
                 {
