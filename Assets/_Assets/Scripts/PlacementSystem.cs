@@ -14,7 +14,6 @@ public class PlacementSystem : MonoBehaviour
 
     private GridData gridData = new GridData();
     private Renderer previewRenderer;
-    private List<GameObject> placedObjects = new List<GameObject>();
     private bool isPlacingStation = false;
 
     private void Awake()
@@ -72,7 +71,6 @@ public class PlacementSystem : MonoBehaviour
             // TODO: play wrong sound
             return false;
         prefab.DropStationParent(grid.CellToWorld(gridPos));
-        placedObjects.Add(cellIndicator);
         gridData.AddObjectAt(gridPos);
         StopPlacingStation();
         return true;
@@ -88,5 +86,12 @@ public class PlacementSystem : MonoBehaviour
     private bool CheckPlacementValidity(Vector3Int gridPosition)
     {
         return gridData.CanPlaceObjectAt(gridPosition);
+    }
+
+    public void RemoveStationObject(BaseStation stationObject)
+    {
+        //TODO: After adding all station data to gridData when placing stations procedurally
+        Vector3Int gridPos = grid.WorldToCell(stationObject.transform.position);
+        gridData.RemoveObjectAt(gridPos);
     }
 }

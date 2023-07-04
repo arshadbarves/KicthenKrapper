@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.18028334, g: 0.22571328, b: 0.3069217, a: 1}
+  m_IndirectSpecularColor: {r: 0.18028331, g: 0.2257133, b: 0.3069217, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -8892,7 +8892,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -80, y: -51.37}
+  m_AnchoredPosition: {x: -80, y: -50}
   m_SizeDelta: {x: 160, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &219963570
@@ -38809,6 +38809,11 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 3258282873027232429, guid: 8894fa072119644489eaa9b1bb2e0f5a,
+        type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 3258282873027232430, guid: 8894fa072119644489eaa9b1bb2e0f5a,
         type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
@@ -38839,15 +38844,30 @@ PrefabInstance:
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
       value: UniversalMobileController.UniversalMobileController_Manager, Assembly-CSharp
       objectReference: {fileID: 0}
+    - target: {fileID: 7353529704003971380, guid: 8894fa072119644489eaa9b1bb2e0f5a,
+        type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 7353529704003971381, guid: 8894fa072119644489eaa9b1bb2e0f5a,
         type: 3}
       propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7353529705530527119, guid: 8894fa072119644489eaa9b1bb2e0f5a,
+        type: 3}
+      propertyPath: m_AnchoredPosition.y
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7602777179957123779, guid: 8894fa072119644489eaa9b1bb2e0f5a,
         type: 3}
       propertyPath: m_AnchoredPosition.x
       value: -1.8800049
+      objectReference: {fileID: 0}
+    - target: {fileID: 7602777179957123779, guid: 8894fa072119644489eaa9b1bb2e0f5a,
+        type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 9209846400508017882, guid: 8894fa072119644489eaa9b1bb2e0f5a,
         type: 3}

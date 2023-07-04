@@ -204,6 +204,7 @@ public class Player : NetworkBehaviour, IKitchenObjectParent
     {
         grabbedStationObject = station;
         PlacementSystem.Instance.StartPlacingStation(this, grabbedStationObject);
+        PlacementSystem.Instance.RemoveStationObject(grabbedStationObject);
         grabbedStationObject.PickStationParent(this);
     }
 
