@@ -6,7 +6,7 @@ Welcome to the Kitchen game, a fun and exciting game where you get to cook and s
 
 To get started with the game, you'll need to have the following installed:
 
-- Unity (version X.X.X or higher)
+- Unity (version 2022 or higher)
 - Any additional packages or assets required for the game (check the game's documentation or project files)
 
 Once you have everything set up, you can open the game project in Unity and start exploring!
@@ -19,6 +19,7 @@ The Kitchen game is a simulation game where you run a kitchen and serve food to 
 - Managing ingredients and inventory
 - Serving customers and earning money
 - Upgrading your kitchen and equipment
+- Multiplayer Support (Epic Online Service)
 
 
 ## Contributing
