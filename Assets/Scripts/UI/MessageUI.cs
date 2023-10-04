@@ -2,35 +2,38 @@ using TMPro;
 using UnityEngine;
 using BrunoMikoski.AnimationSequencer;
 
-public class MessageUI : MonoBehaviour
+namespace KitchenKrapper
 {
-
-    [SerializeField] private TextMeshProUGUI messageText;
-    private AnimationSequencerController animationSequencerController;
-
-    private void Start()
+    public class MessageUI : MonoBehaviour
     {
-        animationSequencerController = GetComponent<AnimationSequencerController>();
 
-        Hide();
-    }
+        [SerializeField] private TextMeshProUGUI messageText;
+        private AnimationSequencerController animationSequencerController;
 
-    public void ShowMessage(string message)
-    {
-        messageText.text = message;
-        Show();
-    }
+        private void Start()
+        {
+            animationSequencerController = GetComponent<AnimationSequencerController>();
 
-    private void Show()
-    {
-        // Stop all animations and reset them
-        animationSequencerController.Kill();
-        animationSequencerController.Play();
-        gameObject.SetActive(true);
-    }
+            Hide();
+        }
 
-    private void Hide()
-    {
-        gameObject.SetActive(false);
+        public void ShowMessage(string message)
+        {
+            messageText.text = message;
+            Show();
+        }
+
+        private void Show()
+        {
+            // Stop all animations and reset them
+            animationSequencerController.Kill();
+            animationSequencerController.Play();
+            gameObject.SetActive(true);
+        }
+
+        private void Hide()
+        {
+            gameObject.SetActive(false);
+        }
     }
 }

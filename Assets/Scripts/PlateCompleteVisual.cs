@@ -3,35 +3,38 @@ using System.Collections.Generic;
 
 using UnityEngine;
 
-public class PlateCompleteVisual : MonoBehaviour
+namespace KitchenKrapper
 {
-    [Serializable]
-    public struct KitchenObjectSO_GameObject
+    public class PlateCompleteVisual : MonoBehaviour
     {
-        public KitchenObjectSO kitchenObjectSO;
-        public GameObject gameObject;
-    }
-
-    [SerializeField] private PlateKitchenObject plateKitchenObject;
-    [SerializeField] private List<KitchenObjectSO_GameObject> kitchenObjectSOGameObjects;
-
-    private void Start()
-    {
-        plateKitchenObject.OnIngredientAdded += PlateKitchenObject_OnIngredientAdded;
-
-        foreach (KitchenObjectSO_GameObject kitchenObjectSOGameObject in kitchenObjectSOGameObjects)
+        [Serializable]
+        public struct KitchenObjectSO_GameObject
         {
-            kitchenObjectSOGameObject.gameObject.SetActive(false);
+            public KitchenObjectSO kitchenObjectSO;
+            public GameObject gameObject;
         }
-    }
 
-    private void PlateKitchenObject_OnIngredientAdded(object sender, PlateKitchenObject.OnIngredientAddedEventArgs e)
-    {
-        foreach (KitchenObjectSO_GameObject kitchenObjectSOGameObject in kitchenObjectSOGameObjects)
+        [SerializeField] private PlateKitchenObject plateKitchenObject;
+        [SerializeField] private List<KitchenObjectSO_GameObject> kitchenObjectSOGameObjects;
+
+        private void Start()
         {
-            if (kitchenObjectSOGameObject.kitchenObjectSO == e.ingredient)
+            plateKitchenObject.OnIngredientAdded += PlateKitchenObject_OnIngredientAdded;
+
+            foreach (KitchenObjectSO_GameObject kitchenObjectSOGameObject in kitchenObjectSOGameObjects)
             {
-                kitchenObjectSOGameObject.gameObject.SetActive(true);
+                kitchenObjectSOGameObject.gameObject.SetActive(false);
+            }
+        }
+
+        private void PlateKitchenObject_OnIngredientAdded(object sender, PlateKitchenObject.OnIngredientAddedEventArgs e)
+        {
+            foreach (KitchenObjectSO_GameObject kitchenObjectSOGameObject in kitchenObjectSOGameObjects)
+            {
+                if (kitchenObjectSOGameObject.kitchenObjectSO == e.ingredient)
+                {
+                    kitchenObjectSOGameObject.gameObject.SetActive(true);
+                }
             }
         }
     }

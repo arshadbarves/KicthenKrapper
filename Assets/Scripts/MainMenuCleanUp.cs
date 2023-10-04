@@ -1,23 +1,26 @@
 using Unity.Netcode;
 using UnityEngine;
 
-public class MainMenuCleanUp : MonoBehaviour
+namespace KitchenKrapper
 {
-    private void Awake()
+    public class MainMenuCleanUp : MonoBehaviour
     {
-        if (NetworkManager.Singleton != null)
+        private void Awake()
         {
-            Destroy(NetworkManager.Singleton.gameObject);
-        }
+            if (NetworkManager.Singleton != null)
+            {
+                Destroy(NetworkManager.Singleton.gameObject);
+            }
 
-        if (EOSKitchenGameMultiplayer.Instance != null)
-        {
-            Destroy(EOSKitchenGameMultiplayer.Instance.gameObject);
-        }
+            if (EOSKitchenGameMultiplayer.Instance != null)
+            {
+                Destroy(EOSKitchenGameMultiplayer.Instance.gameObject);
+            }
 
-        if (EOSKitchenGameLobby.Instance != null)
-        {
-            Destroy(EOSKitchenGameLobby.Instance.gameObject);
+            if (EOSKitchenGameLobby.Instance != null)
+            {
+                Destroy(EOSKitchenGameLobby.Instance.gameObject);
+            }
         }
     }
 }

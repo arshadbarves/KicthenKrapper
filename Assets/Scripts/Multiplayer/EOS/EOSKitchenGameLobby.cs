@@ -6,306 +6,222 @@ using PlayEveryWare.EpicOnlineServices;
 using PlayEveryWare.EpicOnlineServices.Samples;
 using UnityEngine;
 
-public class EOSKitchenGameLobby : MonoBehaviour
+namespace KitchenKrapper
 {
-
-    // BUCKET_ID
-    public const string BUCKET_ID = "LobbyBucket";
-    // LOBBY_NAME
-    public const string LOBBY_NAME = "LobbyName";
-
-    public static EOSKitchenGameLobby Instance { get; private set; }
-
-    public event EventHandler OnCreatedLobby;
-    public event EventHandler OnCreatedLobbyFailed;
-    public event EventHandler OnJoinedLobby;
-    public event EventHandler OnJoinedLobbyFailed;
-
-    public event EventHandler<LobbyListChangedEventArgs> OnLobbyListChanged;
-
-    public class LobbyListChangedEventArgs : EventArgs
+    public class EOSKitchenGameLobby : MonoBehaviour
     {
-        public Dictionary<Lobby, LobbyDetails> Lobbies;
-    }
+        public const string BUCKET_ID = "LobbyBucket";
+        public const string LOBBY_NAME = "LobbyName";
 
-    // Current Lobby
-    private string lobbyIdValue;
-    private string ownerIdValue;
+        public static EOSKitchenGameLobby Instance { get; private set; }
 
-    // UI Cache
-    private int lastMemberCount = 0;
-    private ProductUserId currentLobbyOwnerCache;
-    private bool lastCurrentLobbyIsValid = false;
+        public event EventHandler OnCreatedLobby;
+        public event EventHandler OnCreatedLobbyFailed;
+        public event EventHandler OnJoinedLobby;
+        public event EventHandler OnJoinedLobbyFailed;
+        public event EventHandler<LobbyListChangedEventArgs> OnLobbyListChanged;
 
-    // Lobby Search
-    private float listLobbyTimer = 0f;
-
-    private EOSLobbyManager LobbyManager;
-
-    private void Awake()
-    {
-        if (Instance != null)
+        public class LobbyListChangedEventArgs : EventArgs
         {
-            Destroy(gameObject);
-            return;
+            public Dictionary<Lobby, LobbyDetails> Lobbies;
         }
 
-        Instance = this;
-        DontDestroyOnLoad(gameObject);
-    }
+        private string lobbyIdValue;
+        private string ownerIdValue;
+        private ProductUserId currentLobbyOwnerCache;
+        private bool lastCurrentLobbyIsValid = false;
+        private float listLobbyTimer = 0f;
+        private EOSLobbyManager LobbyManager;
 
-    private void Start()
-    {
-        LobbyManager = EOSManager.Instance.GetOrCreateManager<EOSLobbyManager>();
-    }
-
-    private void Update()
-    {
-        HandleLobbyUpdate();
-        HandlePeriodicLobbyUpdate();
-    }
-
-    private void HandlePeriodicLobbyUpdate()
-    {
-        // If we don't have a valid lobby, search for one periodically (every 3 seconds)
-        if (lobbyIdValue == null || !LobbyManager.GetCurrentLobby().IsValid())
+        private void Awake()
         {
-            listLobbyTimer -= Time.deltaTime;
-            if (listLobbyTimer <= 0f)
+            if (Instance != null)
             {
-                float listLobbyInterval = 3f;
-                listLobbyTimer = listLobbyInterval;
+                Destroy(gameObject);
+                return;
+            }
 
-                LobbyManager.SearchByAttribute("bucket", "LobbyBucket", OnSearchByAttribute);
+            Instance = this;
+            DontDestroyOnLoad(gameObject);
+        }
+
+        private void Start()
+        {
+            LobbyManager = EOSManager.Instance.GetOrCreateManager<EOSLobbyManager>();
+        }
+
+        private void Update()
+        {
+            HandleLobbyUpdate();
+            HandlePeriodicLobbyUpdate();
+        }
+
+        private void HandlePeriodicLobbyUpdate()
+        {
+            if (lobbyIdValue == null || !LobbyManager.GetCurrentLobby().IsValid())
+            {
+                listLobbyTimer -= Time.deltaTime;
+                if (listLobbyTimer <= 0f)
+                {
+                    float listLobbyInterval = 3f;
+                    listLobbyTimer = listLobbyInterval;
+                    LobbyManager.SearchByAttribute("bucket", "LobbyBucket", OnSearchByAttribute);
+                }
             }
         }
-    }
 
-    private void HandleLobbyUpdate()
-    {
-        ProductUserId productUserId = EOSManager.Instance.GetProductUserId();
-        if (productUserId == null || !productUserId.IsValid())
+        private void HandleLobbyUpdate()
         {
-            return;
-        }
-
-        if (!LobbyManager._Dirty)
-        {
-            return;
-        }
-
-        Lobby currentLobby = LobbyManager.GetCurrentLobby();
-
-        if (currentLobby.IsValid())
-        {
-            bool ownerChanged = false;
-
-            /* TODO: Cache external/non-friend accounts
-            if(!currentLobby.LobbyOwnerAccountId.IsValid())
+            ProductUserId productUserId = EOSManager.Instance.GetProductUserId();
+            if (productUserId == null || !productUserId.IsValid() || !LobbyManager._Dirty)
             {
-                currentLobby.LobbyOwnerAccountId = FriendsManager.GetAccountMapping(currentLobby.LobbyOwner);
+                return;
+            }
 
-                if(!currentLobby.LobbyOwnerAccountId.IsValid())
+            Lobby currentLobby = LobbyManager.GetCurrentLobby();
+
+            if (currentLobby.IsValid())
+            {
+                bool ownerChanged = false;
+                if (currentLobbyOwnerCache != currentLobby.LobbyOwner)
                 {
-                    Debug.LogWarning("UILobbiesMenu (Update): LobbyOwner EpicAccountId not found in cache, need to query...");
-                    // If still invalid, need to query for account information
-                    // TODO query non cached
+                    ownerChanged = true;
+                    Result resultLobbyOwner = currentLobby.LobbyOwner.ToString(out Utf8String outBuffer);
+                    ownerIdValue = (resultLobbyOwner == Result.Success) ? outBuffer : "Error: " + resultLobbyOwner;
+                    OnLobbyUpdated(Result.Success);
+                    currentLobbyOwnerCache = currentLobby.LobbyOwner;
                 }
             }
 
-            if(currentLobby.LobbyOwnerAccountId.IsValid() && string.IsNullOrEmpty(currentLobby.LobbyOwnerDisplayName))
+            if (currentLobby.IsValid() == lastCurrentLobbyIsValid)
             {
-                currentLobby.LobbyOwnerDisplayName = FriendsManager.GetDisplayName(currentLobby.LobbyOwnerAccountId);
-
-                if(string.IsNullOrEmpty(currentLobby.LobbyOwnerDisplayName))
-                {
-                    Debug.LogWarning("UILobbiesMenu (Update): LobbyOwner DisplayName not found in cache, need to query...");
-                    // No cached display name found for user, need to query for account information
-                    // TODO query non cached
-                }
+                return;
             }
-            */
+            lastCurrentLobbyIsValid = currentLobby.IsValid();
 
-            // Cache LobbyOwner
-            if (currentLobbyOwnerCache != currentLobby.LobbyOwner)
+            if (currentLobby.IsValid())
             {
-                ownerChanged = true;
-                Result resultLobbyOwner = currentLobby.LobbyOwner.ToString(out Utf8String outBuffer);
-                if (resultLobbyOwner == Result.Success)
+                OnLobbyUpdated(Result.Success);
+            }
+            else
+            {
+                OnLeaveLobby(Result.Success);
+                currentLobbyOwnerCache = null;
+            }
+        }
+
+        public Lobby GetCurrentLobby()
+        {
+            return LobbyManager.GetCurrentLobby();
+        }
+
+        private void OnSearchByAttribute(Result result)
+        {
+            if (result != Result.Success)
+            {
+                if (result == Result.NotFound || result == Result.InvalidParameters)
                 {
-                    // Update owner
-                    ownerIdValue = outBuffer;
+                    OnLobbyListChanged?.Invoke(this, new LobbyListChangedEventArgs() { Lobbies = new Dictionary<Lobby, LobbyDetails>() });
+                    Debug.Log("UILobbiesMenu (UpdateSearchResults): No results found.");
                 }
                 else
                 {
-                    ownerIdValue = "Error: " + resultLobbyOwner;
+                    OnLobbyListChanged?.Invoke(this, new LobbyListChangedEventArgs() { Lobbies = new Dictionary<Lobby, LobbyDetails>() });
+                    Debug.LogErrorFormat("UILobbiesMenu (UpdateSearchResults): result error '{0}'", result);
                 }
+                return;
+            }
 
-                OnLobbyUpdated(Result.Success);
-                currentLobbyOwnerCache = currentLobby.LobbyOwner;
+            OnLobbyListChanged?.Invoke(this, new LobbyListChangedEventArgs() { Lobbies = LobbyManager.GetSearchResults() });
+        }
+
+        private void OnDestroy()
+        {
+            LobbyManager?.RemoveNotifyMemberUpdate(OnMemberUpdate);
+            EOSManager.Instance.RemoveManager<EOSLobbyManager>();
+        }
+
+        private void OnMemberUpdate(string LobbyId, ProductUserId MemberId)
+        {
+            Lobby currentLobby = LobbyManager.GetCurrentLobby();
+            if (currentLobby.Id != LobbyId)
+            {
+                return;
             }
         }
 
-        // Invites UI Prompt
-        // if (LobbyManager.GetCurrentInvite() != null)
-        // {
-        //     UIInvitePanel.SetActive(true);
-
-        //     Result resultInviteFrom = LobbyManager.GetCurrentInvite().FriendId.ToString(out Utf8String outBuffer);
-        //     if (resultInviteFrom == Result.Success)
-        //     {
-        //         // Update invite from
-        //         InviteFromVal.text = outBuffer;
-        //     }
-        //     else
-        //     {
-        //         InviteFromVal.text = "Error: " + resultInviteFrom;
-        //     }
-
-        //     InviteLevelVal.text = LobbyManager.GetCurrentInvite().Lobby.Attributes[0].AsString;
-        // }
-        // else
-        // {
-        //     UIInvitePanel.SetActive(false);
-        // }
-
-
-        //Only When Valid Lobby changes
-        if (currentLobby.IsValid() == lastCurrentLobbyIsValid)
+        public void LeaveLobby()
         {
-            return;
+            LobbyManager.LeaveLobby(OnLeaveLobby);
         }
-        lastCurrentLobbyIsValid = currentLobby.IsValid();
 
-        if (currentLobby.IsValid())
+        private void OnLeaveLobby(Result result)
         {
-            // Show Leave button and Update LobbyId UI
-            OnLobbyUpdated(Result.Success);
-        }
-        else
-        {
-            // Clear UI
-            OnLeaveLobby(Result.Success);
-            lastMemberCount = 0;
+            if (result != Result.Success)
+            {
+                Debug.LogErrorFormat("UILobbiesMenu (UIOnLeaveLobby): LeaveLobby error '{0}'", result);
+                return;
+            }
+
+            lobbyIdValue = "";
+            ownerIdValue = "";
             currentLobbyOwnerCache = null;
         }
-    }
 
-    public Lobby GetCurrentLobby()
-    {
-        return LobbyManager.GetCurrentLobby();
-    }
-
-    private void OnSearchByAttribute(Result result)
-    {
-        if (result != Result.Success)
+        public void CreateLobby(Lobby lobbyProperties)
         {
-            if (result == Result.NotFound || result == Result.InvalidParameters)
+            OnCreatedLobby?.Invoke(this, EventArgs.Empty);
+            LobbyManager.CreateLobby(lobbyProperties, OnLobbyUpdated);
+        }
+
+        private void OnLobbyUpdated(Result result)
+        {
+            if (result != Result.Success)
             {
-                OnLobbyListChanged?.Invoke(this, new LobbyListChangedEventArgs() { Lobbies = new Dictionary<Lobby, LobbyDetails>() });
-                // It's not an error if there's no results found when searching or there's invalid characters in the search
-                Debug.Log("UILobbiesMenu (UpdateSearchResults): No results found.");
+                OnCreatedLobbyFailed?.Invoke(this, EventArgs.Empty);
+                Debug.LogErrorFormat("UILobbiesMenu (UIOnLobbyUpdated): LobbyUpdate error '{0}'", result);
+                return;
+            }
+
+            Lobby currentLobby = LobbyManager.GetCurrentLobby();
+
+            if (!currentLobby.IsValid())
+            {
+                OnCreatedLobbyFailed?.Invoke(this, EventArgs.Empty);
+                Debug.LogErrorFormat("UILobbiesMenu (UIOnLobbyUpdated): OnLobbyCreated returned invalid CurrentLobby.Id: {0}", currentLobby.Id);
+                return;
+            }
+
+            string lobbyId = currentLobby.Id;
+            if (!string.IsNullOrEmpty(lobbyId))
+            {
+                lobbyIdValue = currentLobby.Id;
+            }
+
+            if (currentLobby.IsOwner(EOSManager.Instance.GetProductUserId()))
+            {
+                Debug.Log("UIOnLobbyUpdated (UIOnLobbyUpdated): Joined as Host (enable ModifyLobby button)");
+                EOSKitchenGameMultiplayer.Instance.StartHost();
             }
             else
             {
-                OnLobbyListChanged?.Invoke(this, new LobbyListChangedEventArgs() { Lobbies = new Dictionary<Lobby, LobbyDetails>() });
-                Debug.LogErrorFormat("UILobbiesMenu (UpdateSearchResults): result error '{0}'", result);
-            }
-            return;
-        }
+                Debug.Log("UIOnLobbyUpdated (UIOnLobbyUpdated): Joined as Client (disable ModifyLobby button)");
 
-        // Update the lobby list
-        OnLobbyListChanged?.Invoke(this, new LobbyListChangedEventArgs() { Lobbies = LobbyManager.GetSearchResults() });
-    }
-
-    private void OnDestroy()
-    {
-        LobbyManager?.RemoveNotifyMemberUpdate(OnMemberUpdate); // Unregister from LobbyManager
-
-        EOSManager.Instance.RemoveManager<EOSLobbyManager>();
-    }
-
-    private void OnMemberUpdate(string LobbyId, ProductUserId MemberId)
-    {
-        Lobby currentLobby = LobbyManager.GetCurrentLobby();
-        if (currentLobby.Id != LobbyId)
-        {
-            return;
-        }
-    }
-
-    public void LeaveLobby()
-    {
-        LobbyManager.LeaveLobby(OnLeaveLobby);
-    }
-
-    private void OnLeaveLobby(Result result)
-    {
-        if (result != Result.Success)
-        {
-            Debug.LogErrorFormat("UILobbiesMenu (UIOnLeaveLobby): LeaveLobby error '{0}'", result);
-            return;
-        }
-
-        lobbyIdValue = "";
-        ownerIdValue = "";
-        currentLobbyOwnerCache = null;
-    }
-
-    public void CreateLobby(Lobby lobbyProperties)
-    {
-        OnCreatedLobby?.Invoke(this, EventArgs.Empty);
-        LobbyManager.CreateLobby(lobbyProperties, OnLobbyUpdated);
-    }
-
-    private void OnLobbyUpdated(Result result)
-    {
-        if (result != Result.Success)
-        {
-            OnCreatedLobbyFailed?.Invoke(this, EventArgs.Empty);
-            Debug.LogErrorFormat("UILobbiesMenu (UIOnLobbyUpdated): LobbyUpdate error '{0}'", result);
-            return;
-        }
-
-        Lobby currentLobby = LobbyManager.GetCurrentLobby();
-
-        if (!currentLobby.IsValid())
-        {
-            OnCreatedLobbyFailed?.Invoke(this, EventArgs.Empty);
-            Debug.LogErrorFormat("UILobbiesMenu (UIOnLobbyUpdated): OnLobbyCreated returned invalid CurrentLobby.Id: {0}", currentLobby.Id);
-            return;
-        }
-
-        string lobbyId = currentLobby.Id;
-
-        if (!string.IsNullOrEmpty(lobbyId))
-        {
-            lobbyIdValue = currentLobby.Id;
-        }
-
-        if (currentLobby.IsOwner(EOSManager.Instance.GetProductUserId()))
-        {
-            Debug.Log("UIOnLobbyUpdated (UIOnLobbyUpdated): Joined as Host (enable ModifyLobby button)");
-            EOSKitchenGameMultiplayer.Instance.StartHost();
-        }
-        else
-        {
-            Debug.Log("UIOnLobbyUpdated (UIOnLobbyUpdated): Joined as Client (disable ModifyLobby button)");
-
-            if (currentLobby.LobbyOwner.IsValid())
-            {
-                EOSKitchenGameMultiplayer.Instance.StartClient(currentLobby.LobbyOwner);
-            }
-            else
-            {
-                Debug.LogError("UIP2PTransportMenu (JoinGame): invalid server user id");
+                if (currentLobby.LobbyOwner.IsValid())
+                {
+                    EOSKitchenGameMultiplayer.Instance.StartClient(currentLobby.LobbyOwner);
+                }
+                else
+                {
+                    Debug.LogError("UIP2PTransportMenu (JoinGame): invalid server user id");
+                }
             }
         }
-    }
 
-    public void JoinLobby(Lobby lobbyRef, LobbyDetails lobbyDetailsRef)
-    {
-        OnJoinedLobby?.Invoke(this, EventArgs.Empty);
-        LobbyManager.JoinLobby(lobbyRef.Id, lobbyDetailsRef, true, OnLobbyUpdated);
+        public void JoinLobby(Lobby lobbyRef, LobbyDetails lobbyDetailsRef)
+        {
+            OnJoinedLobby?.Invoke(this, EventArgs.Empty);
+            LobbyManager.JoinLobby(lobbyRef.Id, lobbyDetailsRef, true, OnLobbyUpdated);
+        }
     }
 }

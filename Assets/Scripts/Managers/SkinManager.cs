@@ -1,97 +1,112 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SkinManager : MonoBehaviour
+namespace KitchenKrapper
 {
-    // Handle to the skin manager
-    public static SkinManager Instance { get; private set; }
-
-    // List of all the skins
-    public Dictionary<string, SkinSO> skins = new Dictionary<string, SkinSO>();
-
-    // The currently selected skin
-    public SkinSO selectedSkin;
-
-    private void Awake()
+    public class SkinManager : MonoBehaviour
     {
-        if (Instance != null && Instance != this)
+        // Singleton instance
+        public static SkinManager Instance { get; private set; }
+
+        // Dictionary of all the skins
+        private Dictionary<string, SkinSO> skins = new Dictionary<string, SkinSO>();
+
+        // The currently selected skin
+        private SkinSO selectedSkin;
+
+        private void Awake()
         {
-            Destroy(gameObject);
-        }
-        else
-        {
-            Instance = this;
-        }
-
-        // Load all the skins
-        SkinSO[] allSkins = Resources.LoadAll<SkinSO>("Skins"); // Load all the skins from the "Skins" folder
-        foreach (SkinSO skin in allSkins)
-        {
-            skins.Add(skin.SkinID, skin);
-        }
-    }
-
-    private void Start()
-    {
-        // Load the selected skin
-        selectedSkin = PlayerInventory.Instance.GetSelectedSkin();
-    }
-
-    public Dictionary<string, SkinSO> GetSkins()
-    {
-        return skins;
-    }
-
-    public void SelectSkin(SkinSO skin)
-    {
-        selectedSkin = skin;
-        PlayerInventory.Instance.SetSelectedSkin(skin);
-    }
-
-    public SkinSO GetSelectedSkin()
-    {
-        return selectedSkin;
-    }
-
-    public bool UnlockSkin(SkinSO skin)
-    {
-        // Check if the player has enough coins and already owns the skin
-        if (PlayerInventory.Instance.HasEnoughCoins(skin.SkinCost) && !PlayerInventory.Instance.HasSkin(skin))
-        {
-            // Remove the coins
-            PlayerInventory.Instance.SpendCoins(skin.SkinCost);
-
-            // Unlock the skin
-            PlayerInventory.Instance.UnlockSkin(skin);
-
-            return true;
-        }
-
-        return false;
-    }
-
-    public Dictionary<string, SkinSO> GetUnlockedSkins()
-    {
-        return PlayerInventory.Instance.GetUnlockedSkins();
-    }
-
-    public bool HasSkin(SkinSO skin)
-    {
-        return PlayerInventory.Instance.HasSkin(skin);
-    }
-
-    public Dictionary<string, SkinSO> GetLockedSkins()
-    {
-        Dictionary<string, SkinSO> lockedSkins = new Dictionary<string, SkinSO>();
-
-        foreach (KeyValuePair<string, SkinSO> skin in skins)
-        {
-            if (!PlayerInventory.Instance.HasSkin(skin.Value))
+            // Singleton pattern
+            if (Instance != null && Instance != this)
             {
-                lockedSkins.Add(skin.Key, skin.Value);
+                Destroy(gameObject);
+            }
+            else
+            {
+                Instance = this;
+            }
+
+            // Load all the skins
+            LoadAllSkins();
+        }
+
+        private void Start()
+        {
+            // Load the selected skin from the player's inventory
+            selectedSkin = PlayerInventory.Instance.GetSelectedSkin();
+        }
+
+        private void LoadAllSkins()
+        {
+            // Load all the skins from the "Skins" folder and populate the dictionary
+            SkinSO[] allSkins = Resources.LoadAll<SkinSO>("Skins");
+            foreach (SkinSO skin in allSkins)
+            {
+                skins.Add(skin.SkinID, skin);
             }
         }
 
-        return lockedSkins;
+        public IReadOnlyDictionary<string, SkinSO> GetSkins()
+        {
+            return skins;
+        }
+
+        public void SelectSkin(SkinSO skin)
+        {
+            selectedSkin = skin;
+            PlayerInventory.Instance.SetSelectedSkin(skin);
+        }
+
+        public SkinSO GetSelectedSkin()
+        {
+            return selectedSkin;
+        }
+
+        public bool UnlockSkin(SkinSO skin)
+        {
+            if (CanUnlockSkin(skin))
+            {
+                // Remove the required coins
+                PlayerInventory.Instance.SpendCoins(skin.SkinCost);
+
+                // Unlock the skin in the player's inventory
+                PlayerInventory.Instance.UnlockSkin(skin);
+
+                return true;
+            }
+
+            return false;
+        }
+
+        public IReadOnlyDictionary<string, SkinSO> GetUnlockedSkins()
+        {
+            return PlayerInventory.Instance.GetUnlockedSkins();
+        }
+
+        public bool HasSkin(SkinSO skin)
+        {
+            return PlayerInventory.Instance.HasSkin(skin);
+        }
+
+        public IReadOnlyDictionary<string, SkinSO> GetLockedSkins()
+        {
+            Dictionary<string, SkinSO> lockedSkins = new Dictionary<string, SkinSO>();
+
+            foreach (KeyValuePair<string, SkinSO> skin in skins)
+            {
+                if (!PlayerInventory.Instance.HasSkin(skin.Value))
+                {
+                    lockedSkins.Add(skin.Key, skin.Value);
+                }
+            }
+
+            return lockedSkins;
+        }
+
+        private bool CanUnlockSkin(SkinSO skin)
+        {
+            // Check if the player has enough coins and doesn't already own the skin
+            return PlayerInventory.Instance.HasEnoughCoins(skin.SkinCost) && !PlayerInventory.Instance.HasSkin(skin);
+        }
     }
 }

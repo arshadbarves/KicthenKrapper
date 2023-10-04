@@ -1,11 +1,14 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-public class PlateIconSingleUI : MonoBehaviour
+namespace KitchenKrapper
 {
-    [SerializeField] private Image iconImage;
-    public void SetIcon(KitchenObjectSO ingredient)
+    public class PlateIconSingleUI : MonoBehaviour
     {
-        iconImage.sprite = ingredient.sprite;
+        [SerializeField] private Image iconImage;
+        public void SetIcon(KitchenObjectSO ingredient)
+        {
+            iconImage.sprite = ingredient.sprite;
+        }
     }
 }

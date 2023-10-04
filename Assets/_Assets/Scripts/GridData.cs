@@ -29,13 +29,6 @@ public class GridData
             return false;
         return true;
     }
-
-    public void RemoveObjectAt(Vector3Int gridPosition)
-    {
-        Vector3Int pos = CalculatePositions(gridPosition);
-        if (placedObjects.ContainsKey(pos))     
-            placedObjects.Remove(pos);
-    }
 }
 
 public class PlacementData

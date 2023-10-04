@@ -1,35 +1,38 @@
 using System;
 using Unity.Netcode;
 
-public class TrashCounter : BaseStation
+namespace KitchenKrapper
 {
-    public static event EventHandler OnAnyObjectTrashed;
-
-    public static new void ResetStaticData()
+    public class TrashCounter : BaseStation
     {
-        OnAnyObjectTrashed = null;
-    }
+        public static event EventHandler OnAnyObjectTrashed;
 
-    public override void Interact(Player player)
-    {
-        if (player.HasKitchenObject())
+        public static new void ResetStaticData()
         {
-            KitchenObject.DestroyKitchenObject(player.GetKitchenObject());
-            InteractServerRpc();
-
-            StepComplete();
+            OnAnyObjectTrashed = null;
         }
-    }
 
-    [ServerRpc(RequireOwnership = false)]
-    private void InteractServerRpc()
-    {
-        InteractClientRpc();
-    }
+        public override void Interact(Player player)
+        {
+            if (player.HasKitchenObject())
+            {
+                KitchenObject.DestroyKitchenObject(player.GetKitchenObject());
+                InteractServerRpc();
 
-    [ClientRpc]
-    private void InteractClientRpc()
-    {
-        OnAnyObjectTrashed?.Invoke(this, EventArgs.Empty);
+                StepComplete();
+            }
+        }
+
+        [ServerRpc(RequireOwnership = false)]
+        private void InteractServerRpc()
+        {
+            InteractClientRpc();
+        }
+
+        [ClientRpc]
+        private void InteractClientRpc()
+        {
+            OnAnyObjectTrashed?.Invoke(this, EventArgs.Empty);
+        }
     }
 }

@@ -1,27 +1,30 @@
 using UnityEngine;
 
-public class ApplicationManager : MonoBehaviour
+namespace KitchenKrapper
 {
-    public static ApplicationManager Instance { get; private set; }
-
-    [SerializeField] private MainMenuUI mainMenuUI;
-
-    public MainMenuUI MainMenuUI { get { return mainMenuUI; } }
-
-    private void Awake()
+    public class ApplicationManager : MonoBehaviour
     {
-        if (Instance != null && Instance != this)
+        public static ApplicationManager Instance { get; private set; }
+
+        [SerializeField] private MainMenuUI mainMenuUI;
+
+        public MainMenuUI MainMenuUI { get { return mainMenuUI; } }
+
+        private void Awake()
         {
-            Destroy(gameObject);
-            return;
+            if (Instance != null && Instance != this)
+            {
+                Destroy(gameObject);
+                return;
+            }
+
+            Instance = this;
+            DontDestroyOnLoad(gameObject);
         }
 
-        Instance = this;
-        DontDestroyOnLoad(gameObject);
-    }
-
-    private void Start()
-    {
-        PlayerDataStorage.Instance.GetPlayerData(GameManager.Instance.PlayerDataStorageCallback);
+        private void Start()
+        {
+            PlayerDataStorage.Instance.GetPlayerData(GameManager.Instance.PlayerDataStorageCallback);
+        }
     }
 }

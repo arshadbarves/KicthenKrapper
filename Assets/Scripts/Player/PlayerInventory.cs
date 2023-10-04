@@ -2,139 +2,119 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PlayerInventory : MonoBehaviour
+namespace KitchenKrapper
 {
-    [Serializable]
-    public class PlayerData
+    public class PlayerInventory : MonoBehaviour
     {
-        public string playerName;
-        public int coins;
-        public int gems;
-        public Dictionary<string, SkinSO> skins;
-        public SkinSO selectedSkin;
-    }
-
-    public static event EventHandler<CoinsEventArgs> OnCoinsChanged;
-    public static event EventHandler<GemsEventArgs> OnGemsChanged;
-    public static event EventHandler<SkinEventArgs> OnSkinChanged;
-
-    public class CoinsEventArgs : EventArgs
-    {
-        public int coins;
-    }
-
-    public class GemsEventArgs : EventArgs
-    {
-        public int gems;
-    }
-
-    public class SkinEventArgs : EventArgs
-    {
-        public SkinSO skin;
-    }
-
-    public static PlayerInventory Instance { get; private set; }
-
-    private string playerName = "Player";
-    private int coins = 0;
-    private int gems = 0;
-    private Dictionary<string, SkinSO> skins = new Dictionary<string, SkinSO>();
-    public SkinSO selectedSkin;
-
-    private void Awake()
-    {
-        Instance = this;
-        LoadPlayerData();
-    }
-
-    private void LoadPlayerData()
-    {
-        PlayerData playerData = SecureDataStorage.LoadData<PlayerData>(new PlayerData());
-        playerName = playerData.playerName;
-        coins = playerData.coins;
-        gems = playerData.gems;
-        skins = playerData.skins;
-        selectedSkin = playerData.selectedSkin;
-
-        OnCoinsChanged?.Invoke(this, new CoinsEventArgs { coins = coins });
-        OnGemsChanged?.Invoke(this, new GemsEventArgs { gems = gems });
-        OnSkinChanged?.Invoke(this, new SkinEventArgs { skin = selectedSkin });
-    }
-
-    public int GetCoins() { return coins; }
-    public int GetGems() { return gems; }
-
-    public void AddCoins(int amount)
-    {
-        coins += amount;
-        OnCoinsChanged?.Invoke(this, new CoinsEventArgs { coins = coins });
-    }
-
-    public void AddGems(int amount)
-    {
-        gems += amount;
-        OnGemsChanged?.Invoke(this, new GemsEventArgs { gems = gems });
-    }
-
-    public void SpendCoins(int amount)
-    {
-        if (coins - amount < 0)
+        [Serializable]
+        public class PlayerData
         {
-            coins = 0;
+            public string playerName;
+            public int coins;
+            public int gems;
+            public Dictionary<string, SkinSO> skins;
+            public SkinSO selectedSkin;
         }
-        else
+
+        public static event EventHandler<CoinsEventArgs> OnCoinsChanged;
+        public static event EventHandler<GemsEventArgs> OnGemsChanged;
+        public static event EventHandler<SkinEventArgs> OnSkinChanged;
+
+        public static PlayerInventory Instance { get; private set; }
+
+        private PlayerData playerData = new PlayerData();
+
+        private void Awake()
         {
-            coins -= amount;
+            InitializeSingleton();
+            LoadPlayerData();
         }
-        OnCoinsChanged?.Invoke(this, new CoinsEventArgs { coins = coins });
-    }
 
-    public void SpendGems(int amount)
-    {
-        if (gems - amount < 0)
+        private void InitializeSingleton()
         {
-            gems = 0;
+            if (Instance != null && Instance != this)
+            {
+                Destroy(gameObject);
+            }
+            else
+            {
+                Instance = this;
+                DontDestroyOnLoad(gameObject);
+            }
         }
-        else
+
+        private void LoadPlayerData()
         {
-            gems -= amount;
+            playerData = SecureDataStorage.LoadData(playerData);
+
+            OnCoinsChanged?.Invoke(this, new CoinsEventArgs { coins = playerData.coins });
+            OnGemsChanged?.Invoke(this, new GemsEventArgs { gems = playerData.gems });
+            OnSkinChanged?.Invoke(this, new SkinEventArgs { skin = playerData.selectedSkin });
         }
-        OnGemsChanged?.Invoke(this, new GemsEventArgs { gems = gems });
-    }
 
-    public bool HasEnoughCoins(int amount)
-    {
-        return coins >= amount;
-    }
+        public int GetCoins() => playerData.coins;
+        public int GetGems() => playerData.gems;
 
-    public bool HasEnoughGems(int amount)
-    {
-        return gems >= amount;
-    }
+        public void AddCoins(int amount)
+        {
+            playerData.coins += amount;
+            OnCoinsChanged?.Invoke(this, new CoinsEventArgs { coins = playerData.coins });
+        }
 
-    public bool HasSkin(SkinSO skin)
-    {
-        return skins.ContainsKey(skin.SkinID);
-    }
+        public void AddGems(int amount)
+        {
+            playerData.gems += amount;
+            OnGemsChanged?.Invoke(this, new GemsEventArgs { gems = playerData.gems });
+        }
 
-    public SkinSO GetSelectedSkin()
-    {
-        return selectedSkin;
-    }
+        public void SpendCoins(int amount)
+        {
+            playerData.coins = Mathf.Max(0, playerData.coins - amount);
+            OnCoinsChanged?.Invoke(this, new CoinsEventArgs { coins = playerData.coins });
+        }
 
-    public void SetSelectedSkin(SkinSO skin)
-    {
-        selectedSkin = skin;
-        OnSkinChanged?.Invoke(this, new SkinEventArgs { skin = selectedSkin });
-    }
+        public void SpendGems(int amount)
+        {
+            playerData.gems = Mathf.Max(0, playerData.gems - amount);
+            OnGemsChanged?.Invoke(this, new GemsEventArgs { gems = playerData.gems });
+        }
 
-    public void UnlockSkin(SkinSO skin)
-    {
-        skins.Add(skin.SkinID, skin);
-    }
+        public bool HasEnoughCoins(int amount) => playerData.coins >= amount;
+        public bool HasEnoughGems(int amount) => playerData.gems >= amount;
 
-    public Dictionary<string, SkinSO> GetUnlockedSkins()
-    {
-        return skins;
+        public bool HasSkin(SkinSO skin) => playerData.skins.ContainsKey(skin.SkinID);
+
+        public SkinSO GetSelectedSkin() => playerData.selectedSkin;
+
+        public void SetSelectedSkin(SkinSO skin)
+        {
+            playerData.selectedSkin = skin;
+            OnSkinChanged?.Invoke(this, new SkinEventArgs { skin = playerData.selectedSkin });
+        }
+
+        public void UnlockSkin(SkinSO skin)
+        {
+            playerData.skins.Add(skin.SkinID, skin);
+        }
+
+        public Dictionary<string, SkinSO> GetUnlockedSkins() => playerData.skins;
+
+        [Serializable]
+        public class CoinsEventArgs : EventArgs
+        {
+            public int coins;
+        }
+
+        [Serializable]
+        public class GemsEventArgs : EventArgs
+        {
+            public int gems;
+        }
+
+        [Serializable]
+        public class SkinEventArgs : EventArgs
+        {
+            public SkinSO skin;
+        }
     }
 }

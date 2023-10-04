@@ -1,0 +1,25 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" editor-extension-mode="False">
+    <Style src="project://database/Assets/UI%20Toolkit/Styles/style.uss?fileID=7433441132597879392&amp;guid=ab993c0e454983847b10aeb86aa545af&amp;type=3#style" />
+    <Style src="project://database/Assets/UI%20Toolkit/Styles/SlideToggle.uss?fileID=7433441132597879392&amp;guid=f1cd5f313575b634c884cf7ed88e2b37&amp;type=3#SlideToggle" />
+    <ui:VisualElement name="settings__panel" style="flex-grow: 1; flex-direction: row;">
+        <ui:VisualElement name="VisualElement" style="flex-grow: 1; background-color: rgba(0, 0, 0, 0); justify-content: center; width: 30%;">
+            <ui:VisualElement style="flex-grow: 0; background-color: rgba(0, 0, 0, 0); background-image: url(&apos;project://database/Assets/Images/Icons/Settings-V2.png?fileID=2800000&amp;guid=b1a19a38b60490b4eab51b9bb429342b&amp;type=3#Settings-V2&apos;); -unity-background-scale-mode: scale-to-fit; width: 150px; height: 150px; margin-left: 25px; margin-right: 25px; margin-top: 25px; margin-bottom: 25px; position: absolute; -unity-background-image-tint-color: rgb(37, 53, 116); align-self: center; translate: 0 -40px;" />
+            <ui:VisualElement style="flex-grow: 0; background-color: rgba(0, 0, 0, 0); background-image: url(&apos;project://database/Assets/Images/Icons/Settings-V2.png?fileID=2800000&amp;guid=b1a19a38b60490b4eab51b9bb429342b&amp;type=3#Settings-V2&apos;); -unity-background-scale-mode: scale-to-fit; width: 150px; height: 150px; margin-left: 25px; margin-right: 25px; margin-top: 25px; margin-bottom: 25px; align-items: center; align-self: center;" />
+            <ui:Label tabindex="-1" text="Settings" display-tooltip-when-elided="true" class="label" style="font-size: 70px; flex-grow: 0; flex-shrink: 1;" />
+        </ui:VisualElement>
+        <ui:ScrollView class="settings-panel">
+            <ui:VisualElement name="Options">
+                <MyUILibrary.SlideToggle name="sound-effect__slider" label="SOUND EFFECTS" value="false" class="slide-toggle settings-option" />
+                <MyUILibrary.SlideToggle name="music__slider" label="MUSIC" value="false" class="slide-toggle slide-toggle__label settings-option" />
+            </ui:VisualElement>
+            <ui:VisualElement name="Divider" class="divider" />
+            <ui:VisualElement name="OtherOptions" style="flex-grow: 1; background-color: rgba(0, 0, 0, 0);">
+                <ui:VisualElement style="flex-grow: 1; background-color: rgba(0, 0, 0, 0); flex-direction: row;">
+                    <ui:Button text="RATE" display-tooltip-when-elided="true" name="rate-us__button" class="button settings-option" style="background-color: rgb(247, 153, 27); width: 25%;" />
+                    <ui:Button text="SUPPORT" display-tooltip-when-elided="true" name="support__button" class="button settings-option" style="background-color: rgb(2, 158, 247); width: 25%;" />
+                </ui:VisualElement>
+                <ui:Button text="LOGOUT" display-tooltip-when-elided="true" name="logout__button" class="button settings-option" style="background-color: rgb(34, 33, 38);" />
+            </ui:VisualElement>
+        </ui:ScrollView>
+    </ui:VisualElement>
+</ui:UXML>

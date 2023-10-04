@@ -1,14 +1,17 @@
 using UnityEngine;
 
-public class LoaderUI : MonoBehaviour, IBaseUI
+namespace KitchenKrapper
 {
-    public void Hide()
+    public class LoaderUI : MonoBehaviour
     {
-        gameObject.SetActive(false);
-    }
+        public void Hide()
+        {
+            gameObject.SetActive(false);
+        }
 
-    public void Show()
-    {
-        gameObject.SetActive(true);
+        public void Show()
+        {
+            gameObject.SetActive(true);
+        }
     }
 }

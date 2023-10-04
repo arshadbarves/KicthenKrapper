@@ -1,11 +1,14 @@
 using System;
 using UnityEngine;
 
-public class UniqueIDGenerator : MonoBehaviour
+namespace KitchenKrapper
 {
-    public static string GetUniqueID()
+    public class UniqueIDGenerator : MonoBehaviour
     {
-        Guid guid = Guid.NewGuid();
-        return guid.ToString();
+        public static string GetUniqueID()
+        {
+            Guid guid = Guid.NewGuid();
+            return guid.ToString();
+        }
     }
 }

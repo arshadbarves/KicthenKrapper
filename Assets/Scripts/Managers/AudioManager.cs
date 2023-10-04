@@ -1,178 +1,144 @@
 using UnityEngine;
 using UnityEngine.Audio;
 
-public class AudioManager : MonoBehaviour
+namespace KitchenKrapper
 {
-    // Singleton instance
-    private static AudioManager instance;
-
-    // Audio mixer volume keys
-    private const string MUSIC_VOLUME_KEY = "MusicVolume";
-    private const string SOUND_EFFECTS_VOLUME_KEY = "SoundEffectsVolume";
-
-    // Reference to audio sources
-    private AudioSource musicPlayer;
-    private AudioSource soundEffectsPlayer;
-
-    // Reference to audio mixer
-    public AudioMixer audioMixer;
-
-    // Singleton instance property
-    public static AudioManager Instance
+    public class AudioManager : MonoBehaviour
     {
-        get { return instance; }
-    }
+        private static AudioManager instance;
 
-    private void Awake()
-    {
-        // Ensure only one instance of AudioManager exists
-        if (instance != null && instance != this)
+        private const string MUSIC_VOLUME_KEY = "MusicVolume";
+        private const string SOUND_EFFECTS_VOLUME_KEY = "SoundEffectsVolume";
+
+        private AudioSource musicPlayer;
+        private AudioSource soundEffectsPlayer;
+
+        public AudioMixer audioMixer;
+
+        public static AudioManager Instance { get { return instance; } }
+
+        private void Awake()
         {
-            Destroy(this.gameObject);
-            return;
+            if (instance != null && instance != this)
+            {
+                Destroy(this.gameObject);
+                return;
+            }
+
+            instance = this;
+            DontDestroyOnLoad(this.gameObject);
+
+            InitializeAudioSources();
+            LoadPlayerPreferences();
         }
 
-        instance = this;
-        DontDestroyOnLoad(this.gameObject);
+        private void InitializeAudioSources()
+        {
+            musicPlayer = gameObject.AddComponent<AudioSource>();
+            soundEffectsPlayer = gameObject.AddComponent<AudioSource>();
+        }
 
-        // Create audio sources
-        musicPlayer = gameObject.AddComponent<AudioSource>();
-        soundEffectsPlayer = gameObject.AddComponent<AudioSource>();
+        private void LoadPlayerPreferences()
+        {
+            GameDataSource.GameSettings gameSettings = GameDataSource.Instance.gameSettings;
 
-        // Load player preferences
-        LoadPlayerPreferences();
-    }
+            ToggleMusicMute(!gameSettings.isMusicOn);
+            ToggleSoundEffectsMute(!gameSettings.isSoundOn);
+            SetMusicVolume(gameSettings.musicVolume);
+            SetSoundEffectsVolume(gameSettings.soundEffectsVolume);
+        }
 
-    // Load player preferences
-    private void LoadPlayerPreferences()
-    {
-        GameDataSource.GameSettings gameSettings = GameDataSource.Instance.gameSettings;
-
-        // Set music toggle
-        ToggleMusicMute(!gameSettings.isMusicOn);
-
-        // Set sound effects toggle
-        ToggleSoundEffectsMute(!gameSettings.isSoundOn);
-
-        // Set music volume
-        SetMusicVolume(gameSettings.musicVolume);
-
-        // Set sound effects volume
-        SetSoundEffectsVolume(gameSettings.soundEffectsVolume);
-    }
-
-    // Play music
-    public void PlayMusic(AudioClip musicClip)
-    {
-        if (musicPlayer.isPlaying)
+        public void PlayMusic(AudioClip musicClip)
         {
             StopMusic();
+
+            musicPlayer.clip = musicClip;
+            musicPlayer.volume = GetMusicVolume();
+            musicPlayer.loop = true;
+            musicPlayer.Play();
         }
 
-        musicPlayer.clip = musicClip;
-        musicPlayer.volume = GetMusicVolume();
-        musicPlayer.loop = true;
-        musicPlayer.Play();
-    }
-
-    // Stop playing music
-    public void StopMusic()
-    {
-        musicPlayer.Stop();
-    }
-
-    // Play sound effect
-    public void PlaySoundEffect(AudioClip[] soundEffectClips)
-    {
-        if (soundEffectClips.Length == 0)
+        public void StopMusic()
         {
-            return;
+            musicPlayer.Stop();
         }
 
-        AudioClip soundEffectClip = soundEffectClips[Random.Range(0, soundEffectClips.Length)];
-        soundEffectsPlayer.PlayOneShot(soundEffectClip, GetSoundEffectsVolume());
-    }
-
-    // Play sound effect at a specific position
-    public void PlaySoundEffectAtPosition(AudioClip[] soundEffectClips, Vector3 position)
-    {
-        if (soundEffectClips.Length == 0)
+        public void PlaySoundEffect(AudioClip[] soundEffectClips)
         {
-            return;
+            if (soundEffectClips.Length == 0)
+                return;
+
+            AudioClip soundEffectClip = soundEffectClips[Random.Range(0, soundEffectClips.Length)];
+            soundEffectsPlayer.PlayOneShot(soundEffectClip, GetSoundEffectsVolume());
         }
 
-        AudioClip soundEffectClip = soundEffectClips[Random.Range(0, soundEffectClips.Length)];
-        AudioSource.PlayClipAtPoint(soundEffectClip, position, GetSoundEffectsVolume());
-    }
+        public void PlaySoundEffectAtPosition(AudioClip[] soundEffectClips, Vector3 position)
+        {
+            if (soundEffectClips.Length == 0)
+                return;
 
-    // Set music volume
-    public void SetMusicVolume(float volume)
-    {
-        volume = Mathf.Clamp01(volume);
-        musicPlayer.volume = volume;
+            AudioClip soundEffectClip = soundEffectClips[Random.Range(0, soundEffectClips.Length)];
+            AudioSource.PlayClipAtPoint(soundEffectClip, position, GetSoundEffectsVolume());
+        }
 
-        // Adjust music volume in the audio mixer
-        audioMixer.SetFloat(MUSIC_VOLUME_KEY, ConvertToDecibel(volume));
-    }
+        public void SetMusicVolume(float volume)
+        {
+            volume = Mathf.Clamp01(volume);
+            musicPlayer.volume = volume;
 
-    // Get music volume
-    public float GetMusicVolume()
-    {
-        float volume;
-        audioMixer.GetFloat("MusicVolume", out volume);
-        return Mathf.Pow(10f, volume / 20f);
-    }
+            audioMixer.SetFloat(MUSIC_VOLUME_KEY, ConvertToDecibel(volume));
+        }
 
-    // Mute/unmute music
-    public void ToggleMusicMute(bool isMuted)
-    {
-        musicPlayer.mute = isMuted;
+        public float GetMusicVolume()
+        {
+            float volume;
+            audioMixer.GetFloat(MUSIC_VOLUME_KEY, out volume);
+            return Mathf.Pow(10f, volume / 20f);
+        }
 
-        // Save music toggle
-        ClientPrefs.SetMusicToggle(!isMuted);
-    }
+        public void ToggleMusicMute(bool isMuted)
+        {
+            musicPlayer.mute = isMuted;
+            ClientPrefs.SetMusicToggle(!isMuted);
+        }
 
-    // Check if music is muted
-    public bool IsMusicMuted()
-    {
-        return musicPlayer.mute;
-    }
+        public bool IsMusicMuted()
+        {
+            return musicPlayer.mute;
+        }
 
-    // Set sound effects volume
-    public void SetSoundEffectsVolume(float volume)
-    {
-        volume = Mathf.Clamp01(volume);
+        public void SetSoundEffectsVolume(float volume)
+        {
+            volume = Mathf.Clamp01(volume);
+            audioMixer.SetFloat(SOUND_EFFECTS_VOLUME_KEY, ConvertToDecibel(volume));
+        }
 
-        // Adjust sound effects volume in the audio mixer
-        audioMixer.SetFloat("SoundEffectsVolume", ConvertToDecibel(volume));
-    }
+        public float GetSoundEffectsVolume()
+        {
+            float volume;
+            audioMixer.GetFloat(SOUND_EFFECTS_VOLUME_KEY, out volume);
+            return Mathf.Pow(10f, volume / 20f);
+        }
 
-    // Get sound effects volume
-    public float GetSoundEffectsVolume()
-    {
-        float volume;
-        audioMixer.GetFloat("SoundEffectsVolume", out volume);
-        return Mathf.Pow(10f, volume / 20f);
-    }
+        public void ToggleSoundEffectsMute(bool isMuted)
+        {
+            soundEffectsPlayer.mute = isMuted;
+            ClientPrefs.SetSoundEffectsToggle(!isMuted);
+        }
 
-    // Mute/unmute sound effects
-    public void ToggleSoundEffectsMute(bool isMuted)
-    {
-        soundEffectsPlayer.mute = isMuted;
+        public bool AreSoundEffectsMuted()
+        {
+            return soundEffectsPlayer.mute;
+        }
 
-        // Save sound effects toggle
-        ClientPrefs.SetSoundEffectsToggle(!isMuted);
-    }
+        private float ConvertToDecibel(float volume)
+        {
+            return Mathf.Log10(volume) * 20f;
+        }
 
-    // Check if sound effects are muted
-    public bool AreSoundEffectsMuted()
-    {
-        return soundEffectsPlayer.mute;
-    }
-
-    // Convert volume from linear scale to decibel scale
-    private float ConvertToDecibel(float volume)
-    {
-        return Mathf.Log10(volume) * 20f;
+        public static void PlayDefaultButtonSound()
+        {
+            // Instance.PlaySoundEffect(GameDataSource.Instance.gameSettings.defaultButtonSound);
+        }
     }
 }

@@ -1,58 +1,61 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-public class EULAPrivacyUI : MonoBehaviour
+namespace KitchenKrapper
 {
-    [Header("Urls")]
-    [SerializeField] private string termsOfUseUrl = "https://www.microsoft.com/en-us/servicesagreement/";
-    [SerializeField] private string privacyPolicyUrl = "https://privacy.microsoft.com/en-us/privacystatement";
-
-    [Header("Buttons")]
-    [SerializeField] private Button closeButton;
-    [SerializeField] private Button acceptEULAButton;
-    [SerializeField] private Button declineEULAButton;
-    [SerializeField] private Button termsOfUseButton;
-    [SerializeField] private Button privacyPolicyButton;
-
-    private void Awake()
+    public class EULAPrivacyUI : MonoBehaviour
     {
-        SetButtonListeners();
-    }
+        [Header("Urls")]
+        [SerializeField] private string termsOfUseUrl = "https://www.microsoft.com/en-us/servicesagreement/";
+        [SerializeField] private string privacyPolicyUrl = "https://privacy.microsoft.com/en-us/privacystatement";
 
-    private void SetButtonListeners()
-    {
-        termsOfUseButton.onClick.AddListener(OpenTermsOfUse);
-        privacyPolicyButton.onClick.AddListener(OpenPrivacyPolicy);
-        acceptEULAButton.onClick.AddListener(AcceptEULA);
-        declineEULAButton.onClick.AddListener(DeclineEULA);
-        closeButton.onClick.AddListener(DeclineEULA);
-    }
+        [Header("Buttons")]
+        [SerializeField] private Button closeButton;
+        [SerializeField] private Button acceptEULAButton;
+        [SerializeField] private Button declineEULAButton;
+        [SerializeField] private Button termsOfUseButton;
+        [SerializeField] private Button privacyPolicyButton;
 
-    public void OpenTermsOfUse()
-    {
-        Application.OpenURL(termsOfUseUrl);
-    }
+        private void Awake()
+        {
+            InitializeButtonListeners();
+        }
 
-    public void OpenPrivacyPolicy()
-    {
-        Application.OpenURL(privacyPolicyUrl);
-    }
+        private void InitializeButtonListeners()
+        {
+            termsOfUseButton.onClick.AddListener(OpenTermsOfUse);
+            privacyPolicyButton.onClick.AddListener(OpenPrivacyPolicy);
+            acceptEULAButton.onClick.AddListener(AcceptEULA);
+            declineEULAButton.onClick.AddListener(DeclineEULA);
+            closeButton.onClick.AddListener(DeclineEULA);
+        }
 
-    public void AcceptEULA()
-    {
-        Hide();
-        ClientPrefs.SetEULAAndPrivacyPolicyAccepted(true);
-        GameManager.Instance.StartApp();
-    }
+        public void OpenTermsOfUse()
+        {
+            Application.OpenURL(termsOfUseUrl);
+        }
 
-    public void DeclineEULA()
-    {
-        Hide();
-        GameManager.Instance.QuitGame();
-    }
+        public void OpenPrivacyPolicy()
+        {
+            Application.OpenURL(privacyPolicyUrl);
+        }
 
-    public void Hide()
-    {
-        gameObject.SetActive(false);
+        public void AcceptEULA()
+        {
+            Hide();
+            ClientPrefs.SetEULAAndPrivacyPolicyAccepted(true);
+            GameManager.Instance.StartApp();
+        }
+
+        public void DeclineEULA()
+        {
+            Hide();
+            GameManager.Instance.QuitGame();
+        }
+
+        public void Hide()
+        {
+            gameObject.SetActive(false);
+        }
     }
 }

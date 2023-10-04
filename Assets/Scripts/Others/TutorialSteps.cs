@@ -1,14 +1,15 @@
 using UnityEngine;
 
-public class TutorialSteps : MonoBehaviour
+namespace KitchenKrapper
 {
-    private int currentStepIndex;
-
-    // Getter for the object position
-    public Transform GetObjectPosition()
+    public class TutorialSteps : MonoBehaviour
     {
-        return this.transform;
+        private int currentStepIndex;
+
+        // Getter for the object position
+        public Transform GetObjectPosition()
+        {
+            return this.transform;
+        }
     }
-
-
 }

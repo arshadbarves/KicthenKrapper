@@ -1,62 +1,86 @@
 using System;
 using UnityEngine;
 
-public class StoveCounterSound : MonoBehaviour
+namespace KitchenKrapper
 {
-    [SerializeField] private StoveCounter stoveCounter;
-    private AudioSource audioSource;
-    private float warningSoundTimer;
-    private bool shouldPlayWarningSound;
-
-    private void Awake()
+    [RequireComponent(typeof(AudioSource))]
+    public class StoveCounterSound : MonoBehaviour
     {
-        audioSource = GetComponent<AudioSource>();
-    }
+        [SerializeField] private StoveCounter stoveCounter;
+        private AudioSource audioSource;
+        private bool shouldPlayWarningSound;
+        private float warningSoundTimer;
+        private const float WarningSoundTimerMax = 0.2f;
+        private const float BurnShowProgress = 0.5f;
 
-    private void Start()
-    {
-        stoveCounter.OnStoveCounterStateChange += StoveCounter_OnStoveCounterStateChange;
-        stoveCounter.OnProgressChanged += StoveCounter_OnProgressChanged;
-    }
-
-    private void StoveCounter_OnProgressChanged(object sender, IHasProgress.ProgressChangedEventArgs e)
-    {
-        float burnShowProgress = 0.5f;
-        shouldPlayWarningSound = stoveCounter.IsDone() && e.progressNormalized >= burnShowProgress;
-    }
-
-    private void StoveCounter_OnStoveCounterStateChange(object sender, StoveCounter.StoveCounterStateChangeEventArgs e)
-    {
-        switch (e.stoveCounterState)
+        private void Awake()
         {
-            case StoveCounter.StoveCounterState.Empty:
-                audioSource.Stop();
-                break;
-            case StoveCounter.StoveCounterState.Cooking:
-                audioSource.Play();
-                break;
-            case StoveCounter.StoveCounterState.Done:
-                audioSource.Play();
-                break;
-            case StoveCounter.StoveCounterState.Burned:
-                audioSource.Stop();
-                break;
-            default:
-                break;
+            // TODO: Rework this to use the Audio Manager
+            audioSource = GetComponent<AudioSource>();
         }
-    }
 
-    private void Update()
-    {
-        if (shouldPlayWarningSound)
+        private void Start()
         {
-            warningSoundTimer -= Time.deltaTime;
-            if (warningSoundTimer <= 0f)
-            {
-                float warningSoundTimerMax = 0.2f;
-                warningSoundTimer = warningSoundTimerMax;
+            SubscribeToEvents();
+        }
 
-                LevelManager.Instance.PlayWarningSound();
+        private void SubscribeToEvents()
+        {
+            if (stoveCounter != null)
+            {
+                stoveCounter.OnStoveCounterStateChange += HandleStoveCounterStateChange;
+                stoveCounter.OnProgressChanged += HandleProgressChanged;
+            }
+        }
+
+        private void UnsubscribeFromEvents()
+        {
+            if (stoveCounter != null)
+            {
+                stoveCounter.OnStoveCounterStateChange -= HandleStoveCounterStateChange;
+                stoveCounter.OnProgressChanged -= HandleProgressChanged;
+            }
+        }
+
+        private void OnDestroy()
+        {
+            UnsubscribeFromEvents();
+        }
+
+        private void HandleProgressChanged(object sender, IHasProgress.ProgressChangedEventArgs e)
+        {
+            shouldPlayWarningSound = stoveCounter.IsDone() && e.progressNormalized >= BurnShowProgress;
+        }
+
+        private void HandleStoveCounterStateChange(object sender, StoveCounter.StoveCounterStateChangeEventArgs e)
+        {
+            switch (e.stoveCounterState)
+            {
+                case StoveCounter.StoveCounterState.Empty:
+                    audioSource.Stop();
+                    break;
+                case StoveCounter.StoveCounterState.Cooking:
+                case StoveCounter.StoveCounterState.Done:
+                    audioSource.Play();
+                    break;
+                case StoveCounter.StoveCounterState.Burned:
+                    audioSource.Stop();
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        private void Update()
+        {
+            if (shouldPlayWarningSound)
+            {
+                warningSoundTimer -= Time.deltaTime;
+                if (warningSoundTimer <= 0f)
+                {
+                    warningSoundTimer = WarningSoundTimerMax;
+                    LevelManager.Instance.PlayWarningSound();
+                }
             }
         }
     }

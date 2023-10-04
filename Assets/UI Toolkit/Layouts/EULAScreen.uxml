@@ -1,0 +1,26 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" editor-extension-mode="False">
+    <Style src="project://database/Assets/UI%20Toolkit/Styles/style.uss?fileID=7433441132597879392&amp;guid=ab993c0e454983847b10aeb86aa545af&amp;type=3#style" />
+    <ui:VisualElement name="EULAScreen" class="overlay" style="background-color: rgba(34, 33, 38, 0.59);">
+        <ui:VisualElement name="eula-privacy__popup-panel" class="popup-panel">
+            <ui:VisualElement style="flex-grow: 1; height: 150%;">
+                <ui:VisualElement name="Header" style="flex-grow: 1; justify-content: center; background-color: rgb(34, 33, 38); border-top-left-radius: 25px; border-top-right-radius: 25px; border-bottom-right-radius: 25px; border-bottom-left-radius: 25px; margin-top: 25px; margin-right: 25px; margin-bottom: 25px; margin-left: 25px; height: 100px;">
+                    <ui:Label tabindex="-1" text="Terms and Conditions" parse-escape-sequences="true" display-tooltip-when-elided="true" name="Label" class="label" style="padding-top: 25px; padding-right: 25px; padding-bottom: 25px; padding-left: 25px; font-size: 40px;" />
+                </ui:VisualElement>
+                <ui:VisualElement name="Divider" class="divider" style="flex-grow: 0;" />
+                <ui:VisualElement name="Body" style="flex-grow: 1; justify-content: center; height: 50%; background-color: rgba(70, 68, 175, 0.39); margin-top: 25px; margin-right: 25px; margin-bottom: 25px; margin-left: 25px; border-top-left-radius: 25px; border-top-right-radius: 25px; border-bottom-right-radius: 25px; border-bottom-left-radius: 25px; padding-top: 25px; padding-right: 25px; padding-bottom: 25px; padding-left: 25px;">
+                    <ui:ScrollView>
+                        <ui:Label tabindex="-1" text="We care about your privacy! To continue playing, we need your consent to collect and process your data in accordance with our Privacy Policy. &#10;&#10;Tap &apos;Agree&apos; to accept or &apos;Decline&apos; to exit the game." parse-escape-sequences="true" display-tooltip-when-elided="true" class="label" style="white-space: normal; padding-top: 75px; padding-right: 75px; padding-bottom: 75px; padding-left: 75px; font-size: 30px;" />
+                        <ui:VisualElement style="flex-grow: 0; flex-direction: column;">
+                            <ui:Button text="Terms of Use" parse-escape-sequences="true" display-tooltip-when-elided="true" name="eula-privacy__terms-of-use-button" class="label link" />
+                            <ui:Button text="Privacy Policy" parse-escape-sequences="true" display-tooltip-when-elided="true" name="eula-privacy__privacy-policy-button" class="label link" />
+                        </ui:VisualElement>
+                    </ui:ScrollView>
+                </ui:VisualElement>
+            </ui:VisualElement>
+            <ui:VisualElement name="VisualElement" style="flex-direction: row; align-self: center; align-items: flex-end; justify-content: space-around; width: 100%; padding-top: 25px; padding-right: 25px; padding-bottom: 25px; padding-left: 25px; border-top-left-radius: 0; border-top-right-radius: 0; border-bottom-right-radius: 25px; border-bottom-left-radius: 25px; top: 80px;">
+                <ui:Button text="AGREE" parse-escape-sequences="true" display-tooltip-when-elided="true" name="eula-privacy__accept-eula-button" class="button" style="background-color: rgb(240, 0, 144); width: 400px;" />
+                <ui:Button text="DECLINE" parse-escape-sequences="true" display-tooltip-when-elided="true" name="eula-privacy__decline-eula-button" class="button" style="background-color: rgb(247, 153, 27); width: 400px;" />
+            </ui:VisualElement>
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>

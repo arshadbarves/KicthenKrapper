@@ -1,0 +1,86 @@
+.slide-toggle__input {
+    background-color: rgba(34, 33, 38, 0.78);
+    border-top-left-radius: 5px;
+    border-bottom-left-radius: 5px;
+    border-top-right-radius: 5px;
+    border-bottom-right-radius: 5px;
+    overflow: visible;
+    transition-property: background-color;
+    opacity: 1;
+    border-left-width: 3px;
+    border-right-width: 3px;
+    border-top-width: 3px;
+    border-bottom-width: 3px;
+    transition-duration: 0.2s;
+    align-self: center;
+    max-width: 125px;
+    height: 50px;
+}
+
+.slide-toggle__input-knob {
+    width: 50%;
+    background-color: rgb(252, 40, 46);
+    position: absolute;
+    top: 0;
+    transition-property: translate, background-color;
+    transition-duration: 0.2s, 0.5s;
+    translate: 0 0;
+    bottom: 38px;
+    scale: 1 1;
+    -unity-background-image-tint-color: rgb(255, 255, 255);
+    display: flex;
+    border-left-width: 3px;
+    border-right-width: 3px;
+    border-top-width: 3px;
+    border-bottom-width: 3px;
+    border-left-color: rgb(255, 255, 255);
+    border-right-color: rgb(255, 255, 255);
+    border-top-color: rgb(255, 255, 255);
+    border-bottom-color: rgb(255, 255, 255);
+    border-top-left-radius: 5px;
+    border-bottom-left-radius: 5px;
+    border-top-right-radius: 5px;
+    border-bottom-right-radius: 5px;
+    height: 100%;
+}
+
+.slide-toggle__input--checked {
+    background-color: rgba(34, 33, 38, 0.78);
+}
+
+.slide-toggle__input--checked > .slide-toggle__input-knob {
+    translate: 60px 0;
+    opacity: 1;
+    background-color: rgb(102, 247, 15);
+}
+
+.slide-toggle:focus .slide-toggle__input-knob {
+}
+
+.slide-toggle__label {
+    -unity-font-definition: url('project://database/Assets/Third%20Party%20Assets/GUI%20PRO%20Kit%20-%20Casual%20Game/ResourcesData/Fonts/LilitaOne-Regular%20SDF%201.asset?fileID=11400000&guid=3698d87c2a78fe14cbe7ada27ffd1b2a&type=2#LilitaOne-Regular SDF 1');
+    font-size: 40px;
+    -unity-text-align: middle-left;
+    transition-property: opacity;
+    transition-duration: 0.1s;
+    transition-delay: 0.1s;
+    color: rgb(255, 255, 255);
+    -unity-font-style: normal;
+    text-shadow: 5px 5px 0 rgba(0, 0, 0, 0.39);
+    letter-spacing: 5px;
+}
+
+.slide-toggle__label--inactive {
+    font-size: 39px;
+    color: rgb(151, 129, 98);
+    -unity-text-align: middle-center;
+    opacity: 0;
+    transition-property: opacity, scale;
+    transition-duration: 0.1s, 0.3s;
+    transition-delay: 0.1s, 0.2s;
+    scale: 0.9 0.9;
+}
+
+.slide-toggle {
+    justify-content: space-between;
+}

@@ -1,22 +1,25 @@
 using UnityEngine;
 
-public class FollowTransform : MonoBehaviour
+namespace KitchenKrapper
 {
-    private Transform targetTransform;
-
-    public void SetTargetTransform(Transform targetTransform)
+    public class FollowTransform : MonoBehaviour
     {
-        this.targetTransform = targetTransform;
-    }
+        private Transform targetTransform;
 
-    private void LateUpdate()
-    {
-        if (targetTransform == null)
+        public void SetTargetTransform(Transform targetTransform)
         {
-            return;
+            this.targetTransform = targetTransform;
         }
 
-        transform.position = targetTransform.position;
-        transform.rotation = targetTransform.rotation;
+        private void LateUpdate()
+        {
+            if (targetTransform == null)
+            {
+                return;
+            }
+
+            transform.position = targetTransform.position;
+            transform.rotation = targetTransform.rotation;
+        }
     }
 }

@@ -1,68 +1,93 @@
 using System.Collections.Generic;
 using Unity.Netcode;
 
-public class PlayerStateReady : NetworkBehaviour
+namespace KitchenKrapper
 {
-    public static PlayerStateReady Instance { get; private set; }
-    private Dictionary<ulong, bool> playerReadyDictionary;
-
-    private void Awake()
+    public class PlayerStateReady : NetworkBehaviour
     {
-        if (Instance != null && Instance != this)
-        {
-            Destroy(gameObject);
-        }
-        else
-        {
-            Instance = this;
-        }
-        playerReadyDictionary = new Dictionary<ulong, bool>();
-    }
+        public static PlayerStateReady Instance { get; private set; }
 
-    public void OnReadyButtonClicked()
-    {
-        // Toggle ready state
-        if (!playerReadyDictionary.ContainsKey(NetworkManager.Singleton.LocalClientId))
+        private Dictionary<ulong, bool> playerReadyDictionary;
+
+        private void Awake()
         {
-            playerReadyDictionary.Add(NetworkManager.Singleton.LocalClientId, false);
+            InitializeSingleton();
+            InitializePlayerReadyDictionary();
         }
 
-        bool isReady = !playerReadyDictionary[NetworkManager.Singleton.LocalClientId];
-        SetPlayerReadyServerRpc(isReady);
-    }
-
-    [ServerRpc(RequireOwnership = false)]
-    private void SetPlayerReadyServerRpc(bool isReady = false, ServerRpcParams serverRpcParams = default)
-    {
-        playerReadyDictionary[serverRpcParams.Receive.SenderClientId] = isReady;
-
-        if (playerReadyDictionary.Count == NetworkManager.Singleton.ConnectedClientsList.Count)
+        private void InitializeSingleton()
         {
-            bool allPlayersReady = true;
+            if (Instance != null && Instance != this)
+            {
+                Destroy(gameObject);
+            }
+            else
+            {
+                Instance = this;
+            }
+        }
+
+        private void InitializePlayerReadyDictionary()
+        {
+            playerReadyDictionary = new Dictionary<ulong, bool>();
+        }
+
+        public void OnReadyButtonClicked()
+        {
+            TogglePlayerReadyState();
+        }
+
+        private void TogglePlayerReadyState()
+        {
+            ulong localClientId = NetworkManager.Singleton.LocalClientId;
+
+            if (!playerReadyDictionary.ContainsKey(localClientId))
+            {
+                playerReadyDictionary.Add(localClientId, false);
+            }
+
+            bool isReady = !playerReadyDictionary[localClientId];
+            SetPlayerReadyServerRpc(localClientId, isReady);
+        }
+
+        [ServerRpc(RequireOwnership = false)]
+        private void SetPlayerReadyServerRpc(ulong clientId, bool isReady = false, ServerRpcParams serverRpcParams = default)
+        {
+            playerReadyDictionary[clientId] = isReady;
+
+            if (AreAllPlayersReady())
+            {
+                HandleAllPlayersReady();
+            }
+        }
+
+        private bool AreAllPlayersReady()
+        {
             foreach (var playerReady in playerReadyDictionary)
             {
                 if (!playerReady.Value)
                 {
-                    allPlayersReady = false;
-                    break;
+                    return false;
                 }
             }
-
-            if (allPlayersReady)
-            {
-                // TODO - Map selection
-                // EOSKitchenGameLobby.Instance.DeleteLobby();
-                SceneLoaderWrapper.Instance.LoadScene(SceneType.Map_City_001.ToString(), true);
-            }
+            return true;
         }
-    }
 
-    public bool IsReady()
-    {
-        if (playerReadyDictionary.ContainsKey(NetworkManager.Singleton.LocalClientId))
+        private void HandleAllPlayersReady()
         {
-            return playerReadyDictionary[NetworkManager.Singleton.LocalClientId];
+            SceneLoaderWrapper.Instance.LoadScene(SceneType.Map_City_001.ToString(), true);
         }
-        return false;
+
+        public bool IsReady()
+        {
+            ulong localClientId = NetworkManager.Singleton.LocalClientId;
+
+            if (playerReadyDictionary.ContainsKey(localClientId))
+            {
+                return playerReadyDictionary[localClientId];
+            }
+
+            return false;
+        }
     }
 }

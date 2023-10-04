@@ -1,0 +1,5 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" editor-extension-mode="False">
+    <ui:VisualElement name="BufferScreen" style="flex-grow: 1; position: absolute; height: 100%; width: 100%; justify-content: center;">
+        <ui:VisualElement name="buffer__icon" style="flex-grow: 0; background-image: url(&apos;project://database/Assets/Images/Icons/Chef%20Hat.png?fileID=2800000&amp;guid=297a8938f5ff2fe4b96dd7fc77690308&amp;type=3#Chef Hat&apos;); -unity-background-scale-mode: scale-to-fit; width: 100px; height: 100px; border-top-left-radius: 20px; border-top-right-radius: 20px; border-bottom-right-radius: 20px; border-bottom-left-radius: 20px; align-self: center; border-top-width: 5px; border-right-width: 5px; border-bottom-width: 5px; border-left-width: 5px; border-left-color: rgb(255, 255, 255); border-right-color: rgb(255, 255, 255); border-top-color: rgb(255, 255, 255); border-bottom-color: rgb(255, 255, 255); padding-top: 25px; padding-right: 25px; padding-bottom: 25px; padding-left: 25px;" />
+    </ui:VisualElement>
+</ui:UXML>

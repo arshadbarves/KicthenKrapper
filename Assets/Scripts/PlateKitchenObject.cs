@@ -3,57 +3,60 @@ using System.Collections.Generic;
 using Unity.Netcode;
 using UnityEngine;
 
-public class PlateKitchenObject : KitchenObject
+namespace KitchenKrapper
 {
-    public event EventHandler<OnIngredientAddedEventArgs> OnIngredientAdded;
-    public class OnIngredientAddedEventArgs : EventArgs
+    public class PlateKitchenObject : KitchenObject
     {
-        public KitchenObjectSO ingredient;
-    }
-
-    [SerializeField] private List<KitchenObjectSO> validIngredients;
-    private List<KitchenObjectSO> ingredients;
-
-    protected override void Awake()
-    {
-        base.Awake();
-        ingredients = new List<KitchenObjectSO>();
-    }
-
-    // Returns true if ingredient was added to plate successfully and false if not (e.g. if ingredient is not valid for plate or same ingredient already exists on plate etc.)
-    public bool TryAddIngredient(KitchenObjectSO ingredient)
-    {
-        if (validIngredients.Contains(ingredient) && !ingredients.Contains(ingredient))
+        public event EventHandler<OnIngredientAddedEventArgs> OnIngredientAdded;
+        public class OnIngredientAddedEventArgs : EventArgs
         {
-            AddIngredientServerRpc(EOSKitchenGameMultiplayer.Instance.GetKitchenObjectSOIndex(ingredient));
-
-            return true;
+            public KitchenObjectSO ingredient;
         }
-        else
+
+        [SerializeField] private List<KitchenObjectSO> validIngredients;
+        private List<KitchenObjectSO> ingredients;
+
+        protected override void Awake()
         {
-            return false;
+            base.Awake();
+            ingredients = new List<KitchenObjectSO>();
         }
-    }
 
-    [ServerRpc(RequireOwnership = false)]
-    private void AddIngredientServerRpc(int kitchenObjectSOIndex)
-    {
-        AddIngredientClientRpc(kitchenObjectSOIndex);
-    }
+        // Returns true if ingredient was added to plate successfully and false if not (e.g. if ingredient is not valid for plate or same ingredient already exists on plate etc.)
+        public bool TryAddIngredient(KitchenObjectSO ingredient)
+        {
+            if (validIngredients.Contains(ingredient) && !ingredients.Contains(ingredient))
+            {
+                AddIngredientServerRpc(EOSKitchenGameMultiplayer.Instance.GetKitchenObjectSOIndex(ingredient));
 
-    [ClientRpc]
-    private void AddIngredientClientRpc(int kitchenObjectSOIndex)
-    {
-        KitchenObjectSO ingredient = EOSKitchenGameMultiplayer.Instance.GetKitchenObjectSOFromIndex(kitchenObjectSOIndex);
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
 
-        ingredients.Add(ingredient);
+        [ServerRpc(RequireOwnership = false)]
+        private void AddIngredientServerRpc(int kitchenObjectSOIndex)
+        {
+            AddIngredientClientRpc(kitchenObjectSOIndex);
+        }
 
-        OnIngredientAdded?.Invoke(this, new OnIngredientAddedEventArgs { ingredient = ingredient });
+        [ClientRpc]
+        private void AddIngredientClientRpc(int kitchenObjectSOIndex)
+        {
+            KitchenObjectSO ingredient = EOSKitchenGameMultiplayer.Instance.GetKitchenObjectSOFromIndex(kitchenObjectSOIndex);
 
-    }
+            ingredients.Add(ingredient);
 
-    public List<KitchenObjectSO> TryGetIngredient()
-    {
-        return ingredients;
+            OnIngredientAdded?.Invoke(this, new OnIngredientAddedEventArgs { ingredient = ingredient });
+
+        }
+
+        public List<KitchenObjectSO> TryGetIngredient()
+        {
+            return ingredients;
+        }
     }
 }

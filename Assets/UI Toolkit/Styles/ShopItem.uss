@@ -1,0 +1,152 @@
+.shop-item {
+    background-color: rgb(34, 33, 38);
+    border-left-width: 5px;
+    border-right-width: 5px;
+    border-top-width: 5px;
+    border-bottom-width: 5px;
+    border-left-color: rgb(255, 255, 255);
+    border-right-color: rgb(255, 255, 255);
+    border-top-color: rgb(255, 255, 255);
+    border-bottom-color: rgb(255, 255, 255);
+    border-top-left-radius: 25px;
+    border-bottom-left-radius: 25px;
+    border-top-right-radius: 25px;
+    border-bottom-right-radius: 25px;
+    margin-left: 25px;
+    margin-right: 25px;
+    margin-top: 25px;
+    margin-bottom: 25px;
+    min-height: 90%;
+    min-width: 20%;
+    align-self: center;
+}
+
+.shop-item-label {
+    background-color: rgb(2, 158, 247);
+    border-left-width: 5px;
+    border-right-width: 5px;
+    border-top-width: 5px;
+    border-bottom-width: 5px;
+    border-top-left-radius: 25px;
+    border-bottom-left-radius: 25px;
+    border-top-right-radius: 25px;
+    border-bottom-right-radius: 25px;
+    border-left-color: rgb(255, 255, 255);
+    border-right-color: rgb(255, 255, 255);
+    border-top-color: rgb(255, 255, 255);
+    border-bottom-color: rgb(255, 255, 255);
+    top: -30px;
+    position: relative;
+    width: 75%;
+    align-self: center;
+}
+
+.shop-item__cost-icon {
+    flex-grow: 1;
+    background-color: rgba(0, 0, 0, 0);
+    background-image: url('project://database/Assets/Images/Icons/Gem.png?fileID=2800000&guid=2c4c1ae3bca9f8e489c80f0162b3e948&type=3#Gem');
+    width: 64px;
+    height: 64px;
+    max-width: 64px;
+    min-width: 64px;
+    min-height: 64px;
+}
+
+.shop-item__cost-text {
+}
+
+.shop-item__discount-slash {
+    flex-grow: 1;
+    background-color: rgb(252, 40, 46);
+    width: 100%;
+    height: 10px;
+    position: absolute;
+    rotate: -15deg;
+    border-top-left-radius: 5px;
+    border-bottom-left-radius: 5px;
+    border-top-right-radius: 5px;
+    border-bottom-right-radius: 5px;
+}
+
+.shop-item__cost-group {
+    flex-direction: row;
+    align-items: center;
+}
+
+.shop-item__product-image {
+    flex-grow: 1;
+    background-color: rgba(0, 0, 0, 0);
+    background-image: url('project://database/Assets/Third%20Party%20Assets/GUI%20PRO%20Kit%20-%20Simple%20Casual/Sprite/Demo/Demo_Character/CardCharacter_l_Sample02.png?fileID=2800000&guid=1e7151342e980464a88db1ae971d80f7&type=3#CardCharacter_l_Sample02');
+    -unity-background-scale-mode: scale-to-fit;
+    margin-left: 50px;
+    margin-right: 50px;
+    margin-top: 50px;
+    margin-bottom: 50px;
+}
+
+.shop-item__buy-button {
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+    border-left-color: rgb(247, 153, 27);
+    border-right-color: rgb(247, 153, 27);
+    border-top-color: rgb(247, 153, 27);
+    border-bottom-color: rgb(247, 153, 27);
+    border-bottom-left-radius: 20px;
+    border-bottom-right-radius: 20px;
+    margin-left: 0;
+    margin-right: 0;
+    margin-top: 0;
+    margin-bottom: 0;
+}
+
+.shop-item__cost-group {
+    flex-grow: 1;
+    background-color: rgba(0, 0, 0, 0);
+    flex-direction: row;
+    align-self: center;
+    justify-content: center;
+    align-items: center;
+}
+
+.shop-item__cost-icon {
+    flex-grow: 1;
+    background-color: rgba(0, 0, 0, 0);
+    width: 64px;
+    height: 64px;
+    max-width: 64px;
+    min-width: 64px;
+    min-height: 64px;
+    max-height: 64px;
+    background-image: url('project://database/Assets/Images/Icons/Gem.png?fileID=2800000&guid=2c4c1ae3bca9f8e489c80f0162b3e948&type=3#Gem');
+    -unity-background-scale-mode: scale-to-fit;
+    align-self: center;
+    align-items: center;
+}
+
+.shop-item__cost-text {
+    align-items: center;
+    align-self: center;
+}
+
+.shop-item__discount-slash {
+    flex-grow: 1;
+    background-color: rgb(252, 40, 46);
+    position: absolute;
+    width: 75%;
+    height: 10px;
+    border-top-left-radius: 5px;
+    border-bottom-left-radius: 5px;
+    border-top-right-radius: 5px;
+    border-bottom-right-radius: 5px;
+    rotate: -15deg;
+    align-self: center;
+    align-items: center;
+}
+
+.shop-item_buy-button-container {
+    flex-direction: row;
+}
+
+.shop-item__buy-button:hover {
+    scale: 1 1;
+}

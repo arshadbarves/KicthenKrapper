@@ -1,0 +1,37 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" editor-extension-mode="False">
+    <Style src="project://database/Assets/UI%20Toolkit/Styles/style.uss?fileID=7433441132597879392&amp;guid=ab993c0e454983847b10aeb86aa545af&amp;type=3#style" />
+    <Style src="project://database/Assets/UI%20Toolkit/Styles/MenuBar.uss?fileID=7433441132597879392&amp;guid=498cb522a8c1a6b4a9dcd781b72b9a51&amp;type=3#MenuBar" />
+    <ui:VisualElement name="OptionbarScreen" class="top-bar">
+        <ui:Button parse-escape-sequences="true" display-tooltip-when-elided="true" name="optionbar__profile-button" class="profile-rank">
+            <ui:VisualElement name="optionbar__profile-image" class="profile-icon" />
+            <ui:VisualElement name="profile-container" style="flex-grow: 1; margin-top: 15px; margin-right: 15px; margin-bottom: 15px; margin-left: 15px; align-items: stretch; align-self: stretch; justify-content: space-around;">
+                <ui:Label tabindex="-1" text="#PlayerName" display-tooltip-when-elided="true" name="optionbar__profile-name" class="label" style="-unity-text-align: middle-center; align-self: flex-start;" />
+                <ui:ProgressBar value="22" name="optionbar__profile-rank-progress" class="profile-rank__progress" />
+            </ui:VisualElement>
+        </ui:Button>
+        <ui:VisualElement name="NavBar" class="navbar">
+            <ui:Button name="optionbar__home-button" class="navbar-button">
+                <ui:VisualElement class="icon" style="background-image: url(&apos;project://database/Assets/Images/Icons/Home.png?fileID=2800000&amp;guid=f9841f5fd08a3fe47878a16025b189a7&amp;type=3#Home&apos;);" />
+            </ui:Button>
+            <ui:Button name="optionbar__inventory-button" class="navbar-button">
+                <ui:VisualElement class="icon" style="background-image: url(&apos;project://database/Assets/Images/Icons/Hanger.png?fileID=2800000&amp;guid=0e201efa0fcd4ce40bfae39a7b7c71f6&amp;type=3#Hanger&apos;);" />
+            </ui:Button>
+            <ui:Button name="optionbar__shop-button" class="navbar-button">
+                <ui:VisualElement class="icon" style="background-image: url(&apos;project://database/Assets/Images/Icons/Shop.png?fileID=2800000&amp;guid=26f0ffd878c01e94fbdf357d8f2a6629&amp;type=3#Shop&apos;);" />
+            </ui:Button>
+            <ui:Button name="optionbar__settings-button" class="navbar-button">
+                <ui:VisualElement class="icon" style="background-image: url(&apos;project://database/Assets/Images/Icons/Settings.png?fileID=2800000&amp;guid=f23a03b788c77864c8253b6e84c2ea66&amp;type=3#Settings&apos;);" />
+            </ui:Button>
+        </ui:VisualElement>
+        <ui:VisualElement name="Items" class="treasure-items">
+            <ui:VisualElement name="CoinItem" class="treasure-item">
+                <ui:VisualElement name="CoinVisualIcon" class="treasure-item-icon" />
+                <ui:Label text="10000000" name="optionbar__coin-count" class="label treasure-item-label" />
+            </ui:VisualElement>
+            <ui:VisualElement name="GemItem" class="treasure-item">
+                <ui:VisualElement name="GemVisualIcon" class="treasure-item-icon" style="background-image: url(&apos;project://database/Assets/Images/Icons/Gem.png?fileID=2800000&amp;guid=2c4c1ae3bca9f8e489c80f0162b3e948&amp;type=3#Gem&apos;);" />
+                <ui:Label text="10000000" name="optionbar__gem-count" class="label treasure-item-label" />
+            </ui:VisualElement>
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>

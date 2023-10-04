@@ -3,51 +3,54 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class JoinCodeUI : MonoBehaviour
+namespace KitchenKrapper
 {
-    [Header("Join Code Input")]
-    [SerializeField] private TMP_InputField joinCodeInput;
-    [SerializeField] private Button joinButton;
-    [SerializeField] private Button closeButton;
-    [SerializeField] private MessageUI messagePanel;
-
-    private AnimationSequencerController animationSequencerController;
-
-    private void Awake()
+    public class JoinCodeUI : MonoBehaviour
     {
-        joinButton.onClick.AddListener(JoinButton_OnClick);
-        closeButton.onClick.AddListener(CloseButton_OnClick);
-        animationSequencerController = GetComponent<AnimationSequencerController>();
+        [Header("Join Code Input")]
+        [SerializeField] private TMP_InputField joinCodeInput;
+        [SerializeField] private Button joinButton;
+        [SerializeField] private Button closeButton;
+        [SerializeField] private MessageUI messagePanel;
 
-        Hide();
-    }
+        private AnimationSequencerController animationSequencerController;
 
-    private void CloseButton_OnClick()
-    {
-        Hide();
-    }
-
-    private void JoinButton_OnClick()
-    {
-        if (string.IsNullOrEmpty(joinCodeInput.text))
+        private void Awake()
         {
-            messagePanel.ShowMessage("Please enter a kitchen code");
-            return;
+            joinButton.onClick.AddListener(JoinButton_OnClick);
+            closeButton.onClick.AddListener(CloseButton_OnClick);
+            animationSequencerController = GetComponent<AnimationSequencerController>();
+
+            Hide();
         }
 
-        // EOSKitchenGameLobby.Instance.JoinWithCode(joinCodeInput.text);
-    }
+        private void CloseButton_OnClick()
+        {
+            Hide();
+        }
 
-    public void Show()
-    {
-        // Stop all animations and reset them
-        animationSequencerController.Kill();
-        animationSequencerController.Play();
-        gameObject.SetActive(true);
-    }
+        private void JoinButton_OnClick()
+        {
+            if (string.IsNullOrEmpty(joinCodeInput.text))
+            {
+                messagePanel.ShowMessage("Please enter a kitchen code");
+                return;
+            }
 
-    public void Hide()
-    {
-        gameObject.SetActive(false);
+            // EOSKitchenGameLobby.Instance.JoinWithCode(joinCodeInput.text);
+        }
+
+        public void Show()
+        {
+            // Stop all animations and reset them
+            animationSequencerController.Kill();
+            animationSequencerController.Play();
+            gameObject.SetActive(true);
+        }
+
+        public void Hide()
+        {
+            gameObject.SetActive(false);
+        }
     }
 }

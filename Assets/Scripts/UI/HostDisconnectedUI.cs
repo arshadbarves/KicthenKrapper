@@ -3,58 +3,61 @@ using UnityEngine;
 using UnityEngine.UI;
 using BrunoMikoski.AnimationSequencer;
 
-public class HostDisconnectedUI : MonoBehaviour
+namespace KitchenKrapper
 {
-    [SerializeField] private Button exitButton;
-    [SerializeField] private GameObject floatingJoystick;
-    private AnimationSequencerController animationSequencerController;
-
-    private void Start()
+    public class HostDisconnectedUI : MonoBehaviour
     {
-        exitButton.onClick.AddListener(ExitButton_OnClick);
-        animationSequencerController = GetComponent<AnimationSequencerController>();
-        NetworkManager.Singleton.OnClientDisconnectCallback += OnClientDisconnectCallback;
-        Hide();
-    }
+        [SerializeField] private Button exitButton;
+        [SerializeField] private GameObject floatingJoystick;
+        private AnimationSequencerController animationSequencerController;
 
-    private void OnDestroy()
-    {
-        NetworkManager.Singleton.OnClientDisconnectCallback -= OnClientDisconnectCallback;
-    }
-
-    private void OnClientDisconnectCallback(ulong clientId)
-    {
-        if (clientId == NetworkManager.ServerClientId)
+        private void Start()
         {
-            Show();
+            exitButton.onClick.AddListener(ExitButton_OnClick);
+            animationSequencerController = GetComponent<AnimationSequencerController>();
+            NetworkManager.Singleton.OnClientDisconnectCallback += OnClientDisconnectCallback;
+            Hide();
         }
-    }
 
-    private void ExitButton_OnClick()
-    {
-        LoadMainMenuScene();
-    }
+        private void OnDestroy()
+        {
+            NetworkManager.Singleton.OnClientDisconnectCallback -= OnClientDisconnectCallback;
+        }
 
-    private void Show()
-    {
-        floatingJoystick.SetActive(false);
-        KillAndPlayAnimation();
-        gameObject.SetActive(true);
-    }
+        private void OnClientDisconnectCallback(ulong clientId)
+        {
+            if (clientId == NetworkManager.ServerClientId)
+            {
+                Show();
+            }
+        }
 
-    private void Hide()
-    {
-        gameObject.SetActive(false);
-    }
+        private void ExitButton_OnClick()
+        {
+            LoadMainMenuScene();
+        }
 
-    private void KillAndPlayAnimation()
-    {
-        animationSequencerController.Kill();
-        animationSequencerController.Play();
-    }
+        private void Show()
+        {
+            floatingJoystick.SetActive(false);
+            KillAndPlayAnimation();
+            gameObject.SetActive(true);
+        }
 
-    private void LoadMainMenuScene()
-    {
-        SceneLoaderWrapper.Instance.LoadScene(SceneType.MainMenu.ToString(), false);
+        private void Hide()
+        {
+            gameObject.SetActive(false);
+        }
+
+        private void KillAndPlayAnimation()
+        {
+            animationSequencerController.Kill();
+            animationSequencerController.Play();
+        }
+
+        private void LoadMainMenuScene()
+        {
+            SceneLoaderWrapper.Instance.LoadScene(SceneType.MainMenu.ToString(), false);
+        }
     }
 }

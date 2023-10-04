@@ -1,24 +1,38 @@
 using System;
 using UnityEngine;
 
-public class CuttingCounterVisual : MonoBehaviour
+namespace KitchenKrapper
 {
-    private const string CUT = "Cut";
-    [SerializeField] private CuttingCounter cuttingCounter;
-    private Animator animator;
-
-    private void Awake()
+    public class CuttingCounterVisual : MonoBehaviour
     {
-        animator = GetComponent<Animator>();
-    }
+        private const string CUT = "Cut";
 
-    private void Start()
-    {
-        cuttingCounter.OnCut += CuttingCounter_OnCut;
-    }
+        [SerializeField] private CuttingCounter cuttingCounter;
+        private Animator animator;
 
-    private void CuttingCounter_OnCut(object sender, EventArgs e)
-    {
-        animator.SetTrigger(CUT);
+        private void Awake()
+        {
+            animator = GetComponent<Animator>();
+        }
+
+        private void OnEnable()
+        {
+            cuttingCounter.OnCut += HandleCut;
+        }
+
+        private void OnDisable()
+        {
+            cuttingCounter.OnCut -= HandleCut;
+        }
+
+        private void HandleCut(object sender, EventArgs e)
+        {
+            TriggerCutAnimation();
+        }
+
+        private void TriggerCutAnimation()
+        {
+            animator.SetTrigger(CUT);
+        }
     }
 }

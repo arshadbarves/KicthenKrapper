@@ -3,45 +3,48 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class MainMenuLobbyUI : MonoBehaviour
+namespace KitchenKrapper
 {
-    [SerializeField] private TextMeshProUGUI playerNameText;
-    [SerializeField] private TextMeshProUGUI playerCurrencyText;
-    [SerializeField] private TextMeshProUGUI playerGemText;
-    [SerializeField] private TextMeshProUGUI playerTrophiesText;
-    [SerializeField] private Slider playerTrophiesSlider;
-
-    private void Start()
+    public class MainMenuLobbyUI : MonoBehaviour
     {
-        SubscribeToPlayerDataChangedEvent();
-    }
+        [SerializeField] private TextMeshProUGUI playerNameText;
+        [SerializeField] private TextMeshProUGUI playerCurrencyText;
+        [SerializeField] private TextMeshProUGUI playerGemText;
+        [SerializeField] private TextMeshProUGUI playerTrophiesText;
+        [SerializeField] private Slider playerTrophiesSlider;
 
-    private void OnDestroy()
-    {
-        UnsubscribeFromPlayerDataChangedEvent();
-    }
+        private void Start()
+        {
+            SubscribeToPlayerDataChangedEvent();
+        }
 
-    private void SubscribeToPlayerDataChangedEvent()
-    {
-        GameDataSource.Instance.OnPlayerDataChanged += OnPlayerDataChanged;
-    }
+        private void OnDestroy()
+        {
+            UnsubscribeFromPlayerDataChangedEvent();
+        }
 
-    private void UnsubscribeFromPlayerDataChangedEvent()
-    {
-        GameDataSource.Instance.OnPlayerDataChanged -= OnPlayerDataChanged;
-    }
+        private void SubscribeToPlayerDataChangedEvent()
+        {
+            GameDataSource.Instance.OnPlayerDataChanged += OnPlayerDataChanged;
+        }
 
-    private void OnPlayerDataChanged(object sender, EventArgs e)
-    {
-        UpdatePlayerData(GameDataSource.Instance.GetPlayerData());
-    }
+        private void UnsubscribeFromPlayerDataChangedEvent()
+        {
+            GameDataSource.Instance.OnPlayerDataChanged -= OnPlayerDataChanged;
+        }
 
-    private void UpdatePlayerData(PlayerDataInventory playerData)
-    {
-        playerNameText.text = playerData.PlayerName;
-        playerTrophiesText.text = playerData.Trophies.ToString();
-        playerTrophiesSlider.value = playerData.Trophies;
-        playerCurrencyText.text = playerData.Coins.ToString();
-        playerGemText.text = playerData.Gems.ToString();
+        private void OnPlayerDataChanged(object sender, EventArgs e)
+        {
+            UpdatePlayerData(GameDataSource.Instance.GetPlayerData());
+        }
+
+        private void UpdatePlayerData(PlayerDataInventory playerData)
+        {
+            playerNameText.text = playerData.PlayerName;
+            playerTrophiesText.text = playerData.Trophies.ToString();
+            playerTrophiesSlider.value = playerData.Trophies;
+            playerCurrencyText.text = playerData.Coins.ToString();
+            playerGemText.text = playerData.Gems.ToString();
+        }
     }
 }

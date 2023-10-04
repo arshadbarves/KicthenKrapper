@@ -3,84 +3,70 @@ using System.Net;
 using System.Net.Sockets;
 using UnityEngine;
 
-public class NTPTime : MonoBehaviour
+namespace KitchenKrapper
 {
-    [SerializeField] private const string NTP_SERVER = "time.google.com";
-
-    public static NTPTime Instance { get; private set; }
-
-    private void Awake()
+    public class NTPTime : MonoBehaviour
     {
-        if (Instance != null && Instance != this)
+        private const string NTP_SERVER = "time.google.com";
+        public static NTPTime Instance { get; private set; }
+
+        private void Awake()
         {
-            Destroy(gameObject);
-        }
-        else
-        {
-            Instance = this;
-        }
-    }
-
-
-    private void Update()
-    {
-        Debug.Log(GetNetworkTime());
-    }
-
-    public static DateTime GetNetworkTime()
-    {
-        // NTP message size - 16 bytes of the digest (RFC 2030)
-        var ntpData = new byte[48];
-
-        //Setting the Leap Indicator, Version Number and Mode values
-        ntpData[0] = 0x1B; //LI = 0 (no warning), VN = 3 (IPv4 only), Mode = 3 (Client Mode)
-
-        var addresses = Dns.GetHostEntry(NTP_SERVER).AddressList;
-
-        //The UDP port number assigned to NTP is 123
-        var ipEndPoint = new IPEndPoint(addresses[0], 123);
-        //NTP uses UDP
-
-        using (var socket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp))
-        {
-            socket.Connect(ipEndPoint);
-
-            //Stops code hang if NTP is blocked
-            socket.ReceiveTimeout = 3000;
-
-            socket.Send(ntpData);
-            socket.Receive(ntpData);
-            socket.Close();
+            InitializeSingleton();
         }
 
-        //Offset to get to the "Transmit Timestamp" field (time at which the reply 
-        //departed the server for the client, in 64-bit timestamp format."
-        const byte serverReplyTime = 40;
+        private void InitializeSingleton()
+        {
+            if (Instance != null && Instance != this)
+            {
+                Destroy(gameObject);
+            }
+            else
+            {
+                Instance = this;
+            }
+        }
 
-        //Get the seconds part
-        ulong intPart = BitConverter.ToUInt32(ntpData, serverReplyTime);
+        private void Update()
+        {
+            Debug.Log(GetNetworkTime());
+        }
 
-        //Get the seconds fraction
-        ulong fractPart = BitConverter.ToUInt32(ntpData, serverReplyTime + 4);
+        public static DateTime GetNetworkTime()
+        {
+            byte[] ntpData = new byte[48];
+            ntpData[0] = 0x1B;
 
-        //Convert From big-endian to little-endian
-        intPart = SwapEndianness(intPart);
-        fractPart = SwapEndianness(fractPart);
+            var addresses = Dns.GetHostEntry(NTP_SERVER).AddressList;
+            var ipEndPoint = new IPEndPoint(addresses[0], 123);
 
-        var milliseconds = (intPart * 1000) + ((fractPart * 1000) / 0x100000000L);
+            using (var socket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp))
+            {
+                socket.Connect(ipEndPoint);
+                socket.ReceiveTimeout = 3000;
+                socket.Send(ntpData);
+                socket.Receive(ntpData);
+                socket.Close();
+            }
 
-        //**UTC** time
-        var networkDateTime = (new DateTime(1900, 1, 1, 0, 0, 0, DateTimeKind.Utc)).AddMilliseconds((long)milliseconds);
+            const byte serverReplyTime = 40;
+            ulong intPart = BitConverter.ToUInt32(ntpData, serverReplyTime);
+            ulong fractPart = BitConverter.ToUInt32(ntpData, serverReplyTime + 4);
+            intPart = SwapEndianness(intPart);
+            fractPart = SwapEndianness(fractPart);
 
-        return networkDateTime.ToLocalTime();
-    }
+            var milliseconds = (intPart * 1000) + ((fractPart * 1000) / 0x100000000L);
+            var networkDateTime = (new DateTime(1900, 1, 1, 0, 0, 0, DateTimeKind.Utc)).AddMilliseconds((long)milliseconds);
 
-    // stackoverflow.com/a/3294698/162671
-    static uint SwapEndianness(ulong x)
-    {
-        return (uint)(((x & 0x000000ff) << 24) +
-                       ((x & 0x0000ff00) << 8) +
-                       ((x & 0x00ff0000) >> 8) +
-                       ((x & 0xff000000) >> 24));
+            return networkDateTime.ToLocalTime();
+        }
+
+        private static uint SwapEndianness(ulong x)
+        {
+            return (uint)(((x & 0x000000ff) << 24) +
+                           ((x & 0x0000ff00) << 8) +
+                           ((x & 0x00ff0000) >> 8) +
+                           ((x & 0xff000000) >> 24));
+        }
     }
 }

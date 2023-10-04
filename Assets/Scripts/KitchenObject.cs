@@ -1,93 +1,95 @@
 using UnityEngine;
 using Unity.Netcode;
-
-public class KitchenObject : NetworkBehaviour
+namespace KitchenKrapper
 {
-    [SerializeField] private KitchenObjectSO kitchenObjectSO;
-    private IKitchenObjectParent kitchenObjectParent;
-    private FollowTransform followTransform;
-
-    protected virtual void Awake()
+    public class KitchenObject : NetworkBehaviour
     {
-        followTransform = GetComponent<FollowTransform>();
-    }
+        [SerializeField] private KitchenObjectSO kitchenObjectSO;
+        private IKitchenObjectParent kitchenObjectParent;
+        private FollowTransform followTransform;
 
-    public KitchenObjectSO GetKitchenObjectSO()
-    {
-        return kitchenObjectSO;
-    }
-
-    public void SetKitchenObjectParent(IKitchenObjectParent kitchenObjectParent)
-    {
-        SetKitchenObjectParentServerRpc(kitchenObjectParent.GetNetworkObject());
-    }
-
-    [ServerRpc(RequireOwnership = false)]
-    private void SetKitchenObjectParentServerRpc(NetworkObjectReference kitchenObjectParentNetworkObjectReference)
-    {
-        SetKitchenObjectParentClientRpc(kitchenObjectParentNetworkObjectReference);
-    }
-
-    [ClientRpc]
-    private void SetKitchenObjectParentClientRpc(NetworkObjectReference kitchenObjectParentNetworkObjectReference)
-    {
-        kitchenObjectParentNetworkObjectReference.TryGet(out NetworkObject kitchenObjectParentNetworkObject);
-        IKitchenObjectParent kitchenObjectParent = kitchenObjectParentNetworkObject.GetComponent<IKitchenObjectParent>();
-
-        if (kitchenObjectParent.HasKitchenObject())
+        protected virtual void Awake()
         {
-            return;
+            followTransform = GetComponent<FollowTransform>();
         }
 
-        // If the kitchen object parent already has a kitchen object, destroy this one
-        if (this.kitchenObjectParent != null)
+        public KitchenObjectSO GetKitchenObjectSO()
         {
-            this.kitchenObjectParent.RemoveKitchenObject();
+            return kitchenObjectSO;
         }
 
-        this.kitchenObjectParent = kitchenObjectParent;
-
-        kitchenObjectParent.SetKitchenObject(this);
-
-        followTransform.SetTargetTransform(kitchenObjectParent.GetKitchenObjectFollowTransform());
-    }
-
-    public IKitchenObjectParent GetKitchenObjectParent()
-    {
-        return kitchenObjectParent;
-    }
-
-    public void DestroySelf()
-    {
-        Destroy(gameObject);
-    }
-
-    public void RemoveKitchenObjectParent()
-    {
-        kitchenObjectParent.RemoveKitchenObject();
-    }
-
-    public bool TryGetPlateKitchenObject(out PlateKitchenObject plateKitchenObject)
-    {
-        if (this is PlateKitchenObject)
+        public void SetKitchenObjectParent(IKitchenObjectParent kitchenObjectParent)
         {
-            plateKitchenObject = this as PlateKitchenObject;
-            return true;
+            SetKitchenObjectParentServerRpc(kitchenObjectParent.GetNetworkObject());
         }
-        else
+
+        [ServerRpc(RequireOwnership = false)]
+        private void SetKitchenObjectParentServerRpc(NetworkObjectReference kitchenObjectParentNetworkObjectReference)
         {
-            plateKitchenObject = null;
-            return false;
+            SetKitchenObjectParentClientRpc(kitchenObjectParentNetworkObjectReference);
         }
-    }
 
-    public static void CreateKitchenObject(KitchenObjectSO kitchenObjectSO, IKitchenObjectParent kitchenObjectParent)
-    {
-        EOSKitchenGameMultiplayer.Instance.CreateKitchenObject(kitchenObjectSO, kitchenObjectParent);
-    }
+        [ClientRpc]
+        private void SetKitchenObjectParentClientRpc(NetworkObjectReference kitchenObjectParentNetworkObjectReference)
+        {
+            kitchenObjectParentNetworkObjectReference.TryGet(out NetworkObject kitchenObjectParentNetworkObject);
+            IKitchenObjectParent kitchenObjectParent = kitchenObjectParentNetworkObject.GetComponent<IKitchenObjectParent>();
 
-    public static void DestroyKitchenObject(KitchenObject kitchenObject)
-    {
-        EOSKitchenGameMultiplayer.Instance.DestroyKitchenObject(kitchenObject);
+            if (kitchenObjectParent.HasKitchenObject())
+            {
+                return;
+            }
+
+            // If the kitchen object parent already has a kitchen object, destroy this one
+            if (this.kitchenObjectParent != null)
+            {
+                this.kitchenObjectParent.RemoveKitchenObject();
+            }
+
+            this.kitchenObjectParent = kitchenObjectParent;
+
+            kitchenObjectParent.SetKitchenObject(this);
+
+            followTransform.SetTargetTransform(kitchenObjectParent.GetKitchenObjectFollowTransform());
+        }
+
+        public IKitchenObjectParent GetKitchenObjectParent()
+        {
+            return kitchenObjectParent;
+        }
+
+        public void DestroySelf()
+        {
+            Destroy(gameObject);
+        }
+
+        public void RemoveKitchenObjectParent()
+        {
+            kitchenObjectParent.RemoveKitchenObject();
+        }
+
+        public bool TryGetPlateKitchenObject(out PlateKitchenObject plateKitchenObject)
+        {
+            if (this is PlateKitchenObject)
+            {
+                plateKitchenObject = this as PlateKitchenObject;
+                return true;
+            }
+            else
+            {
+                plateKitchenObject = null;
+                return false;
+            }
+        }
+
+        public static void CreateKitchenObject(KitchenObjectSO kitchenObjectSO, IKitchenObjectParent kitchenObjectParent)
+        {
+            EOSKitchenGameMultiplayer.Instance.CreateKitchenObject(kitchenObjectSO, kitchenObjectParent);
+        }
+
+        public static void DestroyKitchenObject(KitchenObject kitchenObject)
+        {
+            EOSKitchenGameMultiplayer.Instance.DestroyKitchenObject(kitchenObject);
+        }
     }
 }

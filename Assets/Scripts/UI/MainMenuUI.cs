@@ -2,66 +2,69 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class MainMenuUI : MonoBehaviour
+namespace KitchenKrapper
 {
-    [Header("Panels")]
-    [SerializeField] private GameObject popupSettingsPanel;
-    [SerializeField] private GameObject popupNamePanel;
-
-    [Header("Buttons")]
-    [SerializeField] private Button playButton;
-    [SerializeField] private Button settingsButton;
-
-    [Header("Multiplayer Toggle")]
-    [SerializeField] private Toggle multiplayerToggle;
-    [SerializeField] private Image multiplayerToggleBackground;
-    [SerializeField] private TextMeshProUGUI multiplayerText;
-
-    private void Awake()
+    public class MainMenuUI : MonoBehaviour
     {
-        playButton.onClick.AddListener(OnPlayButtonClicked);
-        multiplayerToggle.onValueChanged.AddListener(OnMultiplayerToggleValueChanged);
-        settingsButton.onClick.AddListener(OnSettingsButtonClicked);
-    }
+        [Header("Panels")]
+        [SerializeField] private GameObject popupSettingsPanel;
+        [SerializeField] private GameObject popupNamePanel;
 
-    private void Start()
-    {
-        OnMultiplayerToggleValueChanged(GameDataSource.PlayMultiplayer);
-    }
+        [Header("Buttons")]
+        [SerializeField] private Button playButton;
+        [SerializeField] private Button settingsButton;
 
-    private void OnMultiplayerToggleValueChanged(bool isMultiplayer)
-    {
-        GameDataSource.PlayMultiplayer = isMultiplayer;
+        [Header("Multiplayer Toggle")]
+        [SerializeField] private Toggle multiplayerToggle;
+        [SerializeField] private Image multiplayerToggleBackground;
+        [SerializeField] private TextMeshProUGUI multiplayerText;
 
-        if (GameDataSource.PlayMultiplayer)
+        private void Awake()
         {
-            multiplayerText.text = "Multiplayer";
-            multiplayerToggleBackground.color = new Color(254f / 255f, 137f / 255f, 254f / 255f);
+            playButton.onClick.AddListener(OnPlayButtonClicked);
+            multiplayerToggle.onValueChanged.AddListener(OnMultiplayerToggleValueChanged);
+            settingsButton.onClick.AddListener(OnSettingsButtonClicked);
         }
-        else
+
+        private void Start()
         {
-            multiplayerText.text = "Singleplayer";
-            multiplayerToggleBackground.color = new Color(255f / 255f, 192f / 255f, 203f / 255f);
+            OnMultiplayerToggleValueChanged(GameDataSource.PlayMultiplayer);
         }
-    }
 
-    private void ShowPanel(GameObject panel)
-    {
-        panel.SetActive(true);
-    }
+        private void OnMultiplayerToggleValueChanged(bool isMultiplayer)
+        {
+            GameDataSource.PlayMultiplayer = isMultiplayer;
 
-    public void OnPlayButtonClicked()
-    {
-        SceneLoaderWrapper.Instance.LoadScene(SceneType.MultiplayerMenu.ToString(), false);
-    }
+            if (GameDataSource.PlayMultiplayer)
+            {
+                multiplayerText.text = "Multiplayer";
+                multiplayerToggleBackground.color = new Color(254f / 255f, 137f / 255f, 254f / 255f);
+            }
+            else
+            {
+                multiplayerText.text = "Singleplayer";
+                multiplayerToggleBackground.color = new Color(255f / 255f, 192f / 255f, 203f / 255f);
+            }
+        }
 
-    public void OnSettingsButtonClicked()
-    {
-        ShowPanel(popupSettingsPanel);
-    }
+        private void ShowPanel(GameObject panel)
+        {
+            panel.SetActive(true);
+        }
 
-    public void ShowPopupNamePanel()
-    {
-        ShowPanel(popupNamePanel);
+        public void OnPlayButtonClicked()
+        {
+            SceneLoaderWrapper.Instance.LoadScene(SceneType.MultiplayerMenu.ToString(), false);
+        }
+
+        public void OnSettingsButtonClicked()
+        {
+            ShowPanel(popupSettingsPanel);
+        }
+
+        public void ShowPopupNamePanel()
+        {
+            ShowPanel(popupNamePanel);
+        }
     }
 }

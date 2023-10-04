@@ -3,173 +3,176 @@ using System.Collections.Generic;
 using Unity.Netcode;
 using UnityEngine;
 
-public class DeliveryManager : NetworkBehaviour
+namespace KitchenKrapper
 {
-    public event EventHandler<RecipeEventArgs> OnRecipeSpawned;
-    public event EventHandler<RecipeEventArgs> OnRecipeDelivered;
-    public event EventHandler OnRecipeDeliveryFailed;
-    public event EventHandler<RecipeEventArgs> OnRecipeExpired;
-
-    public class RecipeEventArgs : EventArgs
+    public class DeliveryManager : NetworkBehaviour
     {
-        public Recipe Recipe { get; set; }
-    }
+        public event EventHandler<RecipeEventArgs> OnRecipeSpawned;
+        public event EventHandler<RecipeEventArgs> OnRecipeDelivered;
+        public event EventHandler OnRecipeDeliveryFailed;
+        public event EventHandler<RecipeEventArgs> OnRecipeExpired;
 
-    public static DeliveryManager Instance { get; private set; }
-
-    [SerializeField] private RecipeListSO recipeListSO;
-
-    [SerializeField] private float spawnRecipeTimerMax = 5f;
-    [SerializeField] private int waitingRecipeMaxCount = 3;
-    private Dictionary<int, Recipe> waitingRecipeList;
-    private float spawnRecipeTimer = 4f;
-    private int successfulDeliveryCount = 0;
-    private int failedDeliveryCount = 0;
-    private int expiredDeliveryCount = 0;
-
-    private void Awake()
-    {
-        Instance = this;
-        waitingRecipeList = new Dictionary<int, Recipe>();
-    }
-
-    private void Update()
-    {
-        if (!IsServer || !LevelManager.Instance.IsPlaying() || LevelManager.Instance.GetGameMode() == GameMode.Tutorial)
-            return;
-
-        SpawnRecipe();
-        UpdateRecipeDeliveryTime();
-    }
-
-    private void SpawnRecipe()
-    {
-        spawnRecipeTimer -= Time.deltaTime;
-
-        if (spawnRecipeTimer <= 0f && waitingRecipeList.Count < waitingRecipeMaxCount)
+        public class RecipeEventArgs : EventArgs
         {
-            spawnRecipeTimer = spawnRecipeTimerMax;
-
-            int randomIndex = UnityEngine.Random.Range(0, recipeListSO.recipeSOList.Count);
-            int recipeID = RecipeIDGenerator.GetRecipeID();
-            float deliveryTime = LevelManager.Instance.GetRecipeDeliveryTime();
-
-            SpawnRecipeClientRpc(randomIndex, recipeID, deliveryTime);
+            public Recipe Recipe { get; set; }
         }
-    }
 
-    [ClientRpc]
-    private void SpawnRecipeClientRpc(int randomIndex, int recipeID, float deliveryTime)
-    {
-        Recipe recipe = new Recipe(recipeID, deliveryTime, recipeListSO.recipeSOList[randomIndex]);
-        waitingRecipeList.Add(recipeID, recipe);
-        OnRecipeSpawned?.Invoke(this, new RecipeEventArgs { Recipe = recipe });
-    }
+        public static DeliveryManager Instance { get; private set; }
 
-    private void UpdateRecipeDeliveryTime()
-    {
-        foreach (Recipe recipe in waitingRecipeList.Values)
+        [SerializeField] private RecipeListSO recipeListSO;
+
+        [SerializeField] private float spawnRecipeTimerMax = 5f;
+        [SerializeField] private int waitingRecipeMaxCount = 3;
+        private Dictionary<int, Recipe> waitingRecipeList;
+        private float spawnRecipeTimer = 4f;
+        private int successfulDeliveryCount = 0;
+        private int failedDeliveryCount = 0;
+        private int expiredDeliveryCount = 0;
+
+        private void Awake()
         {
-            float deliveryTime = recipe.GetDeliveryTime() - Time.deltaTime;
-            recipe.SetDeliveryTime(deliveryTime);
+            Instance = this;
+            waitingRecipeList = new Dictionary<int, Recipe>();
+        }
 
-            if (deliveryTime <= 0f)
-            {
-                int recipeID = recipe.GetRecipeID();
-                RemoveExpiredRecipeClientRpc(recipeID);
+        private void Update()
+        {
+            if (!IsServer || !LevelManager.Instance.IsPlaying() || LevelManager.Instance.GetGameMode() == GameMode.Tutorial)
                 return;
+
+            SpawnRecipe();
+            UpdateRecipeDeliveryTime();
+        }
+
+        private void SpawnRecipe()
+        {
+            spawnRecipeTimer -= Time.deltaTime;
+
+            if (spawnRecipeTimer <= 0f && waitingRecipeList.Count < waitingRecipeMaxCount)
+            {
+                spawnRecipeTimer = spawnRecipeTimerMax;
+
+                int randomIndex = UnityEngine.Random.Range(0, recipeListSO.recipeSOList.Count);
+                int recipeID = RecipeIDGenerator.GetRecipeID();
+                float deliveryTime = LevelManager.Instance.GetRecipeDeliveryTime();
+
+                SpawnRecipeClientRpc(randomIndex, recipeID, deliveryTime);
             }
         }
-    }
 
-    [ClientRpc]
-    public void RemoveExpiredRecipeClientRpc(int recipeID)
-    {
-        expiredDeliveryCount++;
-        OnRecipeExpired?.Invoke(this, new RecipeEventArgs { Recipe = waitingRecipeList[recipeID] });
-        RemoveRecipe(recipeID);
-    }
-
-    [ServerRpc(RequireOwnership = false)]
-    private void DeliveryCorrectRecipeServerRpc(int recipeID)
-    {
-        DeliveryCorrectRecipeClientRpc(recipeID);
-    }
-
-    [ClientRpc]
-    private void DeliveryCorrectRecipeClientRpc(int recipeID)
-    {
-        successfulDeliveryCount++;
-        OnRecipeDelivered?.Invoke(this, new RecipeEventArgs { Recipe = waitingRecipeList[recipeID] });
-        RemoveRecipe(recipeID);
-    }
-
-    [ServerRpc(RequireOwnership = false)]
-    private void DeliveryIncorrectRecipeServerRpc()
-    {
-        DeliveryIncorrectRecipeClientRpc();
-    }
-
-    [ClientRpc]
-    private void DeliveryIncorrectRecipeClientRpc()
-    {
-        failedDeliveryCount++;
-        OnRecipeDeliveryFailed?.Invoke(this, EventArgs.Empty);
-    }
-
-    public void DeliveryRecipe(PlateKitchenObject plateKitchenObject)
-    {
-        foreach (Recipe recipe in waitingRecipeList.Values)
+        [ClientRpc]
+        private void SpawnRecipeClientRpc(int randomIndex, int recipeID, float deliveryTime)
         {
-            RecipeSO waitingRecipeSO = recipe.GetRecipeSO();
+            Recipe recipe = new Recipe(recipeID, deliveryTime, recipeListSO.recipeSOList[randomIndex]);
+            waitingRecipeList.Add(recipeID, recipe);
+            OnRecipeSpawned?.Invoke(this, new RecipeEventArgs { Recipe = recipe });
+        }
 
-            if (waitingRecipeSO.kitchenObjectSOList.Count == plateKitchenObject.TryGetIngredient().Count)
+        private void UpdateRecipeDeliveryTime()
+        {
+            foreach (Recipe recipe in waitingRecipeList.Values)
             {
-                bool plateContentsMatchRecipe = true;
-                List<KitchenObjectSO> plateIngredients = plateKitchenObject.TryGetIngredient();
+                float deliveryTime = recipe.GetDeliveryTime() - Time.deltaTime;
+                recipe.SetDeliveryTime(deliveryTime);
 
-                foreach (KitchenObjectSO recipeKitchenObjectSO in waitingRecipeSO.kitchenObjectSOList)
+                if (deliveryTime <= 0f)
                 {
-                    if (!plateIngredients.Contains(recipeKitchenObjectSO))
-                    {
-                        plateContentsMatchRecipe = false;
-                        break;
-                    }
-                }
-
-                if (plateContentsMatchRecipe)
-                {
-                    DeliveryCorrectRecipeServerRpc(recipe.GetRecipeID());
+                    int recipeID = recipe.GetRecipeID();
+                    RemoveExpiredRecipeClientRpc(recipeID);
                     return;
                 }
             }
         }
 
-        DeliveryIncorrectRecipeServerRpc();
-    }
+        [ClientRpc]
+        public void RemoveExpiredRecipeClientRpc(int recipeID)
+        {
+            expiredDeliveryCount++;
+            OnRecipeExpired?.Invoke(this, new RecipeEventArgs { Recipe = waitingRecipeList[recipeID] });
+            RemoveRecipe(recipeID);
+        }
 
-    public Dictionary<int, Recipe> GetWaitingRecipeList()
-    {
-        return waitingRecipeList;
-    }
+        [ServerRpc(RequireOwnership = false)]
+        private void DeliveryCorrectRecipeServerRpc(int recipeID)
+        {
+            DeliveryCorrectRecipeClientRpc(recipeID);
+        }
 
-    public int GetSuccessfulDeliveryCount()
-    {
-        return successfulDeliveryCount;
-    }
+        [ClientRpc]
+        private void DeliveryCorrectRecipeClientRpc(int recipeID)
+        {
+            successfulDeliveryCount++;
+            OnRecipeDelivered?.Invoke(this, new RecipeEventArgs { Recipe = waitingRecipeList[recipeID] });
+            RemoveRecipe(recipeID);
+        }
 
-    public int GetFailedDeliveryCount()
-    {
-        return failedDeliveryCount;
-    }
+        [ServerRpc(RequireOwnership = false)]
+        private void DeliveryIncorrectRecipeServerRpc()
+        {
+            DeliveryIncorrectRecipeClientRpc();
+        }
 
-    public int GetExpiredDeliveryCount()
-    {
-        return expiredDeliveryCount;
-    }
+        [ClientRpc]
+        private void DeliveryIncorrectRecipeClientRpc()
+        {
+            failedDeliveryCount++;
+            OnRecipeDeliveryFailed?.Invoke(this, EventArgs.Empty);
+        }
 
-    public void RemoveRecipe(int recipeID)
-    {
-        waitingRecipeList.Remove(recipeID);
+        public void DeliveryRecipe(PlateKitchenObject plateKitchenObject)
+        {
+            foreach (Recipe recipe in waitingRecipeList.Values)
+            {
+                RecipeSO waitingRecipeSO = recipe.GetRecipeSO();
+
+                if (waitingRecipeSO.kitchenObjectSOList.Count == plateKitchenObject.TryGetIngredient().Count)
+                {
+                    bool plateContentsMatchRecipe = true;
+                    List<KitchenObjectSO> plateIngredients = plateKitchenObject.TryGetIngredient();
+
+                    foreach (KitchenObjectSO recipeKitchenObjectSO in waitingRecipeSO.kitchenObjectSOList)
+                    {
+                        if (!plateIngredients.Contains(recipeKitchenObjectSO))
+                        {
+                            plateContentsMatchRecipe = false;
+                            break;
+                        }
+                    }
+
+                    if (plateContentsMatchRecipe)
+                    {
+                        DeliveryCorrectRecipeServerRpc(recipe.GetRecipeID());
+                        return;
+                    }
+                }
+            }
+
+            DeliveryIncorrectRecipeServerRpc();
+        }
+
+        public Dictionary<int, Recipe> GetWaitingRecipeList()
+        {
+            return waitingRecipeList;
+        }
+
+        public int GetSuccessfulDeliveryCount()
+        {
+            return successfulDeliveryCount;
+        }
+
+        public int GetFailedDeliveryCount()
+        {
+            return failedDeliveryCount;
+        }
+
+        public int GetExpiredDeliveryCount()
+        {
+            return expiredDeliveryCount;
+        }
+
+        public void RemoveRecipe(int recipeID)
+        {
+            waitingRecipeList.Remove(recipeID);
+        }
     }
 }

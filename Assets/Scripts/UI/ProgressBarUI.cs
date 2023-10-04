@@ -1,45 +1,48 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-public class ProgressBarUI : MonoBehaviour
+namespace KitchenKrapper
 {
-    [SerializeField] private GameObject hasProgressGameObject;
-    [SerializeField] private Image progressBarImage;
-
-    private IHasProgress hasProgress;
-
-    private void Start()
+    public class ProgressBarUI : MonoBehaviour
     {
-        hasProgress = hasProgressGameObject.GetComponent<IHasProgress>();
-        if (hasProgress == null)
-        {
-            Debug.LogError("Game Object" + hasProgressGameObject + " does not have IHasProgress component");
-        }
-        hasProgress.OnProgressChanged += HasProgressCounter_OnProgressChanged;
-        progressBarImage.fillAmount = 0f;
-        Hide();
-    }
+        [SerializeField] private GameObject hasProgressGameObject;
+        [SerializeField] private Image progressBarImage;
 
-    private void HasProgressCounter_OnProgressChanged(object sender, IHasProgress.ProgressChangedEventArgs e)
-    {
-        progressBarImage.fillAmount = e.progressNormalized;
-        if (e.progressNormalized > 0f && e.progressNormalized < 1f)
+        private IHasProgress hasProgress;
+
+        private void Start()
         {
-            Show();
-        }
-        else
-        {
+            hasProgress = hasProgressGameObject.GetComponent<IHasProgress>();
+            if (hasProgress == null)
+            {
+                Debug.LogError("Game Object" + hasProgressGameObject + " does not have IHasProgress component");
+            }
+            hasProgress.OnProgressChanged += HasProgressCounter_OnProgressChanged;
+            progressBarImage.fillAmount = 0f;
             Hide();
         }
-    }
 
-    private void Show()
-    {
-        gameObject.SetActive(true);
-    }
+        private void HasProgressCounter_OnProgressChanged(object sender, IHasProgress.ProgressChangedEventArgs e)
+        {
+            progressBarImage.fillAmount = e.progressNormalized;
+            if (e.progressNormalized > 0f && e.progressNormalized < 1f)
+            {
+                Show();
+            }
+            else
+            {
+                Hide();
+            }
+        }
 
-    private void Hide()
-    {
-        gameObject.SetActive(false);
+        private void Show()
+        {
+            gameObject.SetActive(true);
+        }
+
+        private void Hide()
+        {
+            gameObject.SetActive(false);
+        }
     }
 }

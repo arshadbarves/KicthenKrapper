@@ -2,30 +2,44 @@ using System;
 using Unity.Netcode;
 using UnityEngine;
 
-public class ContainerCounter : BaseStation
+namespace KitchenKrapper
 {
-    public event EventHandler OnContainerCounterInteracted;
-    [SerializeField] private KitchenObjectSO kitchenObjectSO;
-    public override void Interact(Player player)
+    public class ContainerCounter : BaseStation
     {
-        if (!player.HasKitchenObject())
+        public event EventHandler OnContainerCounterInteracted;
+
+        [SerializeField] private KitchenObjectSO kitchenObjectSO;
+
+        public override void Interact(Player player)
+        {
+            HandleInteract(player);
+        }
+
+        private void HandleInteract(Player player)
+        {
+            if (!player.HasKitchenObject())
+            {
+                CreateAndInteractKitchenObject(player);
+            }
+        }
+
+        private void CreateAndInteractKitchenObject(Player player)
         {
             KitchenObject.CreateKitchenObject(kitchenObjectSO, player);
             InteractServerRpc();
-
             StepComplete();
         }
-    }
 
-    [ServerRpc(RequireOwnership = false)]
-    private void InteractServerRpc()
-    {
-        InteractClientRpc();
-    }
+        [ServerRpc(RequireOwnership = false)]
+        private void InteractServerRpc()
+        {
+            InteractClientRpc();
+        }
 
-    [ClientRpc]
-    private void InteractClientRpc()
-    {
-        OnContainerCounterInteracted?.Invoke(this, EventArgs.Empty);
+        [ClientRpc]
+        private void InteractClientRpc()
+        {
+            OnContainerCounterInteracted?.Invoke(this, EventArgs.Empty);
+        }
     }
 }

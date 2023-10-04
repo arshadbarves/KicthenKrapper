@@ -2,193 +2,155 @@ using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class SceneLoaderWrapper : NetworkBehaviour
+namespace KitchenKrapper
 {
-    /// <summary>
-    /// Manages a loading screen by wrapping around scene management APIs. It loads scene using the SceneManager,
-    /// or, on listening servers for which scene management is enabled, using the NetworkSceneManager and handles
-    /// the starting and stopping of the loading screen.
-    /// </summary>
-
-    [SerializeField]
-    ClientLoadingScreen m_ClientLoadingScreen;
-
-    [SerializeField]
-    LoadingProgressManager m_LoadingProgressManager;
-
-    bool IsNetworkSceneManagementEnabled => NetworkManager != null && NetworkManager.SceneManager != null && NetworkManager.NetworkConfig.EnableSceneManagement;
-
-    public static SceneLoaderWrapper Instance { get; protected set; }
-
-    public virtual void Awake()
+    public class SceneLoaderWrapper : NetworkBehaviour
     {
-        if (Instance != null && Instance != this)
+        [SerializeField] private MainMenuUIManager mainMenuUIManager;
+        [SerializeField] private LoadingProgressManager loadingProgressManager;
+
+        private bool IsNetworkSceneManagementEnabled => NetworkManager != null && NetworkManager.SceneManager != null && NetworkManager.NetworkConfig.EnableSceneManagement;
+
+        public static SceneLoaderWrapper Instance { get; protected set; }
+
+        private void Awake()
         {
-            Destroy(gameObject);
+            InitializeSingleton();
+            DontDestroyOnLoad(this);
         }
-        else
+
+        private void InitializeSingleton()
         {
-            Instance = this;
-        }
-        DontDestroyOnLoad(this);
-    }
-
-    public virtual void Start()
-    {
-        SceneManager.sceneLoaded += OnSceneLoaded;
-    }
-
-    public override void OnDestroy()
-    {
-        SceneManager.sceneLoaded -= OnSceneLoaded;
-        base.OnDestroy();
-    }
-
-    public override void OnNetworkDespawn()
-    {
-        if (NetworkManager != null && NetworkManager.SceneManager != null)
-        {
-            NetworkManager.SceneManager.OnSceneEvent -= OnSceneEvent;
-        }
-    }
-
-    /// <summary>
-    /// Initializes the callback on scene events. This needs to be called right after initializing NetworkManager
-    /// (after StartHost, StartClient or StartServer)
-    /// </summary>
-    public virtual void AddOnSceneEventCallback()
-    {
-        if (IsNetworkSceneManagementEnabled)
-        {
-            NetworkManager.SceneManager.OnSceneEvent += OnSceneEvent;
-        }
-    }
-
-    /// <summary>
-    /// Loads a scene asynchronously using the specified loadSceneMode, with NetworkSceneManager if on a listening
-    /// server with SceneManagement enabled, or SceneManager otherwise. If a scene is loaded via SceneManager, this
-    /// method also triggers the start of the loading screen.
-    /// </summary>
-    /// <param name="sceneName">Name or path of the Scene to load.</param>
-    /// <param name="useNetworkSceneManager">If true, uses NetworkSceneManager, else uses SceneManager</param>
-    /// <param name="loadSceneMode">If LoadSceneMode.Single then all current Scenes will be unloaded before loading.</param>
-    public virtual void LoadScene(string sceneName, bool useNetworkSceneManager, LoadSceneMode loadSceneMode = LoadSceneMode.Single)
-    {
-        if (useNetworkSceneManager)
-        {
-            // Check if NetworkSceneManager is enabled
-            // if (IsSpawned && IsNetworkSceneManagementEnabled && !NetworkManager.ShutdownInProgress)
-            // {
-            //     // If is active server and NetworkManager uses scene management, load scene using NetworkManager's SceneManager
-            //     if (NetworkManager.IsServer)
-            //     {
-            //         // If is active server and NetworkManager uses scene management, load scene using NetworkManager's SceneManager
-            //         NetworkManager.SceneManager.LoadScene(sceneName, loadSceneMode);
-            //     }
-            // }
-
-            NetworkManager.SceneManager.LoadScene(sceneName, loadSceneMode);
-        }
-        else
-        {
-            // Load using SceneManager
-            var loadOperation = SceneManager.LoadSceneAsync(sceneName, loadSceneMode);
-            if (loadSceneMode == LoadSceneMode.Single)
+            if (Instance != null && Instance != this)
             {
-                m_ClientLoadingScreen.StartLoadingScreen();
-                m_LoadingProgressManager.LocalLoadOperation = loadOperation;
+                Destroy(gameObject);
+            }
+            else
+            {
+                Instance = this;
             }
         }
-    }
 
-    /// <summary>
-    /// Loads a scene asynchronously using the specified loadSceneMode, with NetworkSceneManager if on a listening
-    /// server with SceneManagement enabled, or SceneManager otherwise. If a scene is loaded via SceneManager, this
-    /// method also triggers the start of the loading screen.
-    /// </summary>
-
-    void OnSceneLoaded(Scene scene, LoadSceneMode loadSceneMode)
-    {
-        if (!IsSpawned || NetworkManager.ShutdownInProgress)
+        private void Start()
         {
-            m_ClientLoadingScreen.StopLoadingScreen();
+            SceneManager.sceneLoaded += OnSceneLoaded;
         }
-    }
 
-    void OnSceneEvent(SceneEvent sceneEvent)
-    {
-        switch (sceneEvent.SceneEventType)
+        public override void OnDestroy()
         {
-            case SceneEventType.Load: // Server told client to load a scene
-                                      // Only executes on client
-                if (NetworkManager.IsClient)
+            SceneManager.sceneLoaded -= OnSceneLoaded;
+            base.OnDestroy();
+        }
+
+        public override void OnNetworkDespawn()
+        {
+            if (NetworkManager != null && NetworkManager.SceneManager != null)
+            {
+                NetworkManager.SceneManager.OnSceneEvent -= OnSceneEvent;
+            }
+        }
+
+        public virtual void AddOnSceneEventCallback()
+        {
+            if (IsNetworkSceneManagementEnabled)
+            {
+                NetworkManager.SceneManager.OnSceneEvent += OnSceneEvent;
+            }
+        }
+
+        public virtual void LoadScene(string sceneName, bool useNetworkSceneManager = false, LoadSceneMode loadSceneMode = LoadSceneMode.Single)
+        {
+            if (useNetworkSceneManager && IsNetworkSceneManagementEnabled)
+            {
+                NetworkManager.SceneManager.LoadScene(sceneName, loadSceneMode);
+            }
+            else
+            {
+                var loadOperation = SceneManager.LoadSceneAsync(sceneName, loadSceneMode);
+                if (loadSceneMode == LoadSceneMode.Single)
                 {
-                    // Only start a new loading screen if scene loaded in Single mode, else simply update
-                    if (sceneEvent.LoadSceneMode == LoadSceneMode.Single)
-                    {
-                        m_ClientLoadingScreen.StartLoadingScreen();
-                        m_LoadingProgressManager.LocalLoadOperation = sceneEvent.AsyncOperation;
-                    }
-                    else
-                    {
-                        m_ClientLoadingScreen.UpdateLoadingScreen();
-                        m_LoadingProgressManager.LocalLoadOperation = sceneEvent.AsyncOperation;
-                    }
+                    mainMenuUIManager.ShowLoadingScreen();
+                    loadingProgressManager.LocalLoadOperation = loadOperation;
                 }
-                break;
-            case SceneEventType.LoadEventCompleted: // Server told client that all clients finished loading a scene
-                                                    // Only executes on client
-                if (NetworkManager.IsClient)
-                {
-                    m_ClientLoadingScreen.StopLoadingScreen();
-                    m_LoadingProgressManager.ResetLocalProgress();
-                }
-                break;
-            case SceneEventType.Synchronize: // Server told client to start synchronizing scenes
-                {
-                    // todo: this is a workaround that could be removed once MTT-3363 is done
-                    // Only executes on client that is not the host
+            }
+        }
+
+        private void OnSceneLoaded(Scene scene, LoadSceneMode loadSceneMode)
+        {
+            if (!IsSpawned || NetworkManager.ShutdownInProgress)
+            {
+                mainMenuUIManager.HideLoadingScreen();
+            }
+        }
+
+        private void OnSceneEvent(SceneEvent sceneEvent)
+        {
+            switch (sceneEvent.SceneEventType)
+            {
+                case SceneEventType.Load:
+                    if (NetworkManager.IsClient)
+                    {
+                        if (sceneEvent.LoadSceneMode == LoadSceneMode.Single)
+                        {
+                            mainMenuUIManager.ShowLoadingScreen();
+                            loadingProgressManager.LocalLoadOperation = sceneEvent.AsyncOperation;
+                        }
+                        else
+                        {
+                            mainMenuUIManager.UpdateLoadingScreen();
+                            loadingProgressManager.LocalLoadOperation = sceneEvent.AsyncOperation;
+                        }
+                    }
+                    break;
+                case SceneEventType.LoadEventCompleted:
+                    if (NetworkManager.IsClient)
+                    {
+                        mainMenuUIManager.HideLoadingScreen();
+                        loadingProgressManager.ResetLocalProgress();
+                    }
+                    break;
+                case SceneEventType.Synchronize:
                     if (NetworkManager.IsClient && !NetworkManager.IsHost)
                     {
-                        // unload all currently loaded additive scenes so that if we connect to a server with the same
-                        // main scene we properly load and synchronize all appropriate scenes without loading a scene
-                        // that is already loaded.
                         UnloadAdditiveScenes();
                     }
                     break;
-                }
-            case SceneEventType.SynchronizeComplete: // Client told server that they finished synchronizing
-                                                     // Only executes on server
-                if (NetworkManager.IsServer)
-                {
-                    // Send client RPC to make sure the client stops the loading screen after the server handles what it needs to after the client finished synchronizing, for example character spawning done server side should still be hidden by loading screen.
-                    StopLoadingScreenClientRpc(new ClientRpcParams { Send = new ClientRpcSendParams { TargetClientIds = new[] { sceneEvent.ClientId } } });
-                }
-                break;
-        }
-    }
-
-    void UnloadAdditiveScenes()
-    {
-        var activeScene = SceneManager.GetActiveScene();
-        for (var i = 0; i < SceneManager.sceneCount; i++)
-        {
-            var scene = SceneManager.GetSceneAt(i);
-            if (scene.isLoaded && scene != activeScene)
-            {
-                SceneManager.UnloadSceneAsync(scene);
+                case SceneEventType.SynchronizeComplete:
+                    if (NetworkManager.IsServer)
+                    {
+                        HideLoadingScreenClientRpc(new ClientRpcParams { Send = new ClientRpcSendParams { TargetClientIds = new[] { sceneEvent.ClientId } } });
+                    }
+                    break;
             }
         }
-    }
 
-    [ClientRpc]
-    void StopLoadingScreenClientRpc(ClientRpcParams clientRpcParams = default)
-    {
-        m_ClientLoadingScreen.StopLoadingScreen();
-    }
+        private void UnloadAdditiveScenes()
+        {
+            var activeScene = SceneManager.GetActiveScene();
+            for (var i = 0; i < SceneManager.sceneCount; i++)
+            {
+                var scene = SceneManager.GetSceneAt(i);
+                if (scene.isLoaded && scene != activeScene)
+                {
+                    SceneManager.UnloadSceneAsync(scene);
+                }
+            }
+        }
 
-    public string GetActiveSceneName()
-    {
-        return SceneManager.GetActiveScene().name;
+        [ClientRpc]
+        private void HideLoadingScreenClientRpc(ClientRpcParams clientRpcParams = default)
+        {
+            mainMenuUIManager.HideLoadingScreen();
+        }
+
+        public string GetActiveSceneName()
+        {
+            return SceneManager.GetActiveScene().name;
+        }
+
+        public void ReloadScene()
+        {
+            LoadScene(GetActiveSceneName());
+        }
     }
 }

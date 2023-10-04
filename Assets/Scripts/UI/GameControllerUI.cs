@@ -1,72 +1,75 @@
 using System;
 using UnityEngine;
 
-public class GameControllerUI : MonoBehaviour
+namespace KitchenKrapper
 {
-    private LevelManager levelManager;
-
-    private void Awake()
+    public class GameControllerUI : MonoBehaviour
     {
-        levelManager = LevelManager.Instance;
-    }
+        private LevelManager levelManager;
 
-    private void Start()
-    {
-        SubscribeToGameStateEvents();
-        UpdateVisibility();
-    }
-
-    private void SubscribeToGameStateEvents()
-    {
-        if (levelManager != null)
+        private void Awake()
         {
-            levelManager.OnGameStateChanged += HandleGameStateChanged;
+            levelManager = LevelManager.Instance;
         }
-    }
 
-    private void UnsubscribeFromGameStateEvents()
-    {
-        if (levelManager != null)
+        private void Start()
         {
-            levelManager.OnGameStateChanged -= HandleGameStateChanged;
+            SubscribeToGameStateEvents();
+            UpdateVisibility();
         }
-    }
 
-    private void HandleGameStateChanged(object sender, EventArgs e)
-    {
-        UpdateVisibility();
-    }
-
-    private void UpdateVisibility()
-    {
-        if (levelManager != null)
+        private void SubscribeToGameStateEvents()
         {
-            if (levelManager.IsGameOver())
+            if (levelManager != null)
             {
-                print("Game over");
-                Hide();
-            }
-            else
-            {
-                Show();
+                levelManager.OnGameStateChanged += HandleGameStateChanged;
             }
         }
-    }
 
-    public void Hide()
-    {
-        Debug.Log("Hiding game controller");
-        gameObject.SetActive(false);
-    }
+        private void UnsubscribeFromGameStateEvents()
+        {
+            if (levelManager != null)
+            {
+                levelManager.OnGameStateChanged -= HandleGameStateChanged;
+            }
+        }
 
-    public void Show()
-    {
-        Debug.Log("Showing game controller");
-        gameObject.SetActive(true);
-    }
+        private void HandleGameStateChanged(object sender, EventArgs e)
+        {
+            UpdateVisibility();
+        }
 
-    private void OnDestroy()
-    {
-        UnsubscribeFromGameStateEvents();
+        private void UpdateVisibility()
+        {
+            if (levelManager != null)
+            {
+                if (levelManager.IsGameOver())
+                {
+                    print("Game over");
+                    Hide();
+                }
+                else
+                {
+                    Show();
+                }
+            }
+        }
+
+        public void Hide()
+        {
+            Debug.Log("Hiding game controller");
+            gameObject.SetActive(false);
+        }
+
+        public void Show()
+        {
+            Debug.Log("Showing game controller");
+            gameObject.SetActive(true);
+        }
+
+        private void OnDestroy()
+        {
+            UnsubscribeFromGameStateEvents();
+        }
     }
 }

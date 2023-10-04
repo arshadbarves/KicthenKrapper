@@ -1,61 +1,58 @@
 using UnityEngine;
 
-public class ClearCounter : BaseStation
+namespace KitchenKrapper
 {
-    [SerializeField] private KitchenObjectSO kitchenObjectSO;
-
-    public override void Interact(Player player)
+    public class ClearCounter : BaseStation
     {
+        [SerializeField] private KitchenObjectSO kitchenObjectSO;
 
-        if (!HasKitchenObject())
+        public override void Interact(Player player)
         {
-            // Counter doesn't have a kitchen object
+            if (!HasKitchenObject())
+            {
+                HandleCounterEmpty(player);
+            }
+            else
+            {
+                HandleCounterOccupied(player);
+            }
+        }
+
+        private void HandleCounterEmpty(Player player)
+        {
             if (player.HasKitchenObject())
             {
                 player.GetKitchenObject().SetKitchenObjectParent(this);
                 StepComplete();
             }
-            else
-            {
-                // Player doesn't have a kitchen object
-            }
+            // No need for an else clause here since we're not doing anything if both are empty.
         }
-        else
+
+        private void HandleCounterOccupied(Player player)
         {
-            // Counter already has a kitchen object
             if (player.HasKitchenObject())
             {
-                // Player already has a kitchen object
-                if (player.GetKitchenObject().TryGetPlateKitchenObject(out PlateKitchenObject plateKitchenObject))
+                if (player.GetKitchenObject().TryGetPlateKitchenObject(out PlateKitchenObject playerPlate))
                 {
-                    // Player has a plate
-                    if (plateKitchenObject.TryAddIngredient(GetKitchenObject().GetKitchenObjectSO()))
-                    {
-                        // Ingredient added to plate
-                        KitchenObject.DestroyKitchenObject(GetKitchenObject());
-                        StepComplete();
-                    }
+                    TryAddIngredientToPlate(player, playerPlate);
                 }
-                else
+                else if (GetKitchenObject().TryGetPlateKitchenObject(out PlateKitchenObject counterPlate))
                 {
-                    // Player doesn't have a plate
-                    if (GetKitchenObject().TryGetPlateKitchenObject(out plateKitchenObject))
-                    {
-                        // Counter has a plate
-                        if (plateKitchenObject.TryAddIngredient(player.GetKitchenObject().GetKitchenObjectSO()))
-                        {
-                            // Ingredient added to plate
-                            KitchenObject.DestroyKitchenObject(player.GetKitchenObject());
-                            StepComplete();
-                        }
-                    }
+                    TryAddIngredientToPlate(this, counterPlate);
                 }
             }
             else
             {
-                // Player doesn't have a kitchen object
                 GetKitchenObject().SetKitchenObjectParent(player);
+                StepComplete();
+            }
+        }
 
+        private void TryAddIngredientToPlate(IKitchenObjectParent sourceParent, PlateKitchenObject plate)
+        {
+            if (plate.TryAddIngredient(sourceParent.GetKitchenObject().GetKitchenObjectSO()))
+            {
+                KitchenObject.DestroyKitchenObject(sourceParent.GetKitchenObject());
                 StepComplete();
             }
         }

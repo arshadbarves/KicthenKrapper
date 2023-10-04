@@ -6,7 +6,7 @@ using PlayEveryWare.EpicOnlineServices.Samples;
 using Epic.OnlineServices;
 using Epic.OnlineServices.Lobby;
 
-namespace Playcenter.KitchenGame.UI
+namespace KitchenKrapper
 {
     public class LobbyCreateUI : MonoBehaviour
     {

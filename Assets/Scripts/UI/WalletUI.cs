@@ -2,23 +2,26 @@ using System;
 using TMPro;
 using UnityEngine;
 
-public class WalletUI : MonoBehaviour
+namespace KitchenKrapper
 {
-    [SerializeField] private TextMeshProUGUI walletText;
-
-    private void Start()
+    public class WalletUI : MonoBehaviour
     {
-        LevelManager.Instance.OnWalletAmountChanged += Wallet_OnWalletChanged;
-        UpdateVisual();
-    }
+        [SerializeField] private TextMeshProUGUI walletText;
 
-    private void Wallet_OnWalletChanged(object sender, int e)
-    {
-        UpdateVisual();
-    }
+        private void Start()
+        {
+            LevelManager.Instance.OnWalletAmountChanged += Wallet_OnWalletChanged;
+            UpdateVisual();
+        }
 
-    private void UpdateVisual()
-    {
-        walletText.text = LevelManager.Instance.GetWalletAmount().ToString();
+        private void Wallet_OnWalletChanged(object sender, int e)
+        {
+            UpdateVisual();
+        }
+
+        private void UpdateVisual()
+        {
+            walletText.text = LevelManager.Instance.GetWalletAmount().ToString();
+        }
     }
 }

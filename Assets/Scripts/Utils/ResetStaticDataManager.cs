@@ -1,13 +1,17 @@
 using UnityEngine;
 
-public class ResetStaticDataManager : MonoBehaviour
-{
 
-    private void Awake()
+namespace KitchenKrapper
+{
+    public class ResetStaticDataManager : MonoBehaviour
     {
-        CuttingCounter.ResetStaticData();
-        BaseStation.ResetStaticData();
-        TrashCounter.ResetStaticData();
-        Player.ResetStaticData();
+
+        private void Awake()
+        {
+            CuttingCounter.ResetStaticData();
+            BaseStation.ResetStaticData();
+            TrashCounter.ResetStaticData();
+            Player.ResetStaticData();
+        }
     }
 }

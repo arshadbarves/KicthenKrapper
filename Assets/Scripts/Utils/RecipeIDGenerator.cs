@@ -2,12 +2,15 @@
 
 using UnityEngine;
 
-public class RecipeIDGenerator : MonoBehaviour
+namespace KitchenKrapper
 {
-    private static int recipeID = 0;
-
-    public static int GetRecipeID()
+    public class RecipeIDGenerator : MonoBehaviour
     {
-        return recipeID++;
+        private static int recipeID = 0;
+
+        public static int GetRecipeID()
+        {
+            return recipeID++;
+        }
     }
 }

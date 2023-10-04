@@ -1,9 +1,12 @@
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "New Cooking Recipe", menuName = "ScriptableObjects/Cooking Recipe")]
-public class CookingRecipeSO : ScriptableObject
+namespace KitchenKrapper
 {
-    public KitchenObjectSO inputFoodObjectSO;
-    public KitchenObjectSO outputFoodObjectSO;
-    public float cookingTime;
+    [CreateAssetMenu(fileName = "New Cooking Recipe", menuName = "ScriptableObjects/Cooking Recipe")]
+    public class CookingRecipeSO : ScriptableObject
+    {
+        public KitchenObjectSO inputFoodObjectSO;
+        public KitchenObjectSO outputFoodObjectSO;
+        public float cookingTime;
+    }
 }

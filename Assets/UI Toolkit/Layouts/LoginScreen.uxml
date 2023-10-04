@@ -1,0 +1,12 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" editor-extension-mode="False">
+    <ui:Template name="Background" src="project://database/Assets/UI%20Toolkit/Templates/Background.uxml?fileID=9197481963319205126&amp;guid=f9fd50bea5ee3f541a1e738d74bdf45c&amp;type=3#Background" />
+    <Style src="project://database/Assets/UI%20Toolkit/Styles/style.uss?fileID=7433441132597879392&amp;guid=ab993c0e454983847b10aeb86aa545af&amp;type=3#style" />
+    <ui:VisualElement name="LoginScreen" style="flex-grow: 1; position: absolute; width: 100%; height: 100%;">
+        <ui:Instance template="Background" name="Background" style="position: absolute; width: 100%; height: 100%;" />
+        <ui:VisualElement style="flex-grow: 1; -unity-background-scale-mode: scale-to-fit; background-image: url(&apos;project://database/Assets/Third%20Party%20Assets/GUI%20PRO%20Kit%20-%20Casual%20Game/ResourcesData/Sprite/Demo/Demo_Image/Image_TitleLogo.png?fileID=2800000&amp;guid=1b6787f827c1143c694a1b7342844b41&amp;type=3#Image_TitleLogo&apos;); width: 50%; align-self: center; height: 250px; margin-top: 50px; margin-right: 50px; margin-bottom: 50px; margin-left: 50px;" />
+        <ui:VisualElement style="flex-grow: 1; flex-direction: column; padding-top: 50px; padding-right: 50px; padding-bottom: 50px; padding-left: 50px; justify-content: center; align-items: center; align-self: center;">
+            <ui:Button text="LOGIN" parse-escape-sequences="true" display-tooltip-when-elided="true" name="login__login-button" class="button" style="margin-top: 50px; margin-right: 50px; margin-bottom: 50px; margin-left: 50px; width: 450px; background-color: rgb(240, 0, 144);" />
+            <ui:Button text="GUEST" parse-escape-sequences="true" display-tooltip-when-elided="true" name="login__guest-button" class="button" style="margin-top: 50px; margin-right: 50px; margin-bottom: 50px; margin-left: 50px; width: 450px; background-color: rgb(34, 33, 38);" />
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>

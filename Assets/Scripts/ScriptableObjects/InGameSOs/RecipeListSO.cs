@@ -1,8 +1,11 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "New Recipe List", menuName = "ScriptableObjects/Recipe List")]
-public class RecipeListSO : ScriptableObject
+namespace KitchenKrapper
 {
-    public List<RecipeSO> recipeSOList;
+    [CreateAssetMenu(fileName = "New Recipe List", menuName = "ScriptableObjects/Recipe List")]
+    public class RecipeListSO : ScriptableObject
+    {
+        public List<RecipeSO> recipeSOList;
+    }
 }

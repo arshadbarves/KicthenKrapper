@@ -1,0 +1,481 @@
+:root {
+    --blue-1: rgb(51, 201, 234);
+    --blue-2: rgb(2, 158, 247);
+    --pink-1: rgb(243, 27, 247);
+    --pink-2: rgb(240, 0, 144);
+    --yellow: rgb(254, 185, 56);
+    --green: rgb(102, 247, 15);
+    --purple: rgb(70, 68, 175);
+    --white: rgb(255, 255, 255);
+    --dark: rgb(34, 33, 38);
+    --radius: 25px;
+    --border: 5px;
+    --transition-duration: 0.3s;
+    --transition-timing-function: ease-in-out;
+}
+
+.cotainer {
+    flex-grow: 1;
+    width: 100%;
+    height: 100%;
+}
+
+.icon {
+    flex-grow: 1;
+    background-color: rgba(0, 0, 0, 0);
+    background-image: url('project://database/Assets/Third%20Party%20Assets/GUI%20PRO%20Kit%20-%20Simple%20Casual/Sprite/Demo/Demo_Icon/Icon_WhiteIcon_Home.png?fileID=2800000&guid=5b1d610f5877042a581c418847709013&type=3#Icon_WhiteIcon_Home');
+    width: 62px;
+    height: 62px;
+    -unity-background-scale-mode: scale-and-crop;
+}
+
+.background {
+    flex-grow: 1;
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    background-image: url('project://database/Assets/Images/bg-gd-overlay.png?fileID=2800000&guid=ada7c856e509d1342bc39192b37c404e&type=3#bg-gd-overlay');
+}
+
+.background-overlay {
+    flex-grow: 1;
+    background-image: url('project://database/Assets/Third%20Party%20Assets/GUI%20PRO%20Kit%20-%20Casual%20Game/ResourcesData/Sprite/Component/Slider/Slider19_Fusion_BgGlow.png?fileID=2800000&guid=1e6ae96ee68d643fbaba3efabe195a41&type=3#Slider19_Fusion_BgGlow');
+    height: 100%;
+    width: 100%;
+    rotate: 0;
+}
+
+.button {
+    background-color: var(--yellow);
+    border-left-color: rgb(255, 255, 255);
+    border-right-color: rgb(255, 255, 255);
+    border-top-color: rgb(255, 255, 255);
+    border-bottom-color: rgb(255, 255, 255);
+    border-left-width: var(--border);
+    border-right-width: var(--border);
+    border-top-width: var(--border);
+    border-bottom-width: var(--border);
+    border-top-left-radius: var(--radius);
+    border-bottom-left-radius: var(--radius);
+    border-top-right-radius: var(--radius);
+    border-bottom-right-radius: var(--radius);
+    height: 125px;
+    -unity-font: url('project://database/Assets/Third%20Party%20Assets/GUI%20PRO%20Kit%20-%20Casual%20Game/ResourcesData/Fonts/LilitaOne-Regular.ttf?fileID=12800000&guid=c16eb7d7c3953489db00312b8b09df4b&type=3#LilitaOne-Regular');
+    -unity-font-definition: url('project://database/Assets/Third%20Party%20Assets/GUI%20PRO%20Kit%20-%20Casual%20Game/ResourcesData/Fonts/LilitaOne-Regular%20SDF%201.asset?fileID=11400000&guid=3698d87c2a78fe14cbe7ada27ffd1b2a&type=2#LilitaOne-Regular SDF 1');
+    font-size: 50px;
+    color: rgb(255, 255, 255);
+    text-shadow: 5px 5px 0 rgba(0, 0, 0, 0.29);
+    letter-spacing: 5px;
+    word-spacing: 0;
+    -unity-text-align: middle-center;
+}
+
+.label {
+    -unity-font-definition: url('project://database/Assets/Third%20Party%20Assets/GUI%20PRO%20Kit%20-%20Casual%20Game/ResourcesData/Fonts/LilitaOne-Regular%20SDF%201.asset?fileID=11400000&guid=3698d87c2a78fe14cbe7ada27ffd1b2a&type=2#LilitaOne-Regular SDF 1');
+    color: rgb(255, 255, 255);
+    -unity-text-align: middle-center;
+    font-size: 26px;
+    text-shadow: 5px 5px 0 rgba(0, 0, 0, 0.39);
+    letter-spacing: 5px;
+    -unity-font: url('project://database/Assets/Third%20Party%20Assets/GUI%20PRO%20Kit%20-%20Casual%20Game/ResourcesData/Fonts/LilitaOne-Regular.ttf?fileID=12800000&guid=c16eb7d7c3953489db00312b8b09df4b&type=3#LilitaOne-Regular');
+    align-self: center;
+    align-items: center;
+}
+
+.notification-icon {
+    flex-grow: 1;
+    background-color: rgba(0, 0, 0, 0);
+    background-image: url('project://database/Assets/Images/Icons/Exclamation-Mark.png?fileID=2800000&guid=f3498b31d90814348870540b0c6f191c&type=3#Exclamation-Mark');
+    rotate: 10deg;
+}
+
+.notification {
+    flex-grow: 1;
+    background-color: var(--yellow);
+    width: 50px;
+    height: 50px;
+    position: absolute;
+    border-top-left-radius: 50%;
+    border-bottom-left-radius: 50%;
+    border-top-right-radius: 50%;
+    border-bottom-right-radius: 50%;
+    border-left-width: var(--border);
+    border-right-width: var(--border);
+    border-top-width: var(--border);
+    border-bottom-width: var(--border);
+    border-left-color: var(--white);
+    border-right-color: var(--white);
+    border-top-color: var(--white);
+    border-bottom-color: var(--white);
+    top: -20px;
+    right: -20px;
+}
+
+.play-button {
+    height: 140px;
+    font-size: 70px;
+}
+
+.preview-map {
+    flex-grow: 0;
+    background-color: rgb(34, 33, 38);
+    flex-direction: column;
+    width: 100%;
+    height: 300px;
+    border-left-color: rgb(255, 255, 255);
+    border-right-color: rgb(255, 255, 255);
+    border-top-color: rgb(255, 255, 255);
+    border-bottom-color: rgb(255, 255, 255);
+    border-left-width: var(--border);
+    border-right-width: var(--border);
+    border-top-width: var(--border);
+    border-bottom-width: var(--border);
+    border-top-left-radius: var(--radius);
+    border-bottom-left-radius: var(--radius);
+    border-top-right-radius: var(--radius);
+    border-bottom-right-radius: var(--radius);
+    padding-left: 0;
+    padding-right: 0;
+    padding-top: 0;
+    padding-bottom: 0;
+    margin-left: 0;
+    margin-right: 0;
+    margin-top: 0;
+    margin-bottom: 20px;
+}
+
+.settings-panel {
+    border-left-color: var(--white);
+    border-right-color: var(--white);
+    border-top-color: var(--white);
+    border-bottom-color: var(--white);
+    border-left-width: var(--border);
+    border-right-width: var(--border);
+    border-top-width: var(--border);
+    border-bottom-width: var(--border);
+    border-top-left-radius: var(--radius);
+    border-bottom-left-radius: var(--radius);
+    border-top-right-radius: var(--radius);
+    border-bottom-right-radius: var(--radius);
+    background-color: var(--blue-1);
+    width: 70%;
+    margin-left: 50px;
+    margin-right: 50px;
+    margin-top: 50px;
+    margin-bottom: 50px;
+    padding-left: 25px;
+    padding-right: 25px;
+    padding-top: 25px;
+    padding-bottom: 25px;
+}
+
+#unity-low-button {
+    display: none;
+}
+
+#unity-high-button {
+    display: none;
+}
+
+#unity-slider {
+}
+
+#unity-tracker {
+    background-color: rgb(34, 33, 38);
+    border-top-left-radius: 10px;
+    border-bottom-left-radius: 10px;
+    border-top-right-radius: 10px;
+    border-bottom-right-radius: 10px;
+}
+
+#unity-dragger {
+    border-top-left-radius: 10px;
+    border-bottom-left-radius: 10px;
+    border-top-right-radius: 10px;
+    border-bottom-right-radius: 10px;
+    background-color: rgb(255, 255, 255);
+}
+
+#unity-drag-container {
+}
+
+.unity-toggle__label {
+    width: 85%;
+    font-size: 32px;
+    top: 1%;
+    left: 5%;
+    margin-left: 0;
+    margin-right: 0;
+    margin-top: 0;
+    margin-bottom: 0;
+    -unity-font-definition: url('project://database/Assets/Third%20Party%20Assets/GUI%20PRO%20Kit%20-%20Casual%20Game/ResourcesData/Fonts/LilitaOne-Regular%20SDF%201.asset?fileID=11400000&guid=3698d87c2a78fe14cbe7ada27ffd1b2a&type=2#LilitaOne-Regular SDF 1');
+    color: rgb(255, 255, 255);
+    text-shadow: 5px 5px 0 rgba(0, 0, 0, 0.39);
+    letter-spacing: 5px;
+}
+
+.unity-toggle__checkmark {
+    display: flex;
+    width: 50px;
+    height: 50px;
+    border-left-width: var(--border);
+    border-right-width: var(--border);
+    border-top-width: var(--border);
+    border-bottom-width: var(--border);
+    border-top-left-radius: var(--radius);
+    border-bottom-left-radius: var(--radius);
+    border-top-right-radius: var(--radius);
+    border-bottom-right-radius: var(--radius);
+    border-left-color: var(--pink-2);
+    border-right-color: var(--pink-2);
+    border-top-color: var(--pink-2);
+    border-bottom-color: var(--pink-2);
+}
+
+.unity-scroll-view__content-container--vertical {
+    padding-left: 25px;
+    padding-right: 25px;
+    padding-top: 25px;
+    padding-bottom: 25px;
+}
+
+.settings-option {
+    flex-grow: 1;
+    background-color: rgba(0, 0, 0, 0);
+    margin-left: 25px;
+    margin-right: 25px;
+    margin-top: 25px;
+    margin-bottom: 25px;
+}
+
+.divider {
+    flex-grow: 1;
+    background-color: rgb(255, 255, 255);
+    height: 5px;
+    width: auto;
+    margin-top: 25px;
+    margin-bottom: 25px;
+    margin-left: 25px;
+    margin-right: 25px;
+}
+
+.template-screen {
+    display: flex;
+    flex-grow: 1;
+}
+
+.panel {
+    margin-left: 50px;
+    margin-right: 50px;
+    margin-top: 50px;
+    margin-bottom: 50px;
+    padding-left: 25px;
+    padding-right: 25px;
+    padding-top: 25px;
+    padding-bottom: 25px;
+    background-color: var(--blue-1);
+    border-left-color: var(--white);
+    border-right-color: var(--white);
+    border-top-color: var(--white);
+    border-bottom-color: var(--white);
+    border-left-width: var(--border);
+    border-right-width: var(--border);
+    border-top-width: var(--border);
+    border-bottom-width: var(--border);
+    border-top-left-radius: var(--radius);
+    border-bottom-left-radius: var(--radius);
+    border-top-right-radius: var(--radius);
+    border-bottom-right-radius: var(--radius);
+    height: 100%;
+}
+
+.unity-progress-bar {
+    align-self: center;
+    justify-content: center;
+}
+
+.loading-progress {
+    width: 400px;
+}
+
+.unity-progress-bar__background {
+    background-color: rgb(34, 33, 38);
+    border-top-left-radius: 10px;
+    border-bottom-left-radius: 10px;
+    border-top-right-radius: 10px;
+    border-bottom-right-radius: 10px;
+    padding-top: 10px;
+    padding-right: 10px;
+    padding-bottom: 10px;
+    padding-left: 10px;
+}
+
+.unity-progress-bar__progress {
+    background-color: rgb(240, 0, 144);
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+    border-bottom-right-radius: 8px;
+    border-bottom-left-radius: 8px;
+}
+
+.unity-progress-bar__title {
+    -unity-font-definition: url('project://database/Assets/Third%20Party%20Assets/GUI%20PRO%20Kit%20-%20Casual%20Game/ResourcesData/Fonts/LilitaOne-Regular%20SDF%201.asset?fileID=11400000&guid=3698d87c2a78fe14cbe7ada27ffd1b2a&type=2#LilitaOne-Regular SDF 1');
+    font-size: 50px;
+    color: rgb(255, 255, 255);
+    -unity-text-align: middle-center;
+    -unity-font-style: normal;
+    text-shadow: 5px 5px 0 rgba(0, 0, 0, 0.39);
+    letter-spacing: 5px;
+}
+
+.overlay {
+    flex-grow: 1;
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    background-color: rgba(34, 33, 38, 0.78);
+    align-items: center;
+    align-self: center;
+    justify-content: center;
+}
+
+.unity-progress-bar__title-container {
+    align-items: center;
+    align-self: center;
+    justify-content: center;
+    margin-top: 50px;
+    margin-right: 50px;
+    margin-bottom: 50px;
+    margin-left: 50px;
+}
+
+.profile-rank__progress .unity-progress-bar__background {
+    border-left-color: rgb(34, 33, 38);
+    border-right-color: rgb(34, 33, 38);
+    border-top-color: rgb(34, 33, 38);
+    border-bottom-color: rgb(34, 33, 38);
+    padding-top: 20px;
+    padding-right: 20px;
+    padding-bottom: 20px;
+    padding-left: 20px;
+}
+
+.profile-rank__progress {
+    width: 100%;
+}
+
+.profile-rank__progress .unity-progress-bar__progress {
+    background-color: rgb(102, 247, 15);
+}
+
+.link {
+    background-color: rgba(34, 33, 38, 0);
+    border-left-color: rgb(255, 255, 255);
+    border-right-color: rgb(255, 255, 255);
+    border-top-color: rgb(255, 255, 255);
+    border-bottom-color: rgb(255, 255, 255);
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+    border-bottom-right-radius: 10px;
+    border-bottom-left-radius: 10px;
+    border-top-width: 5px;
+    border-right-width: 5px;
+    border-bottom-width: 5px;
+    border-left-width: 5px;
+    margin-top: 5px;
+    margin-right: 5px;
+    margin-bottom: 5px;
+    margin-left: 5px;
+}
+
+.unity-base-field {
+    -unity-font-definition: url('project://database/Assets/Third%20Party%20Assets/GUI%20PRO%20Kit%20-%20Casual%20Game/ResourcesData/Fonts/LilitaOne-Regular%20SDF%201.asset?fileID=11400000&guid=3698d87c2a78fe14cbe7ada27ffd1b2a&type=2#LilitaOne-Regular SDF 1');
+    text-shadow: 5px 5px 0 rgba(0, 0, 0, 0.39);
+    color: rgb(255, 255, 255);
+}
+
+.inputfield .unity-base-field {
+    color: rgb(34, 33, 38);
+}
+
+.inputfield {
+    height: 200px;
+}
+
+.unity-base-text-field__input {
+    border-left-color: rgb(70, 68, 175);
+    border-right-color: rgb(70, 68, 175);
+    border-top-color: rgb(70, 68, 175);
+    border-bottom-color: rgb(70, 68, 175);
+    border-top-width: 0;
+    border-right-width: 5px;
+    border-bottom-width: 5px;
+    border-left-width: 0;
+    border-top-left-radius: 20px;
+    border-top-right-radius: 20px;
+    border-bottom-right-radius: 20px;
+    border-bottom-left-radius: 20px;
+    justify-content: center;
+    align-self: center;
+    align-items: center;
+}
+
+.unity-base-text-field__label {
+    padding-top: 25px;
+    padding-right: 25px;
+    padding-bottom: 25px;
+    padding-left: 25px;
+    align-self: center;
+    font-size: 35px;
+}
+
+.inputfield .unity-text-element--inner-input-field-component {
+    -unity-text-align: upper-center;
+    font-size: 35px;
+    color: rgb(34, 33, 38);
+    text-shadow: 0 0 0 rgba(0, 0, 0, 0);
+}
+
+.unity-text-field__input {
+}
+
+.popup-panel {
+    flex-grow: 0;
+    background-color: rgb(2, 158, 247);
+    width: 75%;
+    height: 75%;
+    border-top-left-radius: 25px;
+    border-top-right-radius: 25px;
+    border-bottom-right-radius: 25px;
+    border-bottom-left-radius: 25px;
+    border-left-color: rgb(255, 255, 255);
+    border-right-color: rgb(255, 255, 255);
+    border-top-color: rgb(255, 255, 255);
+    border-bottom-color: rgb(255, 255, 255);
+    border-top-width: 5px;
+    border-right-width: 5px;
+    border-bottom-width: 5px;
+    border-left-width: 5px;
+    transition-duration: 0.25s;
+}
+
+.popup-panel--inactive {
+    opacity: 0.05;
+    scale: 0.8 0.8;
+    transition-property: opacity;
+    transition-duration: 0.25s;
+}
+
+.unity-base-field__label {
+    color: rgb(255, 255, 255);
+}
+
+.modal-panel {
+    transition-duration: 0.25s;
+}
+
+.modal-panel--inactive {
+    transition-property: opacity;
+    transition-duration: 0.25s;
+    opacity: 0.05;
+}

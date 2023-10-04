@@ -1,16 +1,19 @@
 using UnityEngine;
 
-public class SinglePlayerLobbyUI : MonoBehaviour
+namespace KitchenKrapper
 {
-    private void Start()
+    public class SinglePlayerLobbyUI : MonoBehaviour
     {
-        if (GameDataSource.PlayMultiplayer)
+        private void Start()
         {
-            gameObject.SetActive(false);
-        }
-        else
-        {
-            gameObject.SetActive(true);
+            if (GameDataSource.PlayMultiplayer)
+            {
+                gameObject.SetActive(false);
+            }
+            else
+            {
+                gameObject.SetActive(true);
+            }
         }
     }
 }

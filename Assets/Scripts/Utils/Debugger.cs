@@ -6,82 +6,85 @@ using UnityEngine;
 using TMPro;
 using QFSW.QC.Actions;
 
-public class Debugger : MonoBehaviour
+namespace KitchenKrapper
 {
-    [SerializeField] private bool m_resetPlayerPrefs = false;
-    [SerializeField] private bool m_resetGame = false;
-    [SerializeField] private TextMeshProUGUI m_debugFPS;
-    [SerializeField] private Canvas m_debugCanvas;
-    [SerializeField] private bool m_showDebugCanvas = false;
-    private float deltaTime_FPS;
-
-    void Awake()
+    public class Debugger : MonoBehaviour
     {
-        // Check if the game is in debug mode. If it is, then delete all the player prefs.
-        if (m_resetPlayerPrefs)
-        {
-            // Clear the Player Prefs.
-            PlayerPrefs.DeleteAll();
-        }
+        [SerializeField] private bool m_resetPlayerPrefs = false;
+        [SerializeField] private bool m_resetGame = false;
+        [SerializeField] private TextMeshProUGUI m_debugFPS;
+        [SerializeField] private Canvas m_debugCanvas;
+        [SerializeField] private bool m_showDebugCanvas = false;
+        private float deltaTime_FPS;
 
-        // Check if the game is in debug mode. If it is, then reset the game.
-        if (m_resetGame)
+        void Awake()
         {
-            var authInterface = EOSManager.Instance.GetEOSPlatformInterface().GetAuthInterface();
-            var options = new Epic.OnlineServices.Auth.DeletePersistentAuthOptions();
-
-            authInterface.DeletePersistentAuth(ref options, null, (ref DeletePersistentAuthCallbackInfo deletePersistentAuthCallbackInfo) =>
+            // Check if the game is in debug mode. If it is, then delete all the player prefs.
+            if (m_resetPlayerPrefs)
             {
-                if (deletePersistentAuthCallbackInfo.ResultCode == Result.Success)
-                {
-                    Debug.Log("Persistent auth deleted");
-                }
-                else
-                {
-                    Debug.Log("Persistent auth not deleted");
-                }
-            });
+                // Clear the Player Prefs.
+                PlayerPrefs.DeleteAll();
+            }
 
-            var connectInterface = EOSManager.Instance.GetEOSPlatformInterface().GetConnectInterface();
-            var connectOptions = new Epic.OnlineServices.Connect.DeleteDeviceIdOptions();
-
-            connectInterface.DeleteDeviceId(ref connectOptions, null, (ref DeleteDeviceIdCallbackInfo deleteDeviceIdCallbackInfo) =>
+            // Check if the game is in debug mode. If it is, then reset the game.
+            if (m_resetGame)
             {
-                if (deleteDeviceIdCallbackInfo.ResultCode == Result.Success)
+                var authInterface = EOSManager.Instance.GetEOSPlatformInterface().GetAuthInterface();
+                var options = new Epic.OnlineServices.Auth.DeletePersistentAuthOptions();
+
+                authInterface.DeletePersistentAuth(ref options, null, (ref DeletePersistentAuthCallbackInfo deletePersistentAuthCallbackInfo) =>
                 {
-                    Debug.Log("Device ID deleted");
-                }
-                else
+                    if (deletePersistentAuthCallbackInfo.ResultCode == Result.Success)
+                    {
+                        Debug.Log("Persistent auth deleted");
+                    }
+                    else
+                    {
+                        Debug.Log("Persistent auth not deleted");
+                    }
+                });
+
+                var connectInterface = EOSManager.Instance.GetEOSPlatformInterface().GetConnectInterface();
+                var connectOptions = new Epic.OnlineServices.Connect.DeleteDeviceIdOptions();
+
+                connectInterface.DeleteDeviceId(ref connectOptions, null, (ref DeleteDeviceIdCallbackInfo deleteDeviceIdCallbackInfo) =>
                 {
-                    Debug.Log("Device ID not deleted");
-                }
-            });
+                    if (deleteDeviceIdCallbackInfo.ResultCode == Result.Success)
+                    {
+                        Debug.Log("Device ID deleted");
+                    }
+                    else
+                    {
+                        Debug.Log("Device ID not deleted");
+                    }
+                });
+            }
         }
-    }
 
-    private void Start()
-    {
-        if (m_showDebugCanvas)
-            m_debugCanvas.gameObject.SetActive(true);
-        else
-            m_debugCanvas.gameObject.SetActive(false);
-    }
-
-    private void Update()
-    {
-        // FPS
-        if (m_showDebugCanvas)
+        private void Start()
         {
-            deltaTime_FPS += (Time.deltaTime - deltaTime_FPS) * 0.1f;
-            float fps = 1.0f / deltaTime_FPS;
-            m_debugFPS.text = Mathf.Ceil(fps).ToString() + " FPS";
+            if (m_showDebugCanvas)
+                m_debugCanvas.gameObject.SetActive(true);
+            else
+                m_debugCanvas.gameObject.SetActive(false);
         }
 
-        // Get Key R
-        // if (Input.GetKeyDown(KeyCode.R))
-        // {
-        //     EOSAuth.Instance.Login();
-        // }
+        private void Update()
+        {
+            // FPS
+            if (m_showDebugCanvas)
+            {
+                deltaTime_FPS += (Time.deltaTime - deltaTime_FPS) * 0.1f;
+                float fps = 1.0f / deltaTime_FPS;
+                m_debugFPS.text = Mathf.Ceil(fps).ToString() + " FPS";
+            }
 
+            // Get Key R
+            // if (Input.GetKeyDown(KeyCode.R))
+            // {
+            //     EOSAuth.Instance.Login();
+            // }
+
+        }
     }
 }

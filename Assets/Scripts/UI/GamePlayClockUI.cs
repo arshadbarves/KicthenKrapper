@@ -2,33 +2,36 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class GamePlayClockUI : MonoBehaviour
+namespace KitchenKrapper
 {
-    [SerializeField] private Image timerImage;
-    [SerializeField] private TextMeshProUGUI timerText;
-
-    private void Update()
+    public class GamePlayClockUI : MonoBehaviour
     {
-        UpdateTimerImage();
-        UpdateTimerText();
-    }
+        [SerializeField] private Image timerImage;
+        [SerializeField] private TextMeshProUGUI timerText;
 
-    private void UpdateTimerImage()
-    {
-        timerImage.fillAmount = LevelManager.Instance.GetGamePlayingTimer(true);
-    }
-
-    private void UpdateTimerText()
-    {
-        float time = LevelManager.Instance.GetGamePlayingTimer();
-        if (time <= 0f)
+        private void Update()
         {
-            return;
+            UpdateTimerImage();
+            UpdateTimerText();
         }
 
-        int minutes = Mathf.FloorToInt(time / 60);
-        int seconds = Mathf.RoundToInt(time % 60);
+        private void UpdateTimerImage()
+        {
+            timerImage.fillAmount = LevelManager.Instance.GetGamePlayingTimer(true);
+        }
 
-        timerText.text = string.Format("{0:00}:{1:00}", minutes, seconds);
+        private void UpdateTimerText()
+        {
+            float time = LevelManager.Instance.GetGamePlayingTimer();
+            if (time <= 0f)
+            {
+                return;
+            }
+
+            int minutes = Mathf.FloorToInt(time / 60);
+            int seconds = Mathf.RoundToInt(time % 60);
+
+            timerText.text = string.Format("{0:00}:{1:00}", minutes, seconds);
+        }
     }
 }

@@ -2,45 +2,48 @@ using System;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class TutorialOverUI : MonoBehaviour
+namespace KitchenKrapper
 {
-    [SerializeField] private Button quitButton;
-
-    private void Awake()
+    public class TutorialOverUI : MonoBehaviour
     {
-        quitButton.onClick.AddListener(OnQuitButtonClicked);
-    }
+        [SerializeField] private Button quitButton;
 
-    private void Start()
-    {
-        LevelManager.Instance.OnGameStateChanged += GameManager_OnGameStateChanged;
-        Hide();
-    }
-
-    private void GameManager_OnGameStateChanged(object sender, EventArgs e)
-    {
-        if (LevelManager.Instance.IsGameOver())
+        private void Awake()
         {
-            Show();
+            quitButton.onClick.AddListener(OnQuitButtonClicked);
         }
-        else
+
+        private void Start()
         {
+            LevelManager.Instance.OnGameStateChanged += GameManager_OnGameStateChanged;
             Hide();
         }
-    }
 
-    private void Show()
-    {
-        gameObject.SetActive(true);
-    }
+        private void GameManager_OnGameStateChanged(object sender, EventArgs e)
+        {
+            if (LevelManager.Instance.IsGameOver())
+            {
+                Show();
+            }
+            else
+            {
+                Hide();
+            }
+        }
 
-    private void Hide()
-    {
-        gameObject.SetActive(false);
-    }
+        private void Show()
+        {
+            gameObject.SetActive(true);
+        }
 
-    private void OnQuitButtonClicked()
-    {
-        SceneLoaderWrapper.Instance.LoadScene(SceneType.MainMenu.ToString(), false);
+        private void Hide()
+        {
+            gameObject.SetActive(false);
+        }
+
+        private void OnQuitButtonClicked()
+        {
+            SceneLoaderWrapper.Instance.LoadScene(SceneType.MainMenu.ToString(), false);
+        }
     }
 }

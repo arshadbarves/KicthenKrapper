@@ -1,0 +1,12 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <ui:Template name="Background" src="project://database/Assets/UI%20Toolkit/Templates/Background.uxml?fileID=9197481963319205126&amp;guid=f9fd50bea5ee3f541a1e738d74bdf45c&amp;type=3#Background" />
+    <Style src="project://database/Assets/UI%20Toolkit/Styles/style.uss?fileID=7433441132597879392&amp;guid=ab993c0e454983847b10aeb86aa545af&amp;type=3#style" />
+    <ui:VisualElement name="LoadingScreen" style="flex-grow: 1; justify-content: center;">
+        <ui:Instance template="Background" name="Background" style="position: absolute; width: 100%; height: 100%;" />
+        <ui:VisualElement style="flex-grow: 1; background-image: url(&apos;project://database/Assets/Third%20Party%20Assets/GUI%20PRO%20Kit%20-%20Casual%20Game/ResourcesData/Sprite/Demo/Demo_Image/Image_TitleLogo.png?fileID=2800000&amp;guid=1b6787f827c1143c694a1b7342844b41&amp;type=3#Image_TitleLogo&apos;); -unity-background-scale-mode: scale-to-fit; align-items: center; align-self: center; justify-content: center; width: 46%; height: 25%; margin-top: 50px; margin-right: 50px; margin-bottom: 50px; margin-left: 50px;" />
+        <ui:ProgressBar value="30" title="30%" name="level-loading__progress-bar" class="loading-progress" style="flex-grow: 1; flex-shrink: 1;" />
+        <ui:VisualElement name="VisualElement" style="flex-grow: 0; justify-content: center; border-top-left-radius: 25px; border-top-right-radius: 25px; border-bottom-right-radius: 25px; border-bottom-left-radius: 25px; margin-top: 25px; margin-right: 25px; margin-bottom: 25px; margin-left: 25px; background-color: rgb(34, 33, 38); padding-top: 25px; padding-right: 25px; padding-bottom: 25px; padding-left: 25px;">
+            <ui:Label tabindex="-1" text="Tips: Grab the meat before burned out" display-tooltip-when-elided="true" name="level-loading__tip-label" class="label" style="white-space: normal; font-size: 30px;" />
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>

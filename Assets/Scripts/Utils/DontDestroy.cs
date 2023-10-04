@@ -1,17 +1,20 @@
 using UnityEngine;
 
-public class DontDestroy : MonoBehaviour
+namespace KitchenKrapper
 {
-    private void Awake()
+    public class DontDestroy : MonoBehaviour
     {
-        DontDestroyOnLoad(gameObject);
-    }
-
-    private void OnDestroy()
-    {
-        if (gameObject != null)
+        private void Awake()
         {
-            Destroy(gameObject);
+            DontDestroyOnLoad(gameObject);
+        }
+
+        private void OnDestroy()
+        {
+            if (gameObject != null)
+            {
+                Destroy(gameObject);
+            }
         }
     }
 }

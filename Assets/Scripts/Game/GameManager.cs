@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using Epic.OnlineServices;
 using Epic.OnlineServices.Auth;
@@ -5,177 +6,258 @@ using Epic.OnlineServices.Connect;
 using PlayEveryWare.EpicOnlineServices;
 using UnityEngine;
 
-public class GameManager : MonoBehaviour
+namespace KitchenKrapper
 {
-    public static GameManager Instance { get; private set; }
-
-    private GameStatus gameStatus = GameStatus.None;
-
-    public GameStatus GameStatus
+    public class GameManager : MonoBehaviour
     {
-        get { return gameStatus; }
-        set { gameStatus = value; }
-    }
+        // Singleton instance
+        public static GameManager Instance { get; private set; }
 
-    private void Awake()
-    {
-        if (Instance == null)
+        // Current game status
+        private GameStatus gameStatus = GameStatus.None;
+        public static event Action<GameData> FundsUpdated;
+        public static event Action PlayerDataChanged;
+
+        // Getter and setter for game status
+        public GameStatus GameStatus
         {
-            Instance = this;
-        }
-        else if (Instance != this)
-        {
-            Destroy(gameObject);
+            get { return gameStatus; }
+            set { gameStatus = value; }
         }
 
-        DontDestroyOnLoad(gameObject);
-    }
-
-    private void Start()
-    {
-        InitializeApplication();
-    }
-
-    public void InitializeApplication()
-    {
-        UIManager.Instance.OnPanelShow(UIManager.Instance.TitlePanel);
-
-        if (!ClientPrefs.GetEULAAndPrivacyPolicyAccepted())
+        [SerializeField] private GameData gameData;
+        public GameData GameData
         {
-            // Show EULA panel in short delay to avoid blocking the UI.
-            UIManager.Instance.OnPanelShowOnDelay(UIManager.Instance.EULAPanel, 1f);
-            return;
+            get { return gameData; }
+            set { gameData = value; }
         }
-        else
+
+        // Initialize the singleton instance
+        private void Awake()
         {
-            StartApp();
+            if (Instance == null)
+            {
+                Instance = this;
+            }
+            else if (Instance != this)
+            {
+                Destroy(gameObject);
+                return;
+            }
+
+            DontDestroyOnLoad(gameObject);
+            gameData = new GameData();
         }
-    }
 
-    public void StartApp()
-    {
-        StartCoroutine(CheckInternetConnection());
+        // Entry point for the game
+        private void Start()
+        {
+            InitializeApplication();
+        }
 
-        EOSAuth.Instance.Login();
+        // Initialize the application
+        public void InitializeApplication()
+        {
+            MainMenuUIManager.Instance.ShowLoginScreen();
 
-        ClientPrefs.Initialize();
-        GameDataSource.Instance.Initialize();
-    }
+            if (!ClientPrefs.GetEULAAndPrivacyPolicyAccepted())
+            {
+                Invoke("ShowEULAScreen", 0.5f);
+            }
+            else
+            {
+                StartApp();
+            }
+        }
 
-    public void StartGame()
-    {
-        gameStatus = GameStatus.GameStarted;
+        // Show EULA screen
+        public void ShowEULAScreen()
+        {
+            MainMenuUIManager.Instance.ShowEULAScreen();
+        }
 
-        SceneLoaderWrapper.Instance.LoadScene(SceneType.MainMenu.ToString(), false);
+        // Start the application
+        public void StartApp()
+        {
+            StartCoroutine(CheckInternetConnection());
+            EOSAuth.Instance.Login();
+            ClientPrefs.Initialize();
+            GameDataSource.Instance.Initialize();
+        }
 
-        UIManager.Instance.HideAllPanels();
-    }
+        // Start the game
+        public void StartGame()
+        {
+            gameStatus = GameStatus.GameStarted;
+            // SceneLoaderWrapper.Instance.LoadScene(SceneType.MainMenu.ToString());
+            MainMenuUIManager.Instance.ShowHomeScreen();
+            PlayerDataStorage.Instance.GetPlayerData(PlayerDataStorageCallback);
+        }
 
-    public void QuitGame()
-    {
-        gameStatus = GameStatus.GameQuit;
+        // Quit the game
+        public void QuitGame()
+        {
+            gameStatus = GameStatus.GameQuit;
+
 #if UNITY_EDITOR
-        UnityEditor.EditorApplication.isPlaying = false;
+            UnityEditor.EditorApplication.isPlaying = false;
 #else
-        Application.Quit();
+            Application.Quit();
 #endif
-    }
-
-    private IEnumerator CheckInternetConnection()
-    {
-        if (Application.internetReachability == NetworkReachability.NotReachable)
-        {
-            UIManager.Instance.OnPanelShow(UIManager.Instance.NetworkErrorPanel);
-        }
-        else
-        {
-            UIManager.Instance.OnPanelHide(UIManager.Instance.NetworkErrorPanel);
         }
 
-        yield return new WaitForSeconds(1.0f);
-        StartCoroutine(CheckInternetConnection());
-    }
-
-    private void ResetPlayerAuth()
-    {
-        var authInterface = EOSManager.Instance.GetEOSPlatformInterface().GetAuthInterface();
-        var options = new Epic.OnlineServices.Auth.DeletePersistentAuthOptions();
-
-        authInterface.DeletePersistentAuth(ref options, null, (ref DeletePersistentAuthCallbackInfo deletePersistentAuthCallbackInfo) =>
+        // Coroutine to check internet connection
+        private IEnumerator CheckInternetConnection()
         {
-            if (deletePersistentAuthCallbackInfo.ResultCode == Result.Success)
+            while (true)
             {
-                Debug.Log("Persistent auth deleted");
+                if (Application.internetReachability == NetworkReachability.NotReachable)
+                {
+                    MainMenuUIManager.Instance.ShowNetworkDisconnectedScreen();
+                }
+                else
+                {
+                    MainMenuUIManager.Instance.HideNetworkDisconnectedScreen();
+                }
+
+                yield return new WaitForSeconds(1.0f);
+            }
+        }
+
+        // Reset player authentication
+        private void ResetPlayerAuth()
+        {
+            var authInterface = EOSManager.Instance.GetEOSPlatformInterface().GetAuthInterface();
+            var options = new DeletePersistentAuthOptions();
+
+            authInterface.DeletePersistentAuth(ref options, null, (ref DeletePersistentAuthCallbackInfo deletePersistentAuthCallbackInfo) =>
+            {
+                if (deletePersistentAuthCallbackInfo.ResultCode == Result.Success)
+                {
+                    Debug.Log("Persistent auth deleted");
+                }
+                else
+                {
+                    Debug.Log("Persistent auth not deleted");
+                }
+            });
+
+            var connectInterface = EOSManager.Instance.GetEOSPlatformInterface().GetConnectInterface();
+            var connectOptions = new Epic.OnlineServices.Connect.DeleteDeviceIdOptions();
+
+            connectInterface.DeleteDeviceId(ref connectOptions, null, (ref DeleteDeviceIdCallbackInfo deleteDeviceIdCallbackInfo) =>
+            {
+                if (deleteDeviceIdCallbackInfo.ResultCode == Result.Success)
+                {
+                    Debug.Log("Device ID deleted");
+                }
+                else
+                {
+                    Debug.Log("Device ID not deleted");
+                }
+            });
+        }
+
+        // Cleanup application and reset data
+        public void CleanupApplication()
+        {
+            GameDataSource.Instance.ResetGameData();
+            gameStatus = GameStatus.None;
+            ClientPrefs.ResetClientPrefs();
+            ResetPlayerAuth();
+            InitializeApplication();
+
+            if (ApplicationManager.Instance != null)
+            {
+                Destroy(ApplicationManager.Instance.gameObject);
+            }
+        }
+
+        // Callback for player data storage
+        public void PlayerDataStorageCallback(string playerData)
+        {
+            if (!string.IsNullOrEmpty(playerData))
+            {
+                gameData = JsonUtility.FromJson<GameData>(playerData);
+                PlayerDataChanged?.Invoke();
             }
             else
             {
-                Debug.Log("Persistent auth not deleted");
+                MainMenuUIManager.Instance.ShowPlayerNamePopupScreen();
             }
-        });
+        }
 
-        var connectInterface = EOSManager.Instance.GetEOSPlatformInterface().GetConnectInterface();
-        var connectOptions = new Epic.OnlineServices.Connect.DeleteDeviceIdOptions();
-
-        connectInterface.DeleteDeviceId(ref connectOptions, null, (ref DeleteDeviceIdCallbackInfo deleteDeviceIdCallbackInfo) =>
+        // Create player data
+        public void CreatePlayerData(string playerName)
         {
-            if (deleteDeviceIdCallbackInfo.ResultCode == Result.Success)
+            if (string.IsNullOrEmpty(playerName))
             {
-                Debug.Log("Device ID deleted");
+                return;
             }
-            else
+
+            GameData playerData = new GameData
             {
-                Debug.Log("Device ID not deleted");
-            }
-        });
-    }
+                PlayerDisplayName = playerName,
+                PlayerId = EOSManager.Instance.GetProductUserId()
+            };
 
-    public void CleanupApplication()
-    {
-        GameDataSource.Instance.ResetGameData();
-        gameStatus = GameStatus.None;
-        ClientPrefs.ResetClientPrefs();
-        ResetPlayerAuth();
-        InitializeApplication();
+            Debug.Log("[GameManager]: Creating Player Account: " + playerData.PlayerId + " " + playerData.PlayerDisplayName);
 
-        if (ApplicationManager.Instance != null)
-        {
-            Destroy(ApplicationManager.Instance.gameObject);
-        }
-    }
-
-    public void PlayerDataStorageCallback(string playerData)
-    {
-        if (playerData != null)
-        {
-            PlayerDataInventory data = JsonUtility.FromJson<PlayerDataInventory>(playerData);
-            GameDataSource.Instance.SetPlayerData(data);
-            Debug.Log("[ApplicationManager]: Player Data Found: " + playerData);
-        }
-        else
-        {
-            Debug.Log("[ApplicationManager]: Player data not found. Creating new player data.");
-            ApplicationManager.Instance.MainMenuUI.ShowPopupNamePanel();
-        }
-    }
-
-    public void CreatePlayerData(string playerName)
-    {
-        if (string.IsNullOrEmpty(playerName))
-        {
-            Debug.Log("[ApplicationManager]: Player name is null or empty.");
-            return;
+            PlayerDataStorage.Instance.CreatePlayerData(playerData);
+            PlayerDataStorage.Instance.GetPlayerData(PlayerDataStorageCallback);
         }
 
-        string playerId = EOSManager.Instance.GetProductUserId().ToString();
-        Debug.Log("[ApplicationManager]: Creating Player Account: " + playerId);
-
-        PlayerDataInventory playerDataInventory = new PlayerDataInventory
+        // Update player data
+        public void UpdatePlayerData()
         {
-            PlayerId = playerId,
-            PlayerName = playerName
-        };
+            PlayerDataStorage.Instance.SetPlayerData(gameData.ToJson());
+        }
 
-        PlayerDataStorage.Instance.CreatePlayerData(playerDataInventory);
-        PlayerDataStorage.Instance.GetPlayerData(PlayerDataStorageCallback);
+        // Set coins
+        public void SetCoins(uint coins)
+        {
+            gameData.Coins = coins;
+            UpdatePlayerData();
+            FundsUpdated?.Invoke(gameData);
+        }
+
+        // Set gems
+        public void SetGems(uint gems)
+        {
+            gameData.Gems = gems;
+            UpdatePlayerData();
+            FundsUpdated?.Invoke(gameData);
+        }
+
+        // Set player display name
+        public void SetPlayerDisplayName(string playerDisplayName)
+        {
+            gameData.PlayerDisplayName = playerDisplayName;
+            UpdatePlayerData();
+            PlayerDataChanged?.Invoke();
+        }
+
+        // Set player icon
+        public void SetPlayerIcon(string playerIcon)
+        {
+            gameData.PlayerIcon = playerIcon;
+            UpdatePlayerData();
+            PlayerDataChanged?.Invoke();
+        }
+
+        // Set player trophies
+        public void SetPlayerTrophies(uint playerTrophies)
+        {
+            gameData.PlayerTrophies = playerTrophies;
+            UpdatePlayerData();
+            PlayerDataChanged?.Invoke();
+        }
+
+        // Logout
+        public void Logout()
+        {
+            EOSAuth.Instance.Logout();
+            CleanupApplication();
+        }
     }
 }

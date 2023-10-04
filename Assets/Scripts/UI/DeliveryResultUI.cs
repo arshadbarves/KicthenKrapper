@@ -3,74 +3,77 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class DeliveryResultUI : MonoBehaviour
+namespace KitchenKrapper
 {
-    private const string DELIVERY_RESULT_ANIMATION_TRIGGER = "ShowDeliveryResult";
-
-    [SerializeField] private Image backgroundImage;
-    [SerializeField] private Image iconImage;
-    [SerializeField] private TextMeshProUGUI resultText;
-    [SerializeField] private Color successColor;
-    [SerializeField] private Color failColor;
-    [SerializeField] private Sprite successSprite;
-    [SerializeField] private Sprite failSprite;
-
-    private Animator animator;
-
-    private void Awake()
+    public class DeliveryResultUI : MonoBehaviour
     {
-        animator = GetComponent<Animator>();
-    }
+        private const string DELIVERY_RESULT_ANIMATION_TRIGGER = "ShowDeliveryResult";
 
-    private void Start()
-    {
-        SubscribeToDeliveryEvents();
-        Hide();
-    }
+        [SerializeField] private Image backgroundImage;
+        [SerializeField] private Image iconImage;
+        [SerializeField] private TextMeshProUGUI resultText;
+        [SerializeField] private Color successColor;
+        [SerializeField] private Color failColor;
+        [SerializeField] private Sprite successSprite;
+        [SerializeField] private Sprite failSprite;
 
-    private void SubscribeToDeliveryEvents()
-    {
-        DeliveryManager.Instance.OnRecipeDelivered += HandleRecipeDelivered;
-        DeliveryManager.Instance.OnRecipeDeliveryFailed += HandleRecipeDeliveryFailed;
-    }
+        private Animator animator;
 
-    private void UnsubscribeFromDeliveryEvents()
-    {
-        DeliveryManager.Instance.OnRecipeDelivered -= HandleRecipeDelivered;
-        DeliveryManager.Instance.OnRecipeDeliveryFailed -= HandleRecipeDeliveryFailed;
-    }
+        private void Awake()
+        {
+            animator = GetComponent<Animator>();
+        }
 
-    private void ShowDeliveryResult(Color backgroundColor, Sprite iconSprite, string resultMessage)
-    {
-        Show();
-        animator.SetTrigger(DELIVERY_RESULT_ANIMATION_TRIGGER);
-        backgroundImage.color = backgroundColor;
-        iconImage.sprite = iconSprite;
-        resultText.text = resultMessage;
-    }
+        private void Start()
+        {
+            SubscribeToDeliveryEvents();
+            Hide();
+        }
 
-    private void HandleRecipeDeliveryFailed(object sender, EventArgs e)
-    {
-        ShowDeliveryResult(failColor, failSprite, "DELIVERY\nFAILED");
-    }
+        private void SubscribeToDeliveryEvents()
+        {
+            DeliveryManager.Instance.OnRecipeDelivered += HandleRecipeDelivered;
+            DeliveryManager.Instance.OnRecipeDeliveryFailed += HandleRecipeDeliveryFailed;
+        }
 
-    private void HandleRecipeDelivered(object sender, EventArgs e)
-    {
-        ShowDeliveryResult(successColor, successSprite, "DELIVERY\nSUCCESS");
-    }
+        private void UnsubscribeFromDeliveryEvents()
+        {
+            DeliveryManager.Instance.OnRecipeDelivered -= HandleRecipeDelivered;
+            DeliveryManager.Instance.OnRecipeDeliveryFailed -= HandleRecipeDeliveryFailed;
+        }
 
-    private void Show()
-    {
-        gameObject.SetActive(true);
-    }
+        private void ShowDeliveryResult(Color backgroundColor, Sprite iconSprite, string resultMessage)
+        {
+            Show();
+            animator.SetTrigger(DELIVERY_RESULT_ANIMATION_TRIGGER);
+            backgroundImage.color = backgroundColor;
+            iconImage.sprite = iconSprite;
+            resultText.text = resultMessage;
+        }
 
-    private void Hide()
-    {
-        gameObject.SetActive(false);
-    }
+        private void HandleRecipeDeliveryFailed(object sender, EventArgs e)
+        {
+            ShowDeliveryResult(failColor, failSprite, "DELIVERY\nFAILED");
+        }
 
-    private void OnDestroy()
-    {
-        UnsubscribeFromDeliveryEvents();
+        private void HandleRecipeDelivered(object sender, EventArgs e)
+        {
+            ShowDeliveryResult(successColor, successSprite, "DELIVERY\nSUCCESS");
+        }
+
+        private void Show()
+        {
+            gameObject.SetActive(true);
+        }
+
+        private void Hide()
+        {
+            gameObject.SetActive(false);
+        }
+
+        private void OnDestroy()
+        {
+            UnsubscribeFromDeliveryEvents();
+        }
     }
 }

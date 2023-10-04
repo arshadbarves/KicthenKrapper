@@ -1,22 +1,30 @@
 using Unity.Netcode;
 using UnityEngine;
 
-public class PlayerAnimator : NetworkBehaviour
+namespace KitchenKrapper
 {
-    private const string IS_WALKING = "IsWalking";
-
-    [SerializeField] private Player player;
-    private Animator animator;
-
-    private void Start()
+    public class PlayerAnimator : NetworkBehaviour
     {
-        animator = GetComponent<Animator>();
-    }
+        private const string IS_WALKING = "IsWalking";
 
-    private void Update()
-    {
-        if (!IsOwner) return; // Only the owner of the player can move it
+        [SerializeField] private Player player;
+        private Animator animator;
 
-        animator.SetBool(IS_WALKING, player.IsWalking());
+        private void Start()
+        {
+            animator = GetComponent<Animator>();
+        }
+
+        private void Update()
+        {
+            if (!IsOwner) return;
+
+            UpdateAnimator();
+        }
+
+        private void UpdateAnimator()
+        {
+            animator.SetBool(IS_WALKING, player.IsWalking());
+        }
     }
 }

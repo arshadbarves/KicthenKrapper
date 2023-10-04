@@ -1,46 +1,49 @@
 using UnityEngine;
 
-public class Recipe
+namespace KitchenKrapper
 {
-    private int recipeID;
-    private RecipeSO recipeSO;
-    private float deliveryTime;
-
-    // For client
-    public Recipe(int recipeID, float deliveryTime, RecipeSO recipeSO)
+    public class Recipe
     {
-        this.recipeID = recipeID;
-        this.deliveryTime = deliveryTime;
-        this.recipeSO = recipeSO;
-    }
+        private int recipeID;
+        private RecipeSO recipeSO;
+        private float deliveryTime;
 
-    public void SetRecipeSO(RecipeSO recipeSO)
-    {
-        this.recipeSO = recipeSO;
-    }
+        // For client
+        public Recipe(int recipeID, float deliveryTime, RecipeSO recipeSO)
+        {
+            this.recipeID = recipeID;
+            this.deliveryTime = deliveryTime;
+            this.recipeSO = recipeSO;
+        }
 
-    public void SetDeliveryTime(float deliveryTime)
-    {
-        this.deliveryTime = deliveryTime;
-    }
+        public void SetRecipeSO(RecipeSO recipeSO)
+        {
+            this.recipeSO = recipeSO;
+        }
 
-    public void SetRecipeID(int recipeID)
-    {
-        this.recipeID = recipeID;
-    }
+        public void SetDeliveryTime(float deliveryTime)
+        {
+            this.deliveryTime = deliveryTime;
+        }
 
-    public RecipeSO GetRecipeSO()
-    {
-        return recipeSO;
-    }
+        public void SetRecipeID(int recipeID)
+        {
+            this.recipeID = recipeID;
+        }
 
-    public float GetDeliveryTime()
-    {
-        return deliveryTime;
-    }
+        public RecipeSO GetRecipeSO()
+        {
+            return recipeSO;
+        }
 
-    public int GetRecipeID()
-    {
-        return recipeID;
+        public float GetDeliveryTime()
+        {
+            return deliveryTime;
+        }
+
+        public int GetRecipeID()
+        {
+            return recipeID;
+        }
     }
 }

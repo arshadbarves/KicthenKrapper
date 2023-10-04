@@ -1,39 +1,45 @@
 using System;
 using UnityEngine;
 
-public class StoveCounterVisual : MonoBehaviour
+namespace KitchenKrapper
 {
-    [SerializeField] private StoveCounter stoveCounter;
-    [SerializeField] private GameObject stoveOnVisual;
-    [SerializeField] private GameObject cookingParticleVisual;
-
-    private void Start()
+    public class StoveCounterVisual : MonoBehaviour
     {
-        stoveCounter.OnStoveCounterStateChange += StoveCounter_OnStoveCounterStateChange;
-    }
+        [SerializeField] private StoveCounter stoveCounter;
+        [SerializeField] private GameObject stoveOnVisual;
+        [SerializeField] private GameObject cookingParticleVisual;
 
-    private void StoveCounter_OnStoveCounterStateChange(object sender, StoveCounter.StoveCounterStateChangeEventArgs e)
-    {
-        switch (e.stoveCounterState)
+        private void Start()
         {
-            case StoveCounter.StoveCounterState.Empty:
-                stoveOnVisual.SetActive(false);
-                cookingParticleVisual.SetActive(false);
-                break;
-            case StoveCounter.StoveCounterState.Cooking:
-                stoveOnVisual.SetActive(true);
-                cookingParticleVisual.SetActive(true);
-                break;
-            case StoveCounter.StoveCounterState.Done:
-                stoveOnVisual.SetActive(true);
-                cookingParticleVisual.SetActive(true);
-                break;
-            case StoveCounter.StoveCounterState.Burned:
-                stoveOnVisual.SetActive(false);
-                cookingParticleVisual.SetActive(false);
-                break;
-            default:
-                break;
+            // Subscribe to the event in Awake for proper initialization
+            SubscribeToEvents();
+        }
+
+        private void OnDestroy()
+        {
+            // Unsubscribe from the event to prevent memory leaks
+            UnsubscribeFromEvents();
+        }
+
+        private void SubscribeToEvents()
+        {
+            stoveCounter.OnStoveCounterStateChange += HandleStoveCounterStateChange;
+        }
+
+        private void UnsubscribeFromEvents()
+        {
+            stoveCounter.OnStoveCounterStateChange -= HandleStoveCounterStateChange;
+        }
+
+        private void HandleStoveCounterStateChange(object sender, StoveCounter.StoveCounterStateChangeEventArgs e)
+        {
+            // Determine the visibility of visual elements based on stove counter state
+            bool stoveOnVisible = e.stoveCounterState == StoveCounter.StoveCounterState.Cooking ||
+                                  e.stoveCounterState == StoveCounter.StoveCounterState.Done;
+
+            // Set the visibility of visual elements
+            stoveOnVisual.SetActive(stoveOnVisible);
+            cookingParticleVisual.SetActive(stoveOnVisible);
         }
     }
 }

@@ -1,7 +1,10 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ShopItemListSO : ScriptableObject
+namespace KitchenKrapper
 {
-    public List<ShopItemSO> shopItemslist;
+    public class ShopItemListSO : ScriptableObject
+    {
+        public List<ShopItemSO> shopItemslist;
+    }
 }

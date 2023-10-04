@@ -1,54 +1,79 @@
 using System;
 using UnityEngine;
 
-public class SelectedCounterVisual : MonoBehaviour
+namespace KitchenKrapper
 {
-    [SerializeField] private BaseStation baseCounter;
-    [SerializeField] private GameObject[] visualGameObjectArray;
-    private void Start()
+    public class SelectedCounterVisual : MonoBehaviour
     {
-        if (Player.LocalInstance != null)
-        {
-            Player.LocalInstance.OnSelectedCounterChanged += Player_OnSelectedCounterChanged;
-        }
-        else
-        {
-            Player.OnAnyPlayerSpawned += Player_OnAnyPlayerSpawned;
-        }
-    }
+        [SerializeField] private BaseStation baseCounter;
+        [SerializeField] private GameObject[] visualGameObjectArray;
 
-    private void Player_OnAnyPlayerSpawned(object sender, EventArgs e)
-    {
-        if (Player.LocalInstance == null) return; // This is a rare case where the player is spawned but not yet assigned to the static variable
-        Player.OnAnyPlayerSpawned -= Player_OnAnyPlayerSpawned;
-        Player.LocalInstance.OnSelectedCounterChanged += Player_OnSelectedCounterChanged;
-    }
+        private Player localPlayer;
 
-    private void Player_OnSelectedCounterChanged(object sender, Player.OnSelectedCounterChangedEventArgs e)
-    {
-        if (e.selectedCounter == baseCounter)
+        private void Awake()
         {
-            ShowVisual();
+            localPlayer = Player.LocalInstance;
+            if (localPlayer != null)
+            {
+                SubscribeToLocalPlayer();
+            }
+            else
+            {
+                Player.OnAnyPlayerSpawned += HandlePlayerSpawned;
+            }
         }
-        else
-        {
-            HideVisual();
-        }
-    }
 
-    private void ShowVisual()
-    {
-        foreach (GameObject visualGameObject in visualGameObjectArray)
+        private void OnDestroy()
         {
-            visualGameObject.SetActive(true);
+            UnsubscribeFromLocalPlayer();
+            Player.OnAnyPlayerSpawned -= HandlePlayerSpawned;
         }
-    }
 
-    private void HideVisual()
-    {
-        foreach (GameObject visualGameObject in visualGameObjectArray)
+        private void SubscribeToLocalPlayer()
         {
-            visualGameObject.SetActive(false);
+            localPlayer.OnSelectedCounterChanged += HandleSelectedCounterChanged;
+        }
+
+        private void UnsubscribeFromLocalPlayer()
+        {
+            if (localPlayer != null)
+            {
+                localPlayer.OnSelectedCounterChanged -= HandleSelectedCounterChanged;
+            }
+        }
+
+        private void HandlePlayerSpawned(object sender, EventArgs e)
+        {
+            localPlayer = Player.LocalInstance;
+            SubscribeToLocalPlayer();
+        }
+
+        private void HandleSelectedCounterChanged(object sender, Player.OnSelectedCounterChangedEventArgs e)
+        {
+            if (e.selectedCounter == baseCounter)
+            {
+                ShowVisual();
+            }
+            else
+            {
+                HideVisual();
+            }
+        }
+
+        private void ShowVisual()
+        {
+            foreach (GameObject visualGameObject in visualGameObjectArray)
+            {
+                visualGameObject.SetActive(true);
+            }
+        }
+
+        private void HideVisual()
+        {
+            foreach (GameObject visualGameObject in visualGameObjectArray)
+            {
+                visualGameObject.SetActive(false);
+            }
         }
     }
 }

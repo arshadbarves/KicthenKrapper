@@ -2,211 +2,211 @@ using System;
 using System.Collections.Generic;
 using Epic.OnlineServices;
 using Epic.OnlineServices.Lobby;
-using Playcenter.KitchenGame.UI;
 using PlayEveryWare.EpicOnlineServices.Samples;
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-
-public class MultiplayerLobbyMenuUI : MonoBehaviour
+namespace KitchenKrapper
 {
-    [SerializeField] private Button mainMenuButton;
-    [SerializeField] private Button createLobbyButton;
-    [SerializeField] private Button joinCodeButton;
-    [SerializeField] private LobbyCreateUI lobbyCreateUI;
-    [SerializeField] private JoinCodeUI joinCodeUI;
-    [SerializeField] private MessageUI messagePanel;
-    [SerializeField] private Transform lobbyContainer;
-    [SerializeField] private Transform lobbyTemplate;
-
-
-    private void Awake()
+    public class MultiplayerLobbyMenuUI : MonoBehaviour
     {
-        mainMenuButton.onClick.AddListener(MainMenuButton_OnClick);
-        createLobbyButton.onClick.AddListener(CreateGameButton_OnClick);
-        joinCodeButton.onClick.AddListener(JoinCodeButton_OnClick);
-    }
+        [SerializeField] private Button mainMenuButton;
+        [SerializeField] private Button createLobbyButton;
+        [SerializeField] private Button joinCodeButton;
+        [SerializeField] private LobbyCreateUI lobbyCreateUI;
+        [SerializeField] private JoinCodeUI joinCodeUI;
+        [SerializeField] private MessageUI messagePanel;
+        [SerializeField] private Transform lobbyContainer;
+        [SerializeField] private Transform lobbyTemplate;
 
-    private void Start()
-    {
-        EOSKitchenGameMultiplayer.Instance.OnTryingToJoinGame += EOSKitchenGameMultiplayer_OnTryingToJoinGame;
-        EOSKitchenGameMultiplayer.Instance.OnFailedToJoinGame += EOSKitchenGameMultiplayer_OnFailedToJoinGame;
-        EOSKitchenGameLobby.Instance.OnLobbyListChanged += EOSKitchenGameLobby_OnLobbyListChanged;
-        UpdateLobbyList(new Dictionary<Lobby, LobbyDetails>());
-    }
 
-    private void EOSKitchenGameLobby_OnLobbyListChanged(object sender, EOSKitchenGameLobby.LobbyListChangedEventArgs e)
-    {
-        UpdateLobbyList(e.Lobbies);
-    }
-
-    private void OnDestroy()
-    {
-        try
+        private void Awake()
         {
-            EOSKitchenGameMultiplayer.Instance.OnTryingToJoinGame -= EOSKitchenGameMultiplayer_OnTryingToJoinGame;
-            EOSKitchenGameMultiplayer.Instance.OnFailedToJoinGame -= EOSKitchenGameMultiplayer_OnFailedToJoinGame;
-            EOSKitchenGameLobby.Instance.OnLobbyListChanged -= EOSKitchenGameLobby_OnLobbyListChanged;
-        }
-        catch (Exception e)
-        {
-            Debug.Log(e);
-        }
-    }
-
-    private void EOSKitchenGameMultiplayer_OnFailedToJoinGame(object sender, EventArgs e)
-    {
-        string message = NetworkManager.Singleton.DisconnectReason;
-
-        if (string.IsNullOrEmpty(message))
-        {
-            message = "Failed to connect to game";
+            mainMenuButton.onClick.AddListener(MainMenuButton_OnClick);
+            createLobbyButton.onClick.AddListener(CreateGameButton_OnClick);
+            joinCodeButton.onClick.AddListener(JoinCodeButton_OnClick);
         }
 
-        messagePanel.ShowMessage(message);
-
-    }
-
-    private void EOSKitchenGameMultiplayer_OnTryingToJoinGame(object sender, EventArgs e)
-    {
-        messagePanel.ShowMessage("Trying to connect to game");
-    }
-
-    private void MainMenuButton_OnClick()
-    {
-        SceneLoaderWrapper.Instance.LoadScene(SceneType.MainMenu.ToString(), false);
-    }
-
-    private void CreateGameButton_OnClick()
-    {
-        lobbyCreateUI.Show();
-    }
-
-    private void JoinCodeButton_OnClick()
-    {
-        joinCodeUI.Show();
-    }
-
-    private void UpdateLobbyList(Dictionary<Lobby, LobbyDetails> lobbies)
-    {
-        // Remove all the old lobbies except the template
-        foreach (Transform child in lobbyContainer)
+        private void Start()
         {
-            if (child != lobbyTemplate)
+            EOSKitchenGameMultiplayer.Instance.OnTryingToJoinGame += EOSKitchenGameMultiplayer_OnTryingToJoinGame;
+            EOSKitchenGameMultiplayer.Instance.OnFailedToJoinGame += EOSKitchenGameMultiplayer_OnFailedToJoinGame;
+            EOSKitchenGameLobby.Instance.OnLobbyListChanged += EOSKitchenGameLobby_OnLobbyListChanged;
+            UpdateLobbyList(new Dictionary<Lobby, LobbyDetails>());
+        }
+
+        private void EOSKitchenGameLobby_OnLobbyListChanged(object sender, EOSKitchenGameLobby.LobbyListChangedEventArgs e)
+        {
+            UpdateLobbyList(e.Lobbies);
+        }
+
+        private void OnDestroy()
+        {
+            try
             {
-                Destroy(child.gameObject);
+                EOSKitchenGameMultiplayer.Instance.OnTryingToJoinGame -= EOSKitchenGameMultiplayer_OnTryingToJoinGame;
+                EOSKitchenGameMultiplayer.Instance.OnFailedToJoinGame -= EOSKitchenGameMultiplayer_OnFailedToJoinGame;
+                EOSKitchenGameLobby.Instance.OnLobbyListChanged -= EOSKitchenGameLobby_OnLobbyListChanged;
+            }
+            catch (Exception e)
+            {
+                Debug.Log(e);
             }
         }
 
-
-        foreach (KeyValuePair<Lobby, LobbyDetails> kvp in lobbies)
+        private void EOSKitchenGameMultiplayer_OnFailedToJoinGame(object sender, EventArgs e)
         {
-            if (kvp.Key == null)
+            string message = NetworkManager.Singleton.DisconnectReason;
+
+            if (string.IsNullOrEmpty(message))
             {
-                Debug.LogError("Lobbies (OnSearchResultsReceived): SearchResults has null key!");
-                continue;
+                message = "Failed to connect to game";
             }
 
-            if (kvp.Value == null)
-            {
-                Debug.LogError("Lobbies (OnSearchResultsReceived): SearchResults has null Value!");
-                continue;
-            }
+            messagePanel.ShowMessage(message);
 
-            if (string.IsNullOrEmpty(kvp.Key.Id))
-            {
-                Debug.LogWarning("Lobbies (OnSearchResultsReceived): Found lobby with null Id: ");
-                continue;
-            }
+        }
 
-            if (kvp.Key.LobbyOwner == null)
-            {
-                Debug.LogWarningFormat("Lobbies (OnSearchResultsReceived): Found lobby with null LobbyOwner id: ", kvp.Key.Id);
-                continue;
-            }
+        private void EOSKitchenGameMultiplayer_OnTryingToJoinGame(object sender, EventArgs e)
+        {
+            messagePanel.ShowMessage("Trying to connect to game");
+        }
 
-            Transform lobbyTransform = Instantiate(lobbyTemplate, lobbyContainer);
-            lobbyTransform.gameObject.SetActive(true);
+        private void MainMenuButton_OnClick()
+        {
+            SceneLoaderWrapper.Instance.LoadScene(SceneType.MainMenu.ToString(), false);
+        }
 
-            LobbyListSingleUI lobbyUI = lobbyTransform.GetComponent<LobbyListSingleUI>();
-            if (lobbyUI != null)
+        private void CreateGameButton_OnClick()
+        {
+            lobbyCreateUI.Show();
+        }
+
+        private void JoinCodeButton_OnClick()
+        {
+            joinCodeUI.Show();
+        }
+
+        private void UpdateLobbyList(Dictionary<Lobby, LobbyDetails> lobbies)
+        {
+            // Remove all the old lobbies except the template
+            foreach (Transform child in lobbyContainer)
             {
-                /* TODO: Cache external/non-friend accounts
-                if (!kvp.Key.LobbyOwnerAccountId.IsValid())
+                if (child != lobbyTemplate)
                 {
-                    kvp.Key.LobbyOwnerAccountId = FriendsManager.GetAccountMapping(kvp.Key.LobbyOwner);
+                    Destroy(child.gameObject);
+                }
+            }
 
+
+            foreach (KeyValuePair<Lobby, LobbyDetails> kvp in lobbies)
+            {
+                if (kvp.Key == null)
+                {
+                    Debug.LogError("Lobbies (OnSearchResultsReceived): SearchResults has null key!");
+                    continue;
+                }
+
+                if (kvp.Value == null)
+                {
+                    Debug.LogError("Lobbies (OnSearchResultsReceived): SearchResults has null Value!");
+                    continue;
+                }
+
+                if (string.IsNullOrEmpty(kvp.Key.Id))
+                {
+                    Debug.LogWarning("Lobbies (OnSearchResultsReceived): Found lobby with null Id: ");
+                    continue;
+                }
+
+                if (kvp.Key.LobbyOwner == null)
+                {
+                    Debug.LogWarningFormat("Lobbies (OnSearchResultsReceived): Found lobby with null LobbyOwner id: ", kvp.Key.Id);
+                    continue;
+                }
+
+                Transform lobbyTransform = Instantiate(lobbyTemplate, lobbyContainer);
+                lobbyTransform.gameObject.SetActive(true);
+
+                LobbyListSingleUI lobbyUI = lobbyTransform.GetComponent<LobbyListSingleUI>();
+                if (lobbyUI != null)
+                {
+                    /* TODO: Cache external/non-friend accounts
                     if (!kvp.Key.LobbyOwnerAccountId.IsValid())
                     {
-                        Debug.LogWarning("UILobbiesMenu (UIUpateSearchResults): LobbyOwner EpicAccountId not found in cache, need to query...");
-                        // If still invalid, need to query for account information
-                        // TODO query non cached
+                        kvp.Key.LobbyOwnerAccountId = FriendsManager.GetAccountMapping(kvp.Key.LobbyOwner);
+
+                        if (!kvp.Key.LobbyOwnerAccountId.IsValid())
+                        {
+                            Debug.LogWarning("UILobbiesMenu (UIUpateSearchResults): LobbyOwner EpicAccountId not found in cache, need to query...");
+                            // If still invalid, need to query for account information
+                            // TODO query non cached
+                        }
                     }
-                }
 
-                if (kvp.Key.LobbyOwnerAccountId.IsValid() && string.IsNullOrEmpty(kvp.Key.LobbyOwnerDisplayName))
-                {
-                    lobbyUI.OwnerName = FriendsManager.GetDisplayName(kvp.Key.LobbyOwnerAccountId);
-
-                    if (string.IsNullOrEmpty(kvp.Key.LobbyOwnerDisplayName))
+                    if (kvp.Key.LobbyOwnerAccountId.IsValid() && string.IsNullOrEmpty(kvp.Key.LobbyOwnerDisplayName))
                     {
-                        Debug.LogWarning("UILobbiesMenu (Update): LobbyOwner DisplayName not found in cache, need to query...");
-                        // No cached display name found for user, need to query for account information
-                        // TODO query non cached
+                        lobbyUI.OwnerName = FriendsManager.GetDisplayName(kvp.Key.LobbyOwnerAccountId);
+
+                        if (string.IsNullOrEmpty(kvp.Key.LobbyOwnerDisplayName))
+                        {
+                            Debug.LogWarning("UILobbiesMenu (Update): LobbyOwner DisplayName not found in cache, need to query...");
+                            // No cached display name found for user, need to query for account information
+                            // TODO query non cached
+                        }
                     }
-                }
-                else
-                */
-                {
-                    lobbyUI.OwnerName = kvp.Key.LobbyOwnerDisplayName;
-                }
-
-                // If DisplayName not found, display ProductUserId
-                if (string.IsNullOrEmpty(lobbyUI.OwnerName))
-                {
-                    Result resultLobbyOwner = kvp.Key.LobbyOwner.ToString(out Utf8String outBuff);
-                    if (resultLobbyOwner == Result.Success)
+                    else
+                    */
                     {
-                        lobbyUI.OwnerName = outBuff;
+                        lobbyUI.OwnerName = kvp.Key.LobbyOwnerDisplayName;
+                    }
+
+                    // If DisplayName not found, display ProductUserId
+                    if (string.IsNullOrEmpty(lobbyUI.OwnerName))
+                    {
+                        Result resultLobbyOwner = kvp.Key.LobbyOwner.ToString(out Utf8String outBuff);
+                        if (resultLobbyOwner == Result.Success)
+                        {
+                            lobbyUI.OwnerName = outBuff;
+                        }
+                        else
+                        {
+                            lobbyUI.OwnerName = "Error: " + resultLobbyOwner;
+                        }
+                    }
+
+                    lobbyUI.MaxMembers = (int)kvp.Key.MaxNumLobbyMembers;
+                    lobbyUI.Members = (int)(lobbyUI.MaxMembers - kvp.Key.AvailableSlots);
+                    lobbyUI.LobbyRef = kvp.Key;
+                    lobbyUI.LobbyDetailsRef = kvp.Value;
+
+                    // Get Level
+                    var lobbyDetailsCopyAttributeByKeyOptions = new LobbyDetailsCopyAttributeByKeyOptions() { AttrKey = EOSKitchenGameLobby.LOBBY_NAME };
+                    Result attrResult = kvp.Value.CopyAttributeByKey(ref lobbyDetailsCopyAttributeByKeyOptions, out Epic.OnlineServices.Lobby.Attribute? outAttrbite);
+                    if (attrResult == Result.Success)
+                    {
+                        lobbyUI.LobbyName = outAttrbite?.Data?.Value.AsUtf8;
                     }
                     else
                     {
-                        lobbyUI.OwnerName = "Error: " + resultLobbyOwner;
+                        lobbyUI.LobbyName = "Error: " + attrResult;
                     }
-                }
 
-                lobbyUI.MaxMembers = (int)kvp.Key.MaxNumLobbyMembers;
-                lobbyUI.Members = (int)(lobbyUI.MaxMembers - kvp.Key.AvailableSlots);
-                lobbyUI.LobbyRef = kvp.Key;
-                lobbyUI.LobbyDetailsRef = kvp.Value;
-
-                // Get Level
-                var lobbyDetailsCopyAttributeByKeyOptions = new LobbyDetailsCopyAttributeByKeyOptions() { AttrKey = EOSKitchenGameLobby.LOBBY_NAME };
-                Result attrResult = kvp.Value.CopyAttributeByKey(ref lobbyDetailsCopyAttributeByKeyOptions, out Epic.OnlineServices.Lobby.Attribute? outAttrbite);
-                if (attrResult == Result.Success)
-                {
-                    lobbyUI.LobbyName = outAttrbite?.Data?.Value.AsUtf8;
+                    lobbyUI.UpdateUI();
                 }
-                else
-                {
-                    lobbyUI.LobbyName = "Error: " + attrResult;
-                }
-
-                lobbyUI.UpdateUI();
             }
+
+            // Add the new lobbies
+            // foreach (Lobby lobby in lobbies)
+            // {
+            //     Transform lobbyTransform = Instantiate(lobbyTemplate, lobbyContainer);
+            //     lobbyTransform.gameObject.SetActive(true);
+
+            //     LobbyListSingleUI lobbyUI = lobbyTransform.GetComponent<LobbyListSingleUI>();
+            //     lobbyUI.SetLobby(lobby);
+            // }
         }
-
-        // Add the new lobbies
-        // foreach (Lobby lobby in lobbies)
-        // {
-        //     Transform lobbyTransform = Instantiate(lobbyTemplate, lobbyContainer);
-        //     lobbyTransform.gameObject.SetActive(true);
-
-        //     LobbyListSingleUI lobbyUI = lobbyTransform.GetComponent<LobbyListSingleUI>();
-        //     lobbyUI.SetLobby(lobby);
-        // }
     }
 }
-

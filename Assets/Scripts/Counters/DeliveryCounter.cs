@@ -1,33 +1,54 @@
 using UnityEngine;
 
-public class DeliveryCounter : BaseStation
+namespace KitchenKrapper
 {
-    public static DeliveryCounter Instance { get; private set; }
-
-    private void Awake()
+    public class DeliveryCounter : BaseStation
     {
-        if (Instance != null && Instance != this)
-        {
-            Destroy(gameObject);
-        }
-        else
-        {
-            Instance = this;
-        }
-    }
+        public static DeliveryCounter Instance { get; private set; }
 
-    public override void Interact(Player player)
-    {
-        if (player.HasKitchenObject())
+        private void Awake()
         {
-            if (player.GetKitchenObject().TryGetPlateKitchenObject(out PlateKitchenObject plateKitchenObject))
+            SingletonCheck();
+        }
+
+        private void SingletonCheck()
+        {
+            if (Instance != null && Instance != this)
             {
-                // Player has a plate
-                DeliveryManager.Instance.DeliveryRecipe(plateKitchenObject);
-                KitchenObject.DestroyKitchenObject(player.GetKitchenObject());
-
-                StepComplete();
+                Destroy(gameObject);
             }
+            else
+            {
+                Instance = this;
+            }
+        }
+
+        public override void Interact(Player player)
+        {
+            HandlePlayerInteraction(player);
+        }
+
+        private void HandlePlayerInteraction(Player player)
+        {
+            if (player.HasKitchenObject())
+            {
+                HandleKitchenObject(player.GetKitchenObject());
+            }
+        }
+
+        private void HandleKitchenObject(KitchenObject kitchenObject)
+        {
+            if (kitchenObject.TryGetPlateKitchenObject(out PlateKitchenObject plateKitchenObject))
+            {
+                DeliverPlate(plateKitchenObject);
+            }
+        }
+
+        private void DeliverPlate(PlateKitchenObject plateKitchenObject)
+        {
+            DeliveryManager.Instance.DeliveryRecipe(plateKitchenObject);
+            KitchenObject.DestroyKitchenObject(plateKitchenObject);
+            StepComplete();
         }
     }
 }

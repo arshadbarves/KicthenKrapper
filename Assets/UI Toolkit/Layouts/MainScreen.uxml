@@ -1,0 +1,29 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" editor-extension-mode="False">
+    <ui:Template name="Background" src="project://database/Assets/UI%20Toolkit/Templates/Background.uxml?fileID=9197481963319205126&amp;guid=f9fd50bea5ee3f541a1e738d74bdf45c&amp;type=3#Background" />
+    <ui:Template name="TopBar" src="project://database/Assets/UI%20Toolkit/Templates/TopBar.uxml?fileID=9197481963319205126&amp;guid=6cf58f0a372439b4a95f331858d82561&amp;type=3#TopBar" />
+    <ui:Template name="HomeScreen" src="project://database/Assets/UI%20Toolkit/Layouts/HomeScreen.uxml?fileID=9197481963319205126&amp;guid=000d7f017f1a9a44d86d3dc32aaf1aea&amp;type=3#HomeScreen" />
+    <ui:Template name="SettingsScreen" src="project://database/Assets/UI%20Toolkit/Layouts/SettingsScreen.uxml?fileID=9197481963319205126&amp;guid=41c206f6ff1f2144e9eff17ab1d71844&amp;type=3#SettingsScreen" />
+    <ui:Template name="ShopScreen" src="project://database/Assets/UI%20Toolkit/Layouts/ShopScreen.uxml?fileID=9197481963319205126&amp;guid=e4193eaabe5a9394d91cb757cecd4d1d&amp;type=3#ShopScreen" />
+    <ui:Template name="LoginScreen" src="project://database/Assets/UI%20Toolkit/Layouts/LoginScreen.uxml?fileID=9197481963319205126&amp;guid=d8dcddb93389b1d49bac4fac0e917369&amp;type=3#LoginScreen" />
+    <ui:Template name="LoadingScreen" src="project://database/Assets/UI%20Toolkit/Layouts/LoadingScreen.uxml?fileID=9197481963319205126&amp;guid=c48fea526295fc445ab51be473c5d12b&amp;type=3#LoadingScreen" />
+    <ui:Template name="ProfileNamePopupScreen" src="project://database/Assets/UI%20Toolkit/Layouts/ProfileNamePopupScreen.uxml?fileID=9197481963319205126&amp;guid=ebb63fc58c9514941bad575ed7cd14d9&amp;type=3#ProfileNamePopupScreen" />
+    <ui:Template name="EULAScreen" src="project://database/Assets/UI%20Toolkit/Layouts/EULAScreen.uxml?fileID=9197481963319205126&amp;guid=e4e0bd7ff8da29e47bd72b660b820b55&amp;type=3#EULAScreen" />
+    <ui:Template name="LoaderScreen" src="project://database/Assets/UI%20Toolkit/Layouts/BufferScreen.uxml?fileID=9197481963319205126&amp;guid=dccf3722f44cf1545919a0f23c5c4521&amp;type=3#BufferScreen" />
+    <ui:Template name="NetworkDisconnectedScreen" src="project://database/Assets/UI%20Toolkit/Layouts/NetworkDisconnectedScreen.uxml?fileID=9197481963319205126&amp;guid=7e989366a4f79f84696a6af355498fd6&amp;type=3#NetworkDisconnectedScreen" />
+    <Style src="project://database/Assets/UI%20Toolkit/Styles/style.uss?fileID=7433441132597879392&amp;guid=ab993c0e454983847b10aeb86aa545af&amp;type=3#style" />
+    <Style src="project://database/Assets/UI%20Toolkit/Styles/SlideToggle.uss?fileID=7433441132597879392&amp;guid=f1cd5f313575b634c884cf7ed88e2b37&amp;type=3#SlideToggle" />
+    <Style src="project://database/Assets/UI%20Toolkit/Styles/ShopItem.uss?fileID=7433441132597879392&amp;guid=a9a8edff2c75dab45b856b7e85a36882&amp;type=3#ShopItem" />
+    <ui:VisualElement name="MainMenuScreen" class="cotainer" style="display: flex;">
+        <ui:Instance template="Background" name="Background" style="position: absolute; height: 100%; width: 100%;" />
+        <ui:Instance template="TopBar" name="OptionbarScreen" style="width: auto; height: 150px;" />
+        <ui:Instance template="HomeScreen" name="HomeScreen" class="template-screen" style="display: none;" />
+        <ui:Instance template="SettingsScreen" name="SettingsScreen" class="template-screen" style="display: flex;" />
+        <ui:Instance template="ShopScreen" name="ShopScreen" class="template-screen" style="display: none;" />
+    </ui:VisualElement>
+    <ui:Instance template="LoginScreen" name="LoginScreen" style="position: absolute; width: 100%; height: 100%; display: none;" />
+    <ui:Instance template="LoadingScreen" name="LoadingScreen" style="position: absolute; flex-grow: 1; height: 100%; width: 100%; display: none;" />
+    <ui:Instance template="ProfileNamePopupScreen" name="PlayerNamePopupScreen" style="position: absolute; height: 100%; width: 100%; display: none;" />
+    <ui:Instance template="EULAScreen" name="EULAScreen" style="position: absolute; height: 100%; width: 100%; display: none;" />
+    <ui:Instance template="LoaderScreen" name="BufferScreen" style="position: absolute; width: 100%; height: 100%; display: none;" />
+    <ui:Instance template="NetworkDisconnectedScreen" name="NetworkDisconnectedScreen" picking-mode="Ignore" style="position: absolute; width: 100%; height: 100%; display: none;" />
+</ui:UXML>

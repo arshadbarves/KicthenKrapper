@@ -2,26 +2,29 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class SetPlayerNameUI : MonoBehaviour
+namespace KitchenKrapper
 {
-    [SerializeField] private Button m_setPlayerNameButton;
-    [SerializeField] private TMP_InputField m_playerNameText;
-
-    private void Awake()
+    public class SetPlayerNameUI : MonoBehaviour
     {
-        m_setPlayerNameButton.onClick.AddListener(OnSetPlayerNameButtonClicked);
-    }
+        [SerializeField] private Button m_setPlayerNameButton;
+        [SerializeField] private TMP_InputField m_playerNameText;
 
-    private void OnSetPlayerNameButtonClicked()
-    {
-        if (m_playerNameText.text.Length > 0)
+        private void Awake()
         {
-            GameManager.Instance.CreatePlayerData(m_playerNameText.text);
-            gameObject.SetActive(false);
+            m_setPlayerNameButton.onClick.AddListener(OnSetPlayerNameButtonClicked);
         }
-        else
+
+        private void OnSetPlayerNameButtonClicked()
         {
-            Debug.Log("Player name cannot be empty");
+            if (m_playerNameText.text.Length > 0)
+            {
+                GameManager.Instance.CreatePlayerData(m_playerNameText.text);
+                gameObject.SetActive(false);
+            }
+            else
+            {
+                Debug.Log("Player name cannot be empty");
+            }
         }
     }
 }

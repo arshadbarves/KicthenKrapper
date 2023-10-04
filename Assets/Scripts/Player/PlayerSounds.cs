@@ -1,32 +1,35 @@
 using UnityEngine;
 
-public class PlayerSounds : MonoBehaviour
+namespace KitchenKrapper
 {
-    private Player player;
-    private float footStepTimer = 0f;
-    private float footStepTimerMax = 0.1f;
-
-    private void Awake()
+    public class PlayerSounds : MonoBehaviour
     {
-        player = GetComponent<Player>();
-    }
+        private Player player;
+        private float footStepTimer = 0f;
+        private float footStepTimerMax = 0.1f;
 
-    private void Update()
-    {
-        HandleFootStepSound();
-    }
-
-    private void HandleFootStepSound()
-    {
-        footStepTimer -= Time.deltaTime;
-
-        if (footStepTimer <= 0f)
+        private void Awake()
         {
-            footStepTimer = footStepTimerMax;
+            player = GetComponent<Player>();
+        }
 
-            if (player.IsWalking())
+        private void Update()
+        {
+            HandleFootStepSound();
+        }
+
+        private void HandleFootStepSound()
+        {
+            footStepTimer -= Time.deltaTime;
+
+            if (footStepTimer <= 0f)
             {
-                // LevelManager.Instance.PlayFootstepSound(player.transform.position);
+                footStepTimer = footStepTimerMax;
+
+                if (player.IsWalking())
+                {
+                    // LevelManager.Instance.PlayFootstepSound(player.transform.position);
+                }
             }
         }
     }
