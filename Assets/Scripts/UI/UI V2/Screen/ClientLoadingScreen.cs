@@ -12,8 +12,8 @@ namespace KitchenKrapper
         [SerializeField] private bool showLoadingScreenOnStart = true;
         [SerializeField] private LoadingTipsSO loadingTips;
 
-        const string LevelLoadingProgressBar = "level-loading__progress-bar";
-        const string LevelLoadingTipLabel = "level-loading__tip-label";
+        const string LEVEL_LOADING_PROGRESS_BAR = "level-loading__progress-bar";
+        const string LEVEL_LOADING_TIP_LABEL_NAME = "level-loading__tip-label";
 
         private ProgressBar progressBar;
         private Label loadingTipLabel;
@@ -32,8 +32,8 @@ namespace KitchenKrapper
 
         private void SetupLoadingScreen()
         {
-            progressBar = root.Q<ProgressBar>(LevelLoadingProgressBar);
-            loadingTipLabel = root.Q<Label>(LevelLoadingTipLabel);
+            progressBar = root.Q<ProgressBar>(LEVEL_LOADING_PROGRESS_BAR);
+            loadingTipLabel = root.Q<Label>(LEVEL_LOADING_TIP_LABEL_NAME);
         }
 
         private void Update()

@@ -47,37 +47,8 @@ namespace KitchenKrapper
                 return;
             }
 
-            Lobby lobbyProperties = new Lobby();
-            // Set lobby properties
-            lobbyProperties.BucketId = EOSKitchenGameLobby.BUCKET_ID;
-            lobbyProperties.MaxNumLobbyMembers = uint.Parse(MaxPlayersVal.ToString());
 
-            // Set lobby attribute
-            LobbyAttribute lobbyAttribute = new LobbyAttribute();
-            lobbyAttribute.Key = EOSKitchenGameLobby.LOBBY_NAME;
-            lobbyAttribute.AsString = lobbyNameInputField.text;
-            lobbyAttribute.ValueType = AttributeType.String;
-            lobbyAttribute.Visibility = LobbyAttributeVisibility.Public;
-            lobbyProperties.Attributes.Add(lobbyAttribute);
-
-            // Set lobby visibility
-            if (privateLobbyToggle.isOn)
-            {
-                Debug.Log("Creating private lobby");
-                lobbyProperties.LobbyPermissionLevel = LobbyPermissionLevel.Joinviapresence;
-            }
-            else
-            {
-                Debug.Log("Creating public lobby");
-                lobbyProperties.LobbyPermissionLevel = LobbyPermissionLevel.Publicadvertised;
-            }
-
-            // Set additional lobby properties
-            lobbyProperties.AllowInvites = true;
-            lobbyProperties.PresenceEnabled = false;
-            lobbyProperties.RTCRoomEnabled = false;
-
-            EOSKitchenGameLobby.Instance.CreateLobby(lobbyProperties);
+            // LobbyManager.Instance.CreateLobby(lobbyProperties);
             Hide();
         }
 

@@ -3,16 +3,22 @@ using Unity.Netcode;
 
 namespace KitchenKrapper
 {
-    public class PlayerStateReady : NetworkBehaviour
+    public class PlayerState : NetworkBehaviour
     {
-        public static PlayerStateReady Instance { get; private set; }
+        public static PlayerState Instance { get; private set; }
 
-        private Dictionary<ulong, bool> playerReadyDictionary;
+        private Dictionary<ulong, bool> playerReadyStates;
+        private LobbyManager lobbyManager;
 
         private void Awake()
         {
             InitializeSingleton();
-            InitializePlayerReadyDictionary();
+            InitializePlayerReadyStates();
+        }
+
+        private void Start()
+        {
+            lobbyManager = LobbyManager.Instance;
         }
 
         private void InitializeSingleton()
@@ -20,50 +26,43 @@ namespace KitchenKrapper
             if (Instance != null && Instance != this)
             {
                 Destroy(gameObject);
+                return;
             }
-            else
-            {
-                Instance = this;
-            }
+
+            Instance = this;
         }
 
-        private void InitializePlayerReadyDictionary()
+        private void InitializePlayerReadyStates()
         {
-            playerReadyDictionary = new Dictionary<ulong, bool>();
-        }
-
-        public void OnReadyButtonClicked()
-        {
-            TogglePlayerReadyState();
+            playerReadyStates = new Dictionary<ulong, bool>();
         }
 
         private void TogglePlayerReadyState()
         {
             ulong localClientId = NetworkManager.Singleton.LocalClientId;
 
-            if (!playerReadyDictionary.ContainsKey(localClientId))
+            if (!playerReadyStates.TryGetValue(localClientId, out bool isReady))
             {
-                playerReadyDictionary.Add(localClientId, false);
+                isReady = false;
             }
 
-            bool isReady = !playerReadyDictionary[localClientId];
-            SetPlayerReadyServerRpc(localClientId, isReady);
+            SetPlayerReadyServerRpc(localClientId, !isReady);
         }
 
         [ServerRpc(RequireOwnership = false)]
         private void SetPlayerReadyServerRpc(ulong clientId, bool isReady = false, ServerRpcParams serverRpcParams = default)
         {
-            playerReadyDictionary[clientId] = isReady;
+            playerReadyStates[clientId] = isReady;
 
-            if (AreAllPlayersReady())
+            if (AllPlayersReady())
             {
-                HandleAllPlayersReady();
+                lobbyManager.StartMatchmaking();
             }
         }
 
-        private bool AreAllPlayersReady()
+        private bool AllPlayersReady()
         {
-            foreach (var playerReady in playerReadyDictionary)
+            foreach (var playerReady in playerReadyStates)
             {
                 if (!playerReady.Value)
                 {
@@ -73,21 +72,10 @@ namespace KitchenKrapper
             return true;
         }
 
-        private void HandleAllPlayersReady()
-        {
-            SceneLoaderWrapper.Instance.LoadScene(SceneType.Map_City_001.ToString(), true);
-        }
-
-        public bool IsReady()
+        public bool IsPlayerReady()
         {
             ulong localClientId = NetworkManager.Singleton.LocalClientId;
-
-            if (playerReadyDictionary.ContainsKey(localClientId))
-            {
-                return playerReadyDictionary[localClientId];
-            }
-
-            return false;
+            return playerReadyStates.TryGetValue(localClientId, out bool isReady) && isReady;
         }
     }
 }

@@ -8,6 +8,7 @@ namespace KitchenKrapper
 
     public class PlayerDataStorage : MonoBehaviour
     {
+        public static event Action PlayerDataCreated;
         public static PlayerDataStorage Instance { get; private set; }
 
         private const string FILE_NAME = "PlayerData";
@@ -47,11 +48,17 @@ namespace KitchenKrapper
             EOSManager.Instance.RemoveManager<EOSPlayerDataStorageManager>();
         }
 
-        public void CreatePlayerData(GameData playerData)
+        public void CreatePlayerData(PlayerGameData playerData)
         {
             string newFileContents = playerData.ToJson();
 
-            PlayerDataStorageManager.AddFile(FILE_NAME, newFileContents, () => Debug.Log("[PlayerDataStorage]: Player data created"));
+            print("[PlayerDataStorage]: Creating File " + newFileContents);
+
+            PlayerDataStorageManager.AddFile(FILE_NAME, newFileContents, () =>
+            {
+                print("[PlayerDataStorage]: Player data created");
+                PlayerDataCreated?.Invoke();
+            });
         }
 
         public void GetPlayerData(Action<string> callback)

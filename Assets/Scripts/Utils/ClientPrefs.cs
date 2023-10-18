@@ -7,22 +7,6 @@ namespace KitchenKrapper
         private const string MusicToggleKey = "MusicToggle";
         private const string SoundEffectsToggleKey = "SoundEffectsToggle";
 
-        private const float DefaultMasterVolume = 0.5f;
-        private const float DefaultMusicVolume = 0.8f;
-
-        public static void Initialize()
-        {
-            if (!PlayerPrefs.HasKey(MusicToggleKey))
-            {
-                PlayerPrefs.SetInt(MusicToggleKey, 1);
-            }
-
-            if (!PlayerPrefs.HasKey(SoundEffectsToggleKey))
-            {
-                PlayerPrefs.SetInt(SoundEffectsToggleKey, 1);
-            }
-        }
-
         public static bool GetMusicToggle()
         {
             return PlayerPrefs.GetInt(MusicToggleKey, 1) == 1;

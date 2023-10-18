@@ -1,5 +1,6 @@
 using UnityEngine;
 using System;
+using System.Text.RegularExpressions;
 
 namespace KitchenKrapper
 {
@@ -39,7 +40,10 @@ namespace KitchenKrapper
 #if UNITY_EDITOR
             if (Application.isPlaying)
 #endif
-                SceneLoaderWrapper.Instance.LoadScene(m_LevelData.sceneName);
+                if (LobbyManager.Instance.GetCurrentLobby() == null)
+                    LobbyManager.Instance.StartMatchmaking();
+                else
+                    MatchmakingManager.Instance.StartMatchmaking(false);
         }
     }
 }

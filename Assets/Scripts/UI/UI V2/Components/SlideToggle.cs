@@ -20,7 +20,7 @@ namespace MyUILibrary
         public static readonly new string inputUssClassName = "slide-toggle__input";
         public static readonly string inputKnobUssClassName = "slide-toggle__input-knob";
         public static readonly string inputCheckedUssClassName = "slide-toggle__input--checked";
-        public static readonly string labelUssClassName = "slide-toggle__label";
+        public static new readonly string labelUssClassName = "slide-toggle__label";
 
         VisualElement m_Input;
         VisualElement m_Knob;

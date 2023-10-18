@@ -29,10 +29,10 @@ namespace KitchenKrapper
         [Tooltip("Toolbars remain active at all times unless explicitly disabled.")]
         [SerializeField] OptionbarScreen optionbarScreen;
 
-        public const string PopupPanelActiveClassName = "popup-panel";
-        public const string PopupPanelInactiveClassName = "popup-panel--inactive";
-        public const string ModalPanelActiveClassName = "modal-panel";
-        public const string ModalPanelInactiveClassName = "modal-panel--inactive";
+        public const string POPUP_PANEL_ACTIVE_CLASS_NAME = "popup-panel";
+        public const string POPUP_PANEL_INACTIVE_CLASS_NAME = "popup-panel--inactive";
+        public const string MODAL_PANEL_ACTIVE_CLASS_NAME = "modal-panel";
+        public const string MODAL_PANEL_INACTIVE_CLASS_NAME = "modal-panel--inactive";
 
         List<Screen> allModalScreens = new List<Screen>();
 
@@ -213,15 +213,15 @@ namespace KitchenKrapper
         {
             if (Input.GetKeyDown(KeyCode.C))
             {
-                GameManager.Instance.SetCoins(GameManager.Instance.GameData.Coins + 100);
+                GameManager.Instance.SetCoins(GameManager.Instance.PlayerGameData.Coins + 100);
             }
             if (Input.GetKeyDown(KeyCode.G))
             {
-                GameManager.Instance.SetGems(GameManager.Instance.GameData.Gems + 10);
+                GameManager.Instance.SetGems(GameManager.Instance.PlayerGameData.Gems + 10);
             }
             if (Input.GetKeyDown(KeyCode.P))
             {
-                GameManager.Instance.SetPlayerTrophies(GameManager.Instance.GameData.PlayerTrophies + 10);
+                GameManager.Instance.SetPlayerTrophies(GameManager.Instance.PlayerGameData.PlayerTrophies + 10);
             }
 
         }

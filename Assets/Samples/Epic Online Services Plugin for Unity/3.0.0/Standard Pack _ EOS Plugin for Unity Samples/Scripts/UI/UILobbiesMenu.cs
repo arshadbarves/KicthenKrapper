@@ -127,7 +127,8 @@ namespace PlayEveryWare.EpicOnlineServices.Samples
             LobbyManager.AddNotifyMemberUpdateReceived(OnMemberUpdate);
             CurrentLobbyPanel.SetActive(false);
 
-            if (ONANDROIDPLATFORM){
+            if (ONANDROIDPLATFORM)
+            {
 #pragma warning disable CS0162 // Unreachable code when not in Android, but findable with intellisense
                 if (!Permission.HasUserAuthorizedPermission(Permission.Microphone))
                 {
@@ -289,7 +290,7 @@ namespace PlayEveryWare.EpicOnlineServices.Samples
                     }
                 }
 
-                foreach(UIMemberEntry uiEntry in UIMemberEntries)
+                foreach (UIMemberEntry uiEntry in UIMemberEntries)
                 {
                     uiEntry.UpdateUI();
                 }
@@ -453,7 +454,7 @@ namespace PlayEveryWare.EpicOnlineServices.Samples
         public void LeaveLobbyButtonOnClick()
         {
             LobbyManager.LeaveLobby(UIOnLeaveLobby);
-            
+
         }
 
         public void AddMemberAttributeOnClick()
@@ -476,15 +477,15 @@ namespace PlayEveryWare.EpicOnlineServices.Samples
 
         public void MuteButtonOnClick(ProductUserId productUserId)
         {
-            LobbyManager.ToggleMute(productUserId, (Result result)=> 
+            LobbyManager.ToggleMute(productUserId, (Result result) =>
             {
                 if (result != Result.Success)
-                { 
-                    return; 
+                {
+                    return;
                 }
                 if (productUserId != EOSManager.Instance.GetProductUserId())
                 {
-                    return; 
+                    return;
                 }
                 foreach (LobbyMember lobbyMember in EOSManager.Instance.GetOrCreateManager<EOSLobbyManager>().GetCurrentLobby().Members)
                 {
@@ -605,6 +606,8 @@ namespace PlayEveryWare.EpicOnlineServices.Samples
             }
 
             Lobby currentLobby = LobbyManager.GetCurrentLobby();
+
+            Debug.LogFormat("UILobbiesMenu (UIOnLobbyUpdated): OnLobbyUpdated: {0}", currentLobby.Id);
 
             if (!currentLobby.IsValid())
             {
@@ -782,7 +785,7 @@ namespace PlayEveryWare.EpicOnlineServices.Samples
                     uiEntry.LobbyDetailsRef = kvp.Value;
                     uiEntry.JoinButtonOnClick = JoinButtonOnClick;
 
-                    if(!firstResultSelected && EventSystem.current != null)
+                    if (!firstResultSelected && EventSystem.current != null)
                     {
                         EventSystem.current.SetSelectedGameObject(uiEntry.JoinButton.gameObject);
                         firstResultSelected = true;
@@ -804,7 +807,7 @@ namespace PlayEveryWare.EpicOnlineServices.Samples
                 }
             }
         }
-     
+
         public void ShowMenu()
         {
             EOSManager.Instance.GetOrCreateManager<EOSLobbyManager>().OnLoggedIn();

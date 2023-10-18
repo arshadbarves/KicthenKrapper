@@ -1,13 +1,30 @@
 <ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" editor-extension-mode="False">
     <Style src="project://database/Assets/UI%20Toolkit/Styles/style.uss?fileID=7433441132597879392&amp;guid=ab993c0e454983847b10aeb86aa545af&amp;type=3#style" />
-    <ui:VisualElement name="home-panel" style="background-color: rgba(0, 0, 0, 0); height: 100%; width: 100%; flex-direction: row; flex-grow: 1;">
+    <ui:VisualElement name="home-panel" style="background-color: rgba(0, 0, 0, 0); height: 100%; width: 100%; flex-direction: row; flex-grow: 1; justify-content: center;">
         <ui:VisualElement name="CharacterPreview" style="flex-grow: 1; background-image: url(&apos;project://database/Assets/Rendering/Character.renderTexture?fileID=8400000&amp;guid=06b358ab0aa12c54fb386af76a435290&amp;type=2#Character&apos;); -unity-background-scale-mode: scale-to-fit; height: auto; align-self: stretch; margin-left: 50px; margin-right: 50px; margin-top: 50px; margin-bottom: 0;" />
         <ui:VisualElement style="flex-grow: 0; width: 25%; flex-direction: column; padding-left: 20px; padding-right: 20px; padding-top: 20px; padding-bottom: 20px; justify-content: flex-end;">
+            <ui:VisualElement name="home-play__lobby-panel">
+                <ui:Label tabindex="-1" text="CODE: TESTINVITE" parse-escape-sequences="true" display-tooltip-when-elided="true" name="home-play__invite-code-label" class="label" style="white-space: normal; font-size: 30px; align-self: flex-end;" />
+                <ui:Button text="LEAVE" parse-escape-sequences="true" display-tooltip-when-elided="true" name="home-play__leave-lobby-button" class="button" style="font-size: 30px; margin-top: 25px; margin-right: 0; margin-bottom: 25px; margin-left: 0; height: 100px; background-color: rgb(252, 40, 46); align-self: stretch;" />
+                <ui:VisualElement name="home-play__create-join-lobby-container" style="flex-grow: 1; flex-direction: row;">
+                    <ui:Button text="JOIN" parse-escape-sequences="true" display-tooltip-when-elided="true" name="home-play__join-lobby-button" class="button" style="font-size: 30px; margin-top: 25px; margin-right: 0; margin-bottom: 25px; margin-left: 0; height: 100px; background-color: rgb(2, 158, 247); align-self: stretch; flex-grow: 1;" />
+                    <ui:Button parse-escape-sequences="true" display-tooltip-when-elided="true" name="home-play__invite-friends-button" class="button" style="margin-top: 25px; margin-right: 0; margin-bottom: 25px; margin-left: 25px; height: 100px; flex-grow: 1; background-color: rgb(240, 0, 144);">
+                        <ui:VisualElement name="icon" style="flex-grow: 1; background-image: url(&apos;project://database/Assets/Images/Icons/Invite.png?fileID=2800000&amp;guid=99fab1c103a8ed3468b9479be18ef743&amp;type=3#Invite&apos;); -unity-background-scale-mode: scale-to-fit;" />
+                    </ui:Button>
+                </ui:VisualElement>
+            </ui:VisualElement>
             <ui:Button text="Button" display-tooltip-when-elided="true" class="preview-map" style="justify-content: space-around;">
                 <ui:VisualElement name="home-play__level-panel" style="flex-grow: 1; background-color: rgba(0, 0, 0, 0); background-image: url(&apos;project://database/Assets/Images/bg_001.png?fileID=2800000&amp;guid=1c86003e1d25f334e9ed53fe050d9f21&amp;type=3#bg_001&apos;); -unity-background-scale-mode: scale-and-crop; -unity-background-image-tint-color: rgb(200, 200, 200);" />
                 <ui:Label tabindex="-1" text="SOLO SHOW" display-tooltip-when-elided="true" name="home-play__level-name" class="label" style="background-color: rgb(51, 201, 234); width: 100%; height: 100px; margin-left: 0; margin-right: 0; margin-top: 0; margin-bottom: 0; padding-left: 25px; padding-right: 25px; padding-top: 25px; padding-bottom: 25px; font-size: 50px; border-left-color: rgb(255, 255, 255); border-right-color: rgb(255, 255, 255); border-top-color: rgb(255, 255, 255); border-bottom-color: rgb(255, 255, 255); border-left-width: 0; border-right-width: 0; border-top-width: 5px; border-bottom-width: 0; border-top-left-radius: 0; border-bottom-left-radius: 0; border-top-right-radius: 0; border-bottom-right-radius: 0;" />
             </ui:Button>
             <ui:Button text="PLAY" display-tooltip-when-elided="true" name="home-play__level-button" class="button play-button" style="height: 140px;" />
+        </ui:VisualElement>
+        <ui:VisualElement name="home-play__join-panel__popup" class="popup-panel" style="flex-grow: 0; position: absolute; align-self: center; width: 50%; height: 600px; justify-content: space-around; align-items: center;">
+            <ui:Button parse-escape-sequences="true" display-tooltip-when-elided="true" name="home-play__join-panel__popup__close-button" style="position: absolute; right: 0; top: -35px; width: 150px; height: 75px; background-color: rgb(252, 40, 46); border-left-color: rgb(255, 255, 255); border-right-color: rgb(255, 255, 255); border-top-color: rgb(255, 255, 255); border-bottom-color: rgb(255, 255, 255); border-top-width: 5px; border-right-width: 5px; border-bottom-width: 5px; border-left-width: 5px; border-top-left-radius: 20px; border-top-right-radius: 20px; border-bottom-right-radius: 20px; border-bottom-left-radius: 20px;">
+                <ui:VisualElement name="Icon" style="flex-grow: 1; background-image: url(&apos;project://database/Assets/Images/Icons/Close.png?fileID=2800000&amp;guid=39a3f451429e6fc45aaff387c9df0137&amp;type=3#Close&apos;); -unity-background-scale-mode: scale-to-fit;" />
+            </ui:Button>
+            <ui:TextField picking-mode="Ignore" name="home-play__join-panel__invite-code-field" label="INVITE CODE" class="inputfield" style="width: 75%;" />
+            <ui:Button text="JOIN" parse-escape-sequences="true" display-tooltip-when-elided="true" name="home-play__join-panel__join-button" class="button" style="width: 300px; height: 100px;" />
         </ui:VisualElement>
     </ui:VisualElement>
 </ui:UXML>

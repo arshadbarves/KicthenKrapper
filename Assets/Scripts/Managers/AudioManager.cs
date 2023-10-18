@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using UnityEngine.Audio;
 
@@ -17,6 +18,11 @@ namespace KitchenKrapper
 
         public static AudioManager Instance { get { return instance; } }
 
+        [SerializeField] private AudioClip defaultButtonSound;
+
+        // Events for volume and mute changes
+        public event Action AudioSettingsChanged;
+
         private void Awake()
         {
             if (instance != null && instance != this)
@@ -29,23 +35,12 @@ namespace KitchenKrapper
             DontDestroyOnLoad(this.gameObject);
 
             InitializeAudioSources();
-            LoadPlayerPreferences();
         }
 
         private void InitializeAudioSources()
         {
             musicPlayer = gameObject.AddComponent<AudioSource>();
             soundEffectsPlayer = gameObject.AddComponent<AudioSource>();
-        }
-
-        private void LoadPlayerPreferences()
-        {
-            GameDataSource.GameSettings gameSettings = GameDataSource.Instance.gameSettings;
-
-            ToggleMusicMute(!gameSettings.isMusicOn);
-            ToggleSoundEffectsMute(!gameSettings.isSoundOn);
-            SetMusicVolume(gameSettings.musicVolume);
-            SetSoundEffectsVolume(gameSettings.soundEffectsVolume);
         }
 
         public void PlayMusic(AudioClip musicClip)
@@ -68,7 +63,7 @@ namespace KitchenKrapper
             if (soundEffectClips.Length == 0)
                 return;
 
-            AudioClip soundEffectClip = soundEffectClips[Random.Range(0, soundEffectClips.Length)];
+            AudioClip soundEffectClip = soundEffectClips[UnityEngine.Random.Range(0, soundEffectClips.Length)];
             soundEffectsPlayer.PlayOneShot(soundEffectClip, GetSoundEffectsVolume());
         }
 
@@ -77,7 +72,7 @@ namespace KitchenKrapper
             if (soundEffectClips.Length == 0)
                 return;
 
-            AudioClip soundEffectClip = soundEffectClips[Random.Range(0, soundEffectClips.Length)];
+            AudioClip soundEffectClip = soundEffectClips[UnityEngine.Random.Range(0, soundEffectClips.Length)];
             AudioSource.PlayClipAtPoint(soundEffectClip, position, GetSoundEffectsVolume());
         }
 
@@ -99,7 +94,7 @@ namespace KitchenKrapper
         public void ToggleMusicMute(bool isMuted)
         {
             musicPlayer.mute = isMuted;
-            ClientPrefs.SetMusicToggle(!isMuted);
+            AudioSettingsChanged?.Invoke();
         }
 
         public bool IsMusicMuted()
@@ -123,7 +118,7 @@ namespace KitchenKrapper
         public void ToggleSoundEffectsMute(bool isMuted)
         {
             soundEffectsPlayer.mute = isMuted;
-            ClientPrefs.SetSoundEffectsToggle(!isMuted);
+            AudioSettingsChanged?.Invoke();
         }
 
         public bool AreSoundEffectsMuted()
@@ -136,9 +131,12 @@ namespace KitchenKrapper
             return Mathf.Log10(volume) * 20f;
         }
 
-        public static void PlayDefaultButtonSound()
+        public void PlayDefaultButtonSound()
         {
-            // Instance.PlaySoundEffect(GameDataSource.Instance.gameSettings.defaultButtonSound);
+            if (Instance.defaultButtonSound != null)
+            {
+                Instance.soundEffectsPlayer.PlayOneShot(Instance.defaultButtonSound, Instance.GetSoundEffectsVolume());
+            }
         }
     }
 }

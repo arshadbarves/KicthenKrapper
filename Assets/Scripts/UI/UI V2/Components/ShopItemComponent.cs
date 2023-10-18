@@ -13,33 +13,33 @@ namespace KitchenKrapper
         public static event Action<ShopItemSO, Vector2> ShopItemClicked;
 
         // string IDs
-        const string k_ParentContainer = "shop-item__parent-container";
-        const string k_Description = "shop-item__description";
-        const string k_ProductImage = "shop-item__product-image";
+        const string PARENT_CONTAINER_NAME = "shop-item__parent-container";
+        const string DESCRIPTION_LABEL_NAME = "shop-item__description";
+        const string PRODUCT_IMAGE_NAME = "shop-item__product-image";
 
-        const string k_Banner = "shop-item__banner";
-        const string k_BannerLabel = "shop-item__banner-label";
+        const string BANNER_NAME = "shop-item__banner";
+        const string BANNER_LABEL_NAME = "shop-item__banner-label";
 
-        const string k_DiscountBadge = "shop-item__discount-badge";
-        const string k_DiscountLabel = "shop-item__badge-text";
-        const string k_DiscountSlash = "shop-item__discount-slash";
+        const string DISCOUNT_BADGE_NAME = "shop-item__discount-badge";
+        const string DISCOUNT_LABEL_NAME = "shop-item__badge-text";
+        const string DISCOUNT_SLASH_NAME = "shop-item__discount-slash";
 
-        const string k_ContentCurrency = "shop-item__content-currency";
-        const string k_ContentValue = "shop-item__content-value";
+        const string CONTENT_CURRENCY_LABEL_NAME = "shop-item__content-currency";
+        const string CONTENT_VALUE_LABEL_NAME = "shop-item__content-value";
 
-        const string k_CostIcon = "shop-item__cost-icon";
-        const string k_CostIconGroup = "shop-item__cost-icon-group";
-        const string k_CostPrice = "shop-item__cost-price";
+        const string COST_ICON_NAME = "shop-item__cost-icon";
+        const string COST_ICON_GROUP_NAME = "shop-item__cost-icon-group";
+        const string COST_PRICE_LABEL_NAME = "shop-item__cost-price";
 
-        const string k_DiscountIcon = "shop-item__discount-icon";
-        const string k_DiscountIconGroup = "shop-item__discount-icon-group";
-        const string k_DiscountPrice = "shop-item__discount-price";
-        const string k_DiscountGroup = "shop-item__discount-group";
+        const string DISCOUNT_ICON_NAME = "shop-item__discount-icon";
+        const string DISCOUNT_ICON_GROUP = "shop-item__discount-icon-group";
+        const string DISCOUNT_PRICE_LABEL_NAME = "shop-item__discount-price";
+        const string DISCOUNT_GROUP_NAME = "shop-item__discount-group";
 
-        const string k_BuyButton = "shop-item__buy-button";
+        const string BUY_BUTTON_NAME = "shop-item__buy-button";
 
-        const string k_SizeNormalClass = "shop-item__size--normal";
-        const string k_SizeWideClass = "shop-item__size--wide";
+        const string SIZE_NORMAL_CLASS_NAME = "shop-item__size--normal";
+        const string SIZE_WIDE_CLASS_NAME = "shop-item__size--wide";
 
         // ScriptableObject pairing icons with currency/shop item types
         GameIconsSO m_GameIconsData;
@@ -74,25 +74,25 @@ namespace KitchenKrapper
         public void SetVisualElements(TemplateContainer shopItemElement)
         {
             // query the parts of the ShopItemElement
-            m_SizeContainer = shopItemElement.Q(k_ParentContainer);
-            m_Description = shopItemElement.Q<Label>(k_Description);
-            m_ProductImage = shopItemElement.Q(k_ProductImage);
-            m_Banner = shopItemElement.Q(k_Banner);
-            m_BannerLabel = shopItemElement.Q<Label>(k_BannerLabel);
-            m_DiscountBadge = shopItemElement.Q(k_DiscountBadge);
-            m_DiscountLabel = shopItemElement.Q<Label>(k_DiscountLabel);
-            m_DiscountSlash = shopItemElement.Q(k_DiscountSlash);
-            m_ContentCurrency = shopItemElement.Q(k_ContentCurrency);
-            m_ContentValue = shopItemElement.Q<Label>(k_ContentValue);
-            m_CostIcon = shopItemElement.Q(k_CostIcon);
-            m_Cost = shopItemElement.Q<Label>(k_CostPrice);
-            m_DiscountIcon = shopItemElement.Q(k_DiscountIcon);
-            m_DiscountGroup = shopItemElement.Q(k_DiscountGroup);
-            m_DiscountCost = shopItemElement.Q<Label>(k_DiscountPrice);
-            m_BuyButton = shopItemElement.Q<Button>(k_BuyButton);
+            m_SizeContainer = shopItemElement.Q(PARENT_CONTAINER_NAME);
+            m_Description = shopItemElement.Q<Label>(DESCRIPTION_LABEL_NAME);
+            m_ProductImage = shopItemElement.Q(PRODUCT_IMAGE_NAME);
+            m_Banner = shopItemElement.Q(BANNER_NAME);
+            m_BannerLabel = shopItemElement.Q<Label>(BANNER_LABEL_NAME);
+            m_DiscountBadge = shopItemElement.Q(DISCOUNT_BADGE_NAME);
+            m_DiscountLabel = shopItemElement.Q<Label>(DISCOUNT_LABEL_NAME);
+            m_DiscountSlash = shopItemElement.Q(DISCOUNT_SLASH_NAME);
+            m_ContentCurrency = shopItemElement.Q(CONTENT_CURRENCY_LABEL_NAME);
+            m_ContentValue = shopItemElement.Q<Label>(CONTENT_VALUE_LABEL_NAME);
+            m_CostIcon = shopItemElement.Q(COST_ICON_NAME);
+            m_Cost = shopItemElement.Q<Label>(COST_PRICE_LABEL_NAME);
+            m_DiscountIcon = shopItemElement.Q(DISCOUNT_ICON_NAME);
+            m_DiscountGroup = shopItemElement.Q(DISCOUNT_GROUP_NAME);
+            m_DiscountCost = shopItemElement.Q<Label>(DISCOUNT_PRICE_LABEL_NAME);
+            m_BuyButton = shopItemElement.Q<Button>(BUY_BUTTON_NAME);
 
-            m_CostIconGroup = shopItemElement.Q(k_CostIconGroup);
-            m_DiscountIconGroup = shopItemElement.Q(k_DiscountIconGroup);
+            m_CostIconGroup = shopItemElement.Q(COST_ICON_GROUP_NAME);
+            m_DiscountIconGroup = shopItemElement.Q(DISCOUNT_ICON_GROUP);
         }
 
         // show the ScriptaboleObject data
@@ -125,13 +125,13 @@ namespace KitchenKrapper
             // use the oversize style if discounted
             if (IsDiscounted(m_ShopItemData))
             {
-                m_SizeContainer.AddToClassList(k_SizeWideClass);
-                m_SizeContainer.RemoveFromClassList(k_SizeNormalClass);
+                m_SizeContainer.AddToClassList(SIZE_WIDE_CLASS_NAME);
+                m_SizeContainer.RemoveFromClassList(SIZE_NORMAL_CLASS_NAME);
             }
             else
             {
-                m_SizeContainer.AddToClassList(k_SizeNormalClass);
-                m_SizeContainer.RemoveFromClassList(k_SizeWideClass);
+                m_SizeContainer.AddToClassList(SIZE_NORMAL_CLASS_NAME);
+                m_SizeContainer.RemoveFromClassList(SIZE_WIDE_CLASS_NAME);
             }
         }
 
@@ -213,7 +213,7 @@ namespace KitchenKrapper
 
             ShopItemClicked?.Invoke(shopItemData, screenPos);
 
-            AudioManager.PlayDefaultButtonSound();
+            AudioManager.Instance.PlayDefaultButtonSound();
         }
     }
 }

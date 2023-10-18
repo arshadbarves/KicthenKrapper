@@ -1,3 +1,4 @@
+using System;
 using MyUILibrary;
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -6,12 +7,12 @@ namespace KitchenKrapper
 {
     public class SettingsScreen : Screen
     {
-        private const string SettingPanelName = "settings__panel";
-        private const string SoundEffectSliderName = "sound-effect__slider";
-        private const string MusicSliderName = "music__slider";
-        private const string RateUsButtonName = "rate-us__button";
-        private const string SupportButtonName = "support__button";
-        private const string LogoutButtonName = "logout__button";
+        private const string SETTINGS_PANEL_NAME = "settings__panel";
+        private const string SOUND_EFFECTS_SLIDER_NAME = "sound-effect__slider";
+        private const string MUSIC_SLIDER_NAME = "music__slider";
+        private const string RATE_US_BUTTON_NAME = "rate-us__button";
+        private const string SUPPORT_BUTTON_NAME = "support__button";
+        private const string LOGOUT_BUTTON_NAME = "logout__button";
 
         private VisualElement settingPanel;
         private SlideToggle soundEffectSlider;
@@ -20,27 +21,37 @@ namespace KitchenKrapper
         private Button supportButton;
         private Button logoutButton;
 
+        private void Start()
+        {
+            GameManager.GameDataUpdated += OnGameDataUpdated;
+        }
+
+        protected override void OnDestroy()
+        {
+            base.OnDestroy();
+            GameManager.GameDataUpdated -= OnGameDataUpdated;
+        }
+
         protected override void SetVisualElements()
         {
             base.SetVisualElements();
-            settingPanel = root.Q<VisualElement>(SettingPanelName);
-            soundEffectSlider = root.Q<SlideToggle>(SoundEffectSliderName);
-            musicSlider = root.Q<SlideToggle>(MusicSliderName);
-            rateUsButton = root.Q<Button>(RateUsButtonName);
-            supportButton = root.Q<Button>(SupportButtonName);
-            logoutButton = root.Q<Button>(LogoutButtonName);
+            settingPanel = root.Q<VisualElement>(SETTINGS_PANEL_NAME);
+            soundEffectSlider = root.Q<SlideToggle>(SOUND_EFFECTS_SLIDER_NAME);
+            musicSlider = root.Q<SlideToggle>(MUSIC_SLIDER_NAME);
+            rateUsButton = root.Q<Button>(RATE_US_BUTTON_NAME);
+            supportButton = root.Q<Button>(SUPPORT_BUTTON_NAME);
+            logoutButton = root.Q<Button>(LOGOUT_BUTTON_NAME);
         }
 
         public override void ShowScreen()
         {
             base.ShowScreen();
 
-            soundEffectSlider.value = AudioManager.Instance.AreSoundEffectsMuted();
-            musicSlider.value = AudioManager.Instance.IsMusicMuted();
+            OnGameDataUpdated();
 
             // add active style
-            settingPanel.AddToClassList(MainMenuUIManager.ModalPanelActiveClassName);
-            settingPanel.RemoveFromClassList(MainMenuUIManager.ModalPanelInactiveClassName);
+            settingPanel.AddToClassList(MainMenuUIManager.MODAL_PANEL_ACTIVE_CLASS_NAME);
+            settingPanel.RemoveFromClassList(MainMenuUIManager.MODAL_PANEL_INACTIVE_CLASS_NAME);
         }
 
         public override void HideScreen()
@@ -48,8 +59,15 @@ namespace KitchenKrapper
             base.HideScreen();
 
             // add inactive style
-            settingPanel.AddToClassList(MainMenuUIManager.ModalPanelInactiveClassName);
-            settingPanel.RemoveFromClassList(MainMenuUIManager.ModalPanelActiveClassName);
+            settingPanel.AddToClassList(MainMenuUIManager.MODAL_PANEL_INACTIVE_CLASS_NAME);
+            settingPanel.RemoveFromClassList(MainMenuUIManager.MODAL_PANEL_ACTIVE_CLASS_NAME);
+        }
+
+        private void OnGameDataUpdated()
+        {
+            print("SettingsScreen: OnGameDataUpdated");
+            soundEffectSlider.value = GameManager.Instance.GameData.SoundEffectsEnabled;
+            musicSlider.value = GameManager.Instance.GameData.MusicEnabled;
         }
 
         protected override void RegisterButtonCallbacks()
@@ -61,33 +79,44 @@ namespace KitchenKrapper
             logoutButton?.RegisterCallback<ClickEvent>(ClickLogoutButton);
         }
 
+        protected override void UnregisterButtonCallbacks()
+        {
+            soundEffectSlider?.UnregisterCallback<ChangeEvent<bool>>(ChangeSoundEffectToggle);
+            musicSlider?.UnregisterCallback<ChangeEvent<bool>>(ChangeMusicVolume);
+            rateUsButton?.UnregisterCallback<ClickEvent>(ClickRateUsButton);
+            supportButton?.UnregisterCallback<ClickEvent>(ClickSupportButton);
+            logoutButton?.UnregisterCallback<ClickEvent>(ClickLogoutButton);
+        }
+
         private void ChangeSoundEffectToggle(ChangeEvent<bool> evt)
         {
-            AudioManager.PlayDefaultButtonSound();
+            AudioManager.Instance.PlayDefaultButtonSound();
+            GameManager.Instance.GameData.SoundEffectsEnabled = evt.newValue;
             AudioManager.Instance.ToggleSoundEffectsMute(evt.newValue);
         }
 
         private void ChangeMusicVolume(ChangeEvent<bool> evt)
         {
-            AudioManager.PlayDefaultButtonSound();
+            AudioManager.Instance.PlayDefaultButtonSound();
+            GameManager.Instance.GameData.MusicEnabled = evt.newValue;
             AudioManager.Instance.ToggleMusicMute(evt.newValue);
         }
 
         private void ClickRateUsButton(ClickEvent evt)
         {
-            AudioManager.PlayDefaultButtonSound();
+            AudioManager.Instance.PlayDefaultButtonSound();
             Application.OpenURL(GameConstants.RateUsURL);
         }
 
         private void ClickSupportButton(ClickEvent evt)
         {
-            AudioManager.PlayDefaultButtonSound();
+            AudioManager.Instance.PlayDefaultButtonSound();
             Application.OpenURL(GameConstants.SupportURL);
         }
 
         private void ClickLogoutButton(ClickEvent evt)
         {
-            AudioManager.PlayDefaultButtonSound();
+            AudioManager.Instance.PlayDefaultButtonSound();
             GameManager.Instance.Logout();
         }
     }

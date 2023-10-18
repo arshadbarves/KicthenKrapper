@@ -5,7 +5,7 @@ namespace KitchenKrapper
 {
     public class BufferScreen : Screen
     {
-        private const string BufferIconName = "buffer__icon";
+        private const string BUFFER_ICON_NAME = "buffer__icon";
 
         private VisualElement bufferIcon;
 
@@ -13,7 +13,7 @@ namespace KitchenKrapper
         {
             base.SetVisualElements();
 
-            bufferIcon = root.Q<VisualElement>(BufferIconName);
+            bufferIcon = root.Q<VisualElement>(BUFFER_ICON_NAME);
             screen.pickingMode = PickingMode.Ignore;
         }
 

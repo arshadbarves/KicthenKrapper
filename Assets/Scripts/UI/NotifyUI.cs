@@ -13,19 +13,19 @@ namespace KitchenKrapper
 
         private void Start()
         {
-            EOSKitchenGameLobby.Instance.OnCreatedLobby += EOSKitchenGameLobby_OnCreatedLobby;
-            EOSKitchenGameLobby.Instance.OnCreatedLobbyFailed += EOSKitchenGameLobby_OnCreatedLobbyFailed;
-            EOSKitchenGameLobby.Instance.OnJoinedLobby += EOSKitchenGameLobby_OnJoinedLobby;
-            EOSKitchenGameLobby.Instance.OnJoinedLobbyFailed += EOSKitchenGameLobby_OnJoinedLobbyFailed;
+            // LobbyManager.Instance.OnCreatedLobby += EOSKitchenGameLobby_OnCreatedLobby;
+            // LobbyManager.Instance.OnCreatedLobbyFailed += EOSKitchenGameLobby_OnCreatedLobbyFailed;
+            // LobbyManager.Instance.OnJoinedLobby += EOSKitchenGameLobby_OnJoinedLobby;
+            // LobbyManager.Instance.OnJoinedLobbyFailed += EOSKitchenGameLobby_OnJoinedLobbyFailed;
             Hide();
         }
 
         private void OnDestroy()
         {
-            EOSKitchenGameLobby.Instance.OnCreatedLobby -= EOSKitchenGameLobby_OnCreatedLobby;
-            EOSKitchenGameLobby.Instance.OnCreatedLobbyFailed -= EOSKitchenGameLobby_OnCreatedLobbyFailed;
-            EOSKitchenGameLobby.Instance.OnJoinedLobby -= EOSKitchenGameLobby_OnJoinedLobby;
-            EOSKitchenGameLobby.Instance.OnJoinedLobbyFailed -= EOSKitchenGameLobby_OnJoinedLobbyFailed;
+            // LobbyManager.Instance.OnCreatedLobby -= EOSKitchenGameLobby_OnCreatedLobby;
+            // LobbyManager.Instance.OnCreatedLobbyFailed -= EOSKitchenGameLobby_OnCreatedLobbyFailed;
+            // LobbyManager.Instance.OnJoinedLobby -= EOSKitchenGameLobby_OnJoinedLobby;
+            // LobbyManager.Instance.OnJoinedLobbyFailed -= EOSKitchenGameLobby_OnJoinedLobbyFailed;
         }
 
         private void EOSKitchenGameLobby_OnJoinedLobbyFailed(object sender, EventArgs e)

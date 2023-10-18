@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -5,11 +6,12 @@ namespace KitchenKrapper
 {
     public class EULAScreen : Screen
     {
-        private const string TermsOfUseButtonName = "eula-privacy__terms-of-use-button";
-        private const string PrivacyPolicyButtonName = "eula-privacy__privacy-policy-button";
-        private const string AcceptEULAButtonName = "eula-privacy__accept-eula-button";
-        private const string DeclineEULAButtonName = "eula-privacy__decline-eula-button";
-        private const string PopupPanelName = "eula-privacy__popup-panel";
+        public static event Action EULAAccepted;
+        private const string TERMS_OF_USE_BUTTON_NAME = "eula-privacy__terms-of-use-button";
+        private const string PRIVACY_POLICY_BUTTON_NAME = "eula-privacy__privacy-policy-button";
+        private const string ACCEPT_EULA_BUTTON_NAME = "eula-privacy__accept-eula-button";
+        private const string DECLLINE_EULA_BUTTON_NAME = "eula-privacy__decline-eula-button";
+        private const string POPUP_PANEL_NAME = "eula-privacy__popup-panel";
         private Button termsOfUseButton;
         private Button privacyPolicyButton;
         private Button acceptEULAButton;
@@ -20,11 +22,11 @@ namespace KitchenKrapper
         protected override void SetVisualElements()
         {
             base.SetVisualElements();
-            termsOfUseButton = root.Q<Button>(TermsOfUseButtonName);
-            privacyPolicyButton = root.Q<Button>(PrivacyPolicyButtonName);
-            acceptEULAButton = root.Q<Button>(AcceptEULAButtonName);
-            declineEULAButton = root.Q<Button>(DeclineEULAButtonName);
-            eulaPopupPanel = root.Q<VisualElement>(PopupPanelName);
+            termsOfUseButton = root.Q<Button>(TERMS_OF_USE_BUTTON_NAME);
+            privacyPolicyButton = root.Q<Button>(PRIVACY_POLICY_BUTTON_NAME);
+            acceptEULAButton = root.Q<Button>(ACCEPT_EULA_BUTTON_NAME);
+            declineEULAButton = root.Q<Button>(DECLLINE_EULA_BUTTON_NAME);
+            eulaPopupPanel = root.Q<VisualElement>(POPUP_PANEL_NAME);
         }
 
         protected override void RegisterButtonCallbacks()
@@ -40,8 +42,8 @@ namespace KitchenKrapper
             base.ShowScreen();
 
             // add active style
-            eulaPopupPanel.RemoveFromClassList(MainMenuUIManager.PopupPanelInactiveClassName);
-            eulaPopupPanel.AddToClassList(MainMenuUIManager.PopupPanelActiveClassName);
+            eulaPopupPanel.RemoveFromClassList(MainMenuUIManager.POPUP_PANEL_INACTIVE_CLASS_NAME);
+            eulaPopupPanel.AddToClassList(MainMenuUIManager.POPUP_PANEL_ACTIVE_CLASS_NAME);
         }
 
         public override void HideScreen()
@@ -49,33 +51,32 @@ namespace KitchenKrapper
             base.HideScreen();
 
             // add inactive style
-            eulaPopupPanel.RemoveFromClassList(MainMenuUIManager.PopupPanelActiveClassName);
-            eulaPopupPanel.AddToClassList(MainMenuUIManager.PopupPanelInactiveClassName);
+            eulaPopupPanel.RemoveFromClassList(MainMenuUIManager.POPUP_PANEL_ACTIVE_CLASS_NAME);
+            eulaPopupPanel.AddToClassList(MainMenuUIManager.POPUP_PANEL_INACTIVE_CLASS_NAME);
         }
 
         private void ClickTermsOfUseButton(ClickEvent evt)
         {
-            AudioManager.PlayDefaultButtonSound();
+            AudioManager.Instance.PlayDefaultButtonSound();
             Application.OpenURL(GameConstants.TermsOfUseUrl);
         }
 
         private void ClickPrivacyPolicyButton(ClickEvent evt)
         {
-            AudioManager.PlayDefaultButtonSound();
+            AudioManager.Instance.PlayDefaultButtonSound();
             Application.OpenURL(GameConstants.PrivacyPolicyUrl);
         }
 
         private void ClickAcceptEULAButton(ClickEvent evt)
         {
-            AudioManager.PlayDefaultButtonSound();
+            AudioManager.Instance.PlayDefaultButtonSound();
             HideScreen();
-            ClientPrefs.SetEULAAndPrivacyPolicyAccepted(true);
-            GameManager.Instance.StartApp();
+            EULAAccepted?.Invoke();
         }
 
         private void ClickDeclineEULAButton(ClickEvent evt)
         {
-            AudioManager.PlayDefaultButtonSound();
+            AudioManager.Instance.PlayDefaultButtonSound();
             HideScreen();
             GameManager.Instance.QuitGame();
         }

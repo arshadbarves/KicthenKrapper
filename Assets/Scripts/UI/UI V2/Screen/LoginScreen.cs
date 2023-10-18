@@ -1,12 +1,11 @@
-using UnityEngine;
 using UnityEngine.UIElements;
 
 namespace KitchenKrapper
 {
     public class LoginScreen : Screen
     {
-        private const string LoginButtonName = "login__login-button";
-        private const string GuestButtonName = "login__guest-button";
+        private const string LOGIN_BUTTON_NAME = "login__login-button";
+        private const string GUEST_BUTTON_NAME = "login__guest-button";
 
         private Button loginButton;
         private Button guestButton;
@@ -15,8 +14,8 @@ namespace KitchenKrapper
         {
             base.SetVisualElements();
 
-            loginButton = root.Q<Button>(LoginButtonName);
-            guestButton = root.Q<Button>(GuestButtonName);
+            loginButton = root.Q<Button>(LOGIN_BUTTON_NAME);
+            guestButton = root.Q<Button>(GUEST_BUTTON_NAME);
         }
 
         public override void ShowScreen()
@@ -24,8 +23,8 @@ namespace KitchenKrapper
             base.ShowScreen();
 
             // add active style
-            screen.AddToClassList(MainMenuUIManager.ModalPanelActiveClassName);
-            screen.RemoveFromClassList(MainMenuUIManager.ModalPanelInactiveClassName);
+            screen.AddToClassList(MainMenuUIManager.MODAL_PANEL_ACTIVE_CLASS_NAME);
+            screen.RemoveFromClassList(MainMenuUIManager.MODAL_PANEL_INACTIVE_CLASS_NAME);
         }
 
         public override void HideScreen()
@@ -33,8 +32,8 @@ namespace KitchenKrapper
             base.HideScreen();
 
             // add inactive style
-            screen.AddToClassList(MainMenuUIManager.ModalPanelInactiveClassName);
-            screen.RemoveFromClassList(MainMenuUIManager.ModalPanelActiveClassName);
+            screen.AddToClassList(MainMenuUIManager.MODAL_PANEL_INACTIVE_CLASS_NAME);
+            screen.RemoveFromClassList(MainMenuUIManager.MODAL_PANEL_ACTIVE_CLASS_NAME);
         }
 
         protected override void RegisterButtonCallbacks()

@@ -1,45 +1,42 @@
-using Epic.OnlineServices;
+using System;
 using UnityEngine;
 
 namespace KitchenKrapper
 {
-    [System.Serializable]
+    [Serializable]
     public class GameData
     {
-        private uint coins;
-        private uint gems;
-        private ProductUserId playerId;
-        private string playerDisplayName;
-        private uint playerTrophies;
-        private string playerIcon;
+        [SerializeField]
+        private bool soundEffectsEnabled;
+        [SerializeField]
+        private bool musicEnabled;
+        [SerializeField]
+        private bool tutorialCompleted;
+        [SerializeField]
+        private bool eulaAgreed;
 
-        public uint Coins { get => coins; set => coins = value; }
-        public uint Gems { get => gems; set => gems = value; }
-        public ProductUserId PlayerId { get => playerId; set => playerId = value; }
-        public string PlayerDisplayName { get => playerDisplayName; set => playerDisplayName = value; }
-        public uint PlayerTrophies { get => playerTrophies; set => playerTrophies = value; }
-        public string PlayerIcon { get => playerIcon; set => playerIcon = value; }
-
+        public bool SoundEffectsEnabled { get => soundEffectsEnabled; set => soundEffectsEnabled = value; }
+        public bool MusicEnabled { get => musicEnabled; set => musicEnabled = value; }
+        public bool TutorialCompleted { get => tutorialCompleted; set => tutorialCompleted = value; }
+        public bool EulaAgreed { get => eulaAgreed; set => eulaAgreed = value; }
 
         // constructor, starting values
         public GameData()
         {
-            this.coins = 500;
-            this.gems = 50;
-            this.playerId = new ProductUserId();
-            this.playerDisplayName = "Player";
-            this.playerTrophies = 0;
-            this.playerIcon = "Default";
+            SoundEffectsEnabled = true;
+            MusicEnabled = true;
+            TutorialCompleted = false;
+            EulaAgreed = false;
         }
 
         public string ToJson()
         {
-            return JsonUtility.ToJson(this, true);
+            return JsonUtility.ToJson(this);
         }
 
-        public void LoadJson(string jsonFilepath)
+        public static GameData FromJson(string json)
         {
-            JsonUtility.FromJsonOverwrite(jsonFilepath, this);
+            return JsonUtility.FromJson<GameData>(json);
         }
     }
 }

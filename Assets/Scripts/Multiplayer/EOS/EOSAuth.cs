@@ -1,5 +1,6 @@
 using Epic.OnlineServices;
 using Epic.OnlineServices.Auth;
+using Epic.OnlineServices.Connect;
 using PlayEveryWare.EpicOnlineServices;
 using UnityEngine;
 
@@ -96,7 +97,7 @@ namespace KitchenKrapper
             {
                 Debug.Log(EOSManager.Instance.GetProductUserId());
                 EOSManager.Instance.ClearConnectId(EOSManager.Instance.GetProductUserId());
-                GameManager.Instance.CleanupApplication();
+                ResetPlayerAuth();
                 Debug.Log("Logout Successful. [No User]");
                 SceneLoaderWrapper.Instance.LoadScene(SceneType.Startup.ToString(), false);
                 return;
@@ -108,7 +109,7 @@ namespace KitchenKrapper
                 if (data.ResultCode == Result.Success)
                 {
                     Debug.Log("Logout Successful. [" + data.ResultCode + "]");
-                    GameManager.Instance.CleanupApplication();
+                    ResetPlayerAuth();
                     SceneLoaderWrapper.Instance.LoadScene(SceneType.Startup.ToString(), false);
                 }
                 else
@@ -118,6 +119,39 @@ namespace KitchenKrapper
             });
 
             Debug.Log(EOSManager.Instance.GetLocalUserId());
+        }
+
+        private void ResetPlayerAuth()
+        {
+            var authInterface = EOSManager.Instance.GetEOSPlatformInterface().GetAuthInterface();
+            var options = new DeletePersistentAuthOptions();
+
+            authInterface.DeletePersistentAuth(ref options, null, (ref DeletePersistentAuthCallbackInfo deletePersistentAuthCallbackInfo) =>
+            {
+                if (deletePersistentAuthCallbackInfo.ResultCode == Result.Success)
+                {
+                    Debug.Log("Persistent auth deleted");
+                }
+                else
+                {
+                    Debug.Log("Persistent auth not deleted");
+                }
+            });
+
+            var connectInterface = EOSManager.Instance.GetEOSPlatformInterface().GetConnectInterface();
+            var connectOptions = new Epic.OnlineServices.Connect.DeleteDeviceIdOptions();
+
+            connectInterface.DeleteDeviceId(ref connectOptions, null, (ref DeleteDeviceIdCallbackInfo deleteDeviceIdCallbackInfo) =>
+            {
+                if (deleteDeviceIdCallbackInfo.ResultCode == Result.Success)
+                {
+                    Debug.Log("Device ID deleted");
+                }
+                else
+                {
+                    Debug.Log("Device ID not deleted");
+                }
+            });
         }
 
         private void ConnectOpenID()

@@ -7,16 +7,16 @@ namespace KitchenKrapper
 {
     public class OptionbarScreen : Screen
     {
-        private const string HomeButtonName = "optionbar__home-button";
-        private const string SettingsButtonName = "optionbar__settings-button";
-        private const string InventoryButtonName = "optionbar__inventory-button";
-        private const string ShopButtonName = "optionbar__shop-button";
-        private const string CoinCountName = "optionbar__coin-count";
-        private const string GemCountName = "optionbar__gem-count";
-        private const string ProfileButtonName = "optionbar__profile-button";
-        private const string ProfileNameName = "optionbar__profile-name";
-        private const string ProfileImageName = "optionbar__profile-image";
-        private const string ProfileRankProgressName = "optionbar__profile-rank-progress";
+        private const string HOME_BUTTON_NAME = "optionbar__home-button";
+        private const string SETTINGS_BUTTON_NAME = "optionbar__settings-button";
+        private const string INVENTORY_BUTTON_NAME = "optionbar__inventory-button";
+        private const string SHOP_BUTTON_NAME = "optionbar__shop-button";
+        private const string COIN_COUNT_LABEL_NAME = "optionbar__coin-count";
+        private const string GEM_COUNT_LABEL_NAME = "optionbar__gem-count";
+        private const string PROFILE_BUTTON_NAME = "optionbar__profile-button";
+        private const string PROFILE_NAME_LABEL_NAME = "optionbar__profile-name";
+        private const string PROFILE_IMAGE_NAME = "optionbar__profile-image";
+        private const string PROFILE_RANK_PROGRESS_NAME = "optionbar__profile-rank-progress";
 
         private Button homeButton;
         private Button settingsButton;
@@ -34,16 +34,16 @@ namespace KitchenKrapper
         protected override void SetVisualElements()
         {
             base.SetVisualElements();
-            homeButton = root.Q<Button>(HomeButtonName);
-            settingsButton = root.Q<Button>(SettingsButtonName);
-            inventoryButton = root.Q<Button>(InventoryButtonName);
-            shopButton = root.Q<Button>(ShopButtonName);
-            coinCount = root.Q<Label>(CoinCountName);
-            gemCount = root.Q<Label>(GemCountName);
-            profileButton = root.Q<Button>(ProfileButtonName);
-            profileName = root.Q<Label>(ProfileNameName);
-            profileImage = root.Q<VisualElement>(ProfileImageName);
-            profileRankProgress = root.Q<ProgressBar>(ProfileRankProgressName);
+            homeButton = root.Q<Button>(HOME_BUTTON_NAME);
+            settingsButton = root.Q<Button>(SETTINGS_BUTTON_NAME);
+            inventoryButton = root.Q<Button>(INVENTORY_BUTTON_NAME);
+            shopButton = root.Q<Button>(SHOP_BUTTON_NAME);
+            coinCount = root.Q<Label>(COIN_COUNT_LABEL_NAME);
+            gemCount = root.Q<Label>(GEM_COUNT_LABEL_NAME);
+            profileButton = root.Q<Button>(PROFILE_BUTTON_NAME);
+            profileName = root.Q<Label>(PROFILE_NAME_LABEL_NAME);
+            profileImage = root.Q<VisualElement>(PROFILE_IMAGE_NAME);
+            profileRankProgress = root.Q<ProgressBar>(PROFILE_RANK_PROGRESS_NAME);
         }
 
         protected override void RegisterButtonCallbacks()
@@ -64,45 +64,43 @@ namespace KitchenKrapper
             profileButton?.UnregisterCallback<ClickEvent>(ClickProfileButton);
         }
 
-        private void OnEnable()
+        private void Start()
         {
-            GameManager.FundsUpdated += OnFundsUpdated;
             GameManager.PlayerDataChanged += OnPlayerDataChanged;
         }
 
-        private void OnDisable()
+        protected override void OnDestroy()
         {
-            GameManager.FundsUpdated -= OnFundsUpdated;
             GameManager.PlayerDataChanged -= OnPlayerDataChanged;
         }
 
         private void ClickHomeButton(ClickEvent evt)
         {
-            AudioManager.PlayDefaultButtonSound();
+            AudioManager.Instance.PlayDefaultButtonSound();
             MainMenuUIManager.Instance.ShowHomeScreen();
         }
 
         private void ClickSettingsButton(ClickEvent evt)
         {
-            AudioManager.PlayDefaultButtonSound();
+            AudioManager.Instance.PlayDefaultButtonSound();
             MainMenuUIManager.Instance.ShowSettingsScreen();
         }
 
         private void ClickInventoryButton(ClickEvent evt)
         {
-            AudioManager.PlayDefaultButtonSound();
+            AudioManager.Instance.PlayDefaultButtonSound();
             MainMenuUIManager.Instance.ShowInventoryScreen();
         }
 
         private void ClickShopButton(ClickEvent evt)
         {
-            AudioManager.PlayDefaultButtonSound();
+            AudioManager.Instance.PlayDefaultButtonSound();
             MainMenuUIManager.Instance.ShowShopScreen();
         }
 
         private void ClickProfileButton(ClickEvent evt)
         {
-            AudioManager.PlayDefaultButtonSound();
+            AudioManager.Instance.PlayDefaultButtonSound();
             MainMenuUIManager.Instance.ShowPlayerNamePopupScreen();
         }
 
@@ -116,12 +114,6 @@ namespace KitchenKrapper
         {
             uint startValue = (uint)Int32.Parse(gemCount.text);
             StartCoroutine(LerpRoutine(gemCount, startValue, gems, LerpTime));
-        }
-
-        void OnFundsUpdated(GameData gameData)
-        {
-            SetCoin(gameData.Coins);
-            SetGems(gameData.Gems);
         }
 
         public void SetPlayerName(string playerName)
@@ -143,9 +135,12 @@ namespace KitchenKrapper
 
         void OnPlayerDataChanged()
         {
-            SetPlayerName(GameManager.Instance.GameData.PlayerDisplayName);
-            // SetPlayerProfileImage(GameManager.Instance.GameData.PlayerIcon);
-            SetPlayerProgress(GameManager.Instance.GameData.PlayerTrophies);
+
+            SetCoin(GameManager.Instance.PlayerGameData.Coins);
+            SetGems(GameManager.Instance.PlayerGameData.Gems);
+            SetPlayerName(GameManager.Instance.PlayerGameData.PlayerDisplayName);
+            print("[Option]" + GameManager.Instance.PlayerGameData.ToJson());
+            SetPlayerProgress(GameManager.Instance.PlayerGameData.PlayerTrophies);
         }
 
         IEnumerator LerpProgressRoutine(ProgressBar progressBar, float startValue, float endValue, float duration)

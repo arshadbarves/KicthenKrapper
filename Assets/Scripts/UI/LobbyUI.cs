@@ -37,7 +37,7 @@ namespace KitchenKrapper
             readyText.text = "Not Ready";
             readyButton.GetComponent<Image>().sprite = onNotReadyButtonImage;
 
-            Lobby lobby = EOSKitchenGameLobby.Instance.GetCurrentLobby();
+            Lobby lobby = LobbyManager.Instance.GetCurrentLobby();
 
             if (lobby == null)
             {
@@ -58,13 +58,13 @@ namespace KitchenKrapper
         private void OnLeaveLobbyButtonClicked()
         {
             EOSKitchenGameMultiplayer.Instance.DisconnectOnClick();
-            EOSKitchenGameLobby.Instance.LeaveLobby();
+            LobbyManager.Instance.LeaveLobby();
             SceneLoaderWrapper.Instance.LoadScene(SceneType.MainMenu.ToString(), false);
         }
 
         private void OnReadyButtonClicked()
         {
-            if (PlayerStateReady.Instance.IsReady())
+            if (PlayerState.Instance.IsPlayerReady())
             {
                 readyText.text = "Not Ready";
                 readyButton.GetComponent<Image>().sprite = onNotReadyButtonImage;
@@ -76,7 +76,7 @@ namespace KitchenKrapper
             }
 
             // Call server RPC to set player ready
-            PlayerStateReady.Instance.OnReadyButtonClicked();
+            // PlayerState.Instance.OnReadyButtonClicked();
         }
     }
 }

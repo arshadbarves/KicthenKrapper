@@ -40,7 +40,7 @@ namespace KitchenKrapper
 
         private void OnLobbyClicked()
         {
-            EOSKitchenGameLobby.Instance.JoinLobby(LobbyRef, LobbyDetailsRef);
+            LobbyManager.Instance.JoinLobby(LobbyRef, LobbyDetailsRef);
         }
 
         public void UpdateUI()

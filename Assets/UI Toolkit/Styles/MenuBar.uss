@@ -63,6 +63,7 @@
     margin-bottom: 20px;
     height: 70px;
     justify-content: space-between;
+    width: 100%;
 }
 
 .treasure-item-label {

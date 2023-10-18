@@ -29,6 +29,7 @@ using Epic.OnlineServices;
 using Epic.OnlineServices.Sessions;
 using Epic.OnlineServices.Presence;
 using Epic.OnlineServices.UI;
+using Unity.Netcode;
 
 namespace PlayEveryWare.EpicOnlineServices.Samples
 {
@@ -168,7 +169,7 @@ namespace PlayEveryWare.EpicOnlineServices.Samples
     /// <summary>
     /// Class represents a single session attribute
     /// </summary>
-    public class Session
+    public class Session : INetworkSerializable
     {
         public string Name = string.Empty;
         public string Id = string.Empty;
@@ -297,7 +298,7 @@ namespace PlayEveryWare.EpicOnlineServices.Samples
         {
             Session session = other as Session;
 
-            return other != null && 
+            return other != null &&
                 Name.Equals(session.Name, StringComparison.OrdinalIgnoreCase) &&
                 Id.Equals(session.Id, StringComparison.OrdinalIgnoreCase) &&
                 BucketId.Equals(session.BucketId, StringComparison.OrdinalIgnoreCase) &&
@@ -312,6 +313,21 @@ namespace PlayEveryWare.EpicOnlineServices.Samples
         public override int GetHashCode()
         {
             return base.GetHashCode();
+        }
+
+        public void NetworkSerialize<T>(BufferSerializer<T> serializer) where T : IReaderWriter
+        {
+            serializer.SerializeValue(ref Name);
+            serializer.SerializeValue(ref Id);
+            serializer.SerializeValue(ref BucketId);
+            serializer.SerializeValue(ref MaxPlayers);
+            serializer.SerializeValue(ref NumConnections);
+            serializer.SerializeValue(ref AllowJoinInProgress);
+            serializer.SerializeValue(ref InvitesAllowed);
+            serializer.SerializeValue(ref PermissionLevel);
+            serializer.SerializeValue(ref SearchResults);
+            serializer.SerializeValue(ref UpdateInProgress);
+            serializer.SerializeValue(ref SessionState);
         }
     }
 
@@ -629,7 +645,7 @@ namespace PlayEveryWare.EpicOnlineServices.Samples
             {
                 AsUtf8 = BUCKET_ID
             };
-            
+
             SessionModificationAddAttributeOptions attrOptions = new SessionModificationAddAttributeOptions();
             attrOptions.SessionAttribute = attrData;
 
@@ -646,7 +662,7 @@ namespace PlayEveryWare.EpicOnlineServices.Samples
             foreach (SessionAttribute sdAttrib in session.Attributes)
             {
                 attrData.Key = sdAttrib.Key;
-                
+
                 switch (sdAttrib.ValueType)
                 {
                     case AttributeType.Boolean:
@@ -910,7 +926,7 @@ namespace PlayEveryWare.EpicOnlineServices.Samples
             {
                 AsUtf8 = BUCKET_ID
             };
-            
+
             SessionSearchSetParameterOptions paramOptions = new SessionSearchSetParameterOptions();
             paramOptions.ComparisonOp = ComparisonOp.Equal;
             paramOptions.Parameter = attrData;
@@ -954,7 +970,7 @@ namespace PlayEveryWare.EpicOnlineServices.Samples
                     return;
                 }
             }
-            
+
             SessionSearchFindOptions findOptions = new SessionSearchFindOptions();
             findOptions.LocalUserId = EOSManager.Instance.GetProductUserId();
 
@@ -1406,7 +1422,7 @@ namespace PlayEveryWare.EpicOnlineServices.Samples
             Result result = presenceInterface.CreatePresenceModification(ref createModOptions, out PresenceModification presenceModification);
             if (result != Result.Success)
             {
-                if(onLoggingOut)
+                if (onLoggingOut)
                 {
                     Debug.LogWarning("EOSSessionsManager.SetJoininfo: Create presence modification during logOut, ignore.");
                     return;

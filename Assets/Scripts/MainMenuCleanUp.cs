@@ -17,9 +17,9 @@ namespace KitchenKrapper
                 Destroy(EOSKitchenGameMultiplayer.Instance.gameObject);
             }
 
-            if (EOSKitchenGameLobby.Instance != null)
+            if (LobbyManager.Instance != null)
             {
-                Destroy(EOSKitchenGameLobby.Instance.gameObject);
+                Destroy(LobbyManager.Instance.gameObject);
             }
         }
     }

@@ -400,6 +400,10 @@
 
 .inputfield {
     height: 200px;
+    margin-top: 25px;
+    margin-right: 25px;
+    margin-bottom: 25px;
+    margin-left: 25px;
 }
 
 .unity-base-text-field__input {
@@ -478,4 +482,8 @@
     transition-property: opacity;
     transition-duration: 0.25s;
     opacity: 0.05;
+}
+
+.unity-base-text-field {
+    flex-direction: column;
 }

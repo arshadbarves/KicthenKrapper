@@ -33,14 +33,14 @@ namespace KitchenKrapper
         {
             EOSKitchenGameMultiplayer.Instance.OnTryingToJoinGame += EOSKitchenGameMultiplayer_OnTryingToJoinGame;
             EOSKitchenGameMultiplayer.Instance.OnFailedToJoinGame += EOSKitchenGameMultiplayer_OnFailedToJoinGame;
-            EOSKitchenGameLobby.Instance.OnLobbyListChanged += EOSKitchenGameLobby_OnLobbyListChanged;
+            // LobbyManager.Instance.OnLobbyListChanged += EOSKitchenGameLobby_OnLobbyListChanged;
             UpdateLobbyList(new Dictionary<Lobby, LobbyDetails>());
         }
 
-        private void EOSKitchenGameLobby_OnLobbyListChanged(object sender, EOSKitchenGameLobby.LobbyListChangedEventArgs e)
-        {
-            UpdateLobbyList(e.Lobbies);
-        }
+        // private void EOSKitchenGameLobby_OnLobbyListChanged(object sender, LobbyManager.LobbyListChangedEventArgs e)
+        // {
+        //     UpdateLobbyList(e.Lobbies);
+        // }
 
         private void OnDestroy()
         {
@@ -48,7 +48,7 @@ namespace KitchenKrapper
             {
                 EOSKitchenGameMultiplayer.Instance.OnTryingToJoinGame -= EOSKitchenGameMultiplayer_OnTryingToJoinGame;
                 EOSKitchenGameMultiplayer.Instance.OnFailedToJoinGame -= EOSKitchenGameMultiplayer_OnFailedToJoinGame;
-                EOSKitchenGameLobby.Instance.OnLobbyListChanged -= EOSKitchenGameLobby_OnLobbyListChanged;
+                // LobbyManager.Instance.OnLobbyListChanged -= EOSKitchenGameLobby_OnLobbyListChanged;
             }
             catch (Exception e)
             {
@@ -183,7 +183,7 @@ namespace KitchenKrapper
                     lobbyUI.LobbyDetailsRef = kvp.Value;
 
                     // Get Level
-                    var lobbyDetailsCopyAttributeByKeyOptions = new LobbyDetailsCopyAttributeByKeyOptions() { AttrKey = EOSKitchenGameLobby.LOBBY_NAME };
+                    var lobbyDetailsCopyAttributeByKeyOptions = new LobbyDetailsCopyAttributeByKeyOptions() { AttrKey = "LobbyManager.LOBBY_NAME" };
                     Result attrResult = kvp.Value.CopyAttributeByKey(ref lobbyDetailsCopyAttributeByKeyOptions, out Epic.OnlineServices.Lobby.Attribute? outAttrbite);
                     if (attrResult == Result.Success)
                     {

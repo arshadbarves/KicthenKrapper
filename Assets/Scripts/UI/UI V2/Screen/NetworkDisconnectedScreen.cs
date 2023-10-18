@@ -10,8 +10,8 @@ namespace KitchenKrapper
         public static event Action NetworkDisconnectedScreenShown;
         public static event Action NetworkDisconnectedScreenHidden;
 
-        private const string ReconnectButtonName = "network-disconnected__reconnect-button";
-        private const string NetworkDisconnectedIconName = "network-disconnected__icon";
+        private const string RECONNECT_BUTTON_NAME = "network-disconnected__reconnect-button";
+        private const string NETWORK_DISCONNECTED_ICON_NAME = "network-disconnected__icon";
 
         private Button reconnectButton;
         private VisualElement networkDisconnectedIcon;
@@ -20,8 +20,8 @@ namespace KitchenKrapper
         {
             base.SetVisualElements();
 
-            reconnectButton = root.Q<Button>(ReconnectButtonName);
-            networkDisconnectedIcon = root.Q<VisualElement>(NetworkDisconnectedIconName);
+            reconnectButton = root.Q<Button>(RECONNECT_BUTTON_NAME);
+            networkDisconnectedIcon = root.Q<VisualElement>(NETWORK_DISCONNECTED_ICON_NAME);
         }
 
         public void EnablePickable()

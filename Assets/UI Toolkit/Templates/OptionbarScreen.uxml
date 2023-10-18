@@ -26,11 +26,11 @@
         <ui:VisualElement name="Items" class="treasure-items">
             <ui:VisualElement name="CoinItem" class="treasure-item">
                 <ui:VisualElement name="CoinVisualIcon" class="treasure-item-icon" />
-                <ui:Label text="10000000" name="optionbar__coin-count" class="label treasure-item-label" />
+                <ui:Label text="0" name="optionbar__coin-count" class="label treasure-item-label" />
             </ui:VisualElement>
             <ui:VisualElement name="GemItem" class="treasure-item">
                 <ui:VisualElement name="GemVisualIcon" class="treasure-item-icon" style="background-image: url(&apos;project://database/Assets/Images/Icons/Gem.png?fileID=2800000&amp;guid=2c4c1ae3bca9f8e489c80f0162b3e948&amp;type=3#Gem&apos;);" />
-                <ui:Label text="10000000" name="optionbar__gem-count" class="label treasure-item-label" />
+                <ui:Label text="0" name="optionbar__gem-count" class="label treasure-item-label" />
             </ui:VisualElement>
         </ui:VisualElement>
     </ui:VisualElement>
