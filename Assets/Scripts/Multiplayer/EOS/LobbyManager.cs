@@ -1,20 +1,27 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 using Epic.OnlineServices;
 using Epic.OnlineServices.Lobby;
 using PlayEveryWare.EpicOnlineServices;
 using PlayEveryWare.EpicOnlineServices.Samples;
+using Unity.Netcode;
 using UnityEngine;
 
 namespace KitchenKrapper
 {
-    public class LobbyManager : MonoBehaviour
+    public enum MatchType
     {
-        public const string LOBBY_LEVEL = "LEVEL";
-        private const int MAX_PLAYERS = 4;
-        private const string allowedCharacters = "abcdefghijklmnopqrstuvwxyz0123456789";
+        Ranked,
+        Casual
+    }
+
+    public class LobbyManager : NetworkSingleton<LobbyManager>
+    {
+        private const string LobbyLevel = "LEVEL";
+        private const int MaxPlayers = 4;
+        private const string AllowedCharacters = "abcdefghijklmnopqrstuvwxyz0123456789";
+        private const int InviteIdLength = 10;
 
         public event Action<Lobby> LobbyCreated;
         public event Action LobbyCreatedFailed;
@@ -24,33 +31,45 @@ namespace KitchenKrapper
         public event Action<Lobby> LobbyUpdated;
         public event Action<string> LobbyResultsReceived;
 
-        public static LobbyManager Instance { get; private set; }
-
-        private bool isRankedMatch = true; // TODO: Make a friend match game mode system
+        private MatchType currentMatchType;
         private Lobby currentLobbyCache;
         private bool lastCurrentLobbyIsValid = false;
         private EOSLobbyManager eOSLobbyManager;
-        private MatchmakingManager matchmakingManager;
-
-        private void Awake()
-        {
-            if (Instance != null)
-            {
-                Destroy(gameObject);
-                return;
-            }
-
-            Instance = this;
-            DontDestroyOnLoad(gameObject);
-        }
+        private NetworkList<PlayerData> lobbyPlayers = new NetworkList<PlayerData>();
 
         private void Start()
         {
             eOSLobbyManager = EOSManager.Instance.GetOrCreateManager<EOSLobbyManager>();
-            matchmakingManager = MatchmakingManager.Instance;
+            lobbyPlayers.OnListChanged += LobbyPlayers_OnListChanged;
+
+            currentMatchType = MatchType.Ranked; // TODO: Remove this when we have a UI for selecting match type
         }
 
-        private void OnDestroy()
+        private void LobbyPlayers_OnListChanged(NetworkListEvent<PlayerData> changeEvent)
+        {
+            if (!IsServer)
+                return;
+
+            if (AllPlayersReady())
+            {
+                StartMatchmaking();
+            }
+        }
+
+        private bool AllPlayersReady()
+        {
+            foreach (PlayerData playerReadyState in lobbyPlayers)
+            {
+                if (playerReadyState.playerGameState != PlayerGameState.Ready)
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        public override void OnDestroy()
         {
             eOSLobbyManager?.RemoveNotifyMemberUpdate(OnMemberUpdate);
             EOSManager.Instance.RemoveManager<EOSLobbyManager>();
@@ -63,12 +82,6 @@ namespace KitchenKrapper
 
         private void HandleLobbyUpdate()
         {
-            ProductUserId productUserId = EOSManager.Instance.GetProductUserId();
-            if (productUserId == null || !productUserId.IsValid() || !eOSLobbyManager._Dirty)
-            {
-                return;
-            }
-
             Lobby currentLobby = eOSLobbyManager.GetCurrentLobby();
 
             if (currentLobby.IsValid())
@@ -85,6 +98,7 @@ namespace KitchenKrapper
             {
                 return;
             }
+
             lastCurrentLobbyIsValid = currentLobby.IsValid();
 
             if (currentLobby.IsValid())
@@ -94,8 +108,6 @@ namespace KitchenKrapper
             else
             {
                 OnLeaveLobby(Result.Success);
-                currentLobbyCache = null;
-                LobbyLeft?.Invoke();
             }
         }
 
@@ -111,12 +123,14 @@ namespace KitchenKrapper
 
         public void CreateLobby()
         {
-            StartCoroutine(CreateUniqueInviteIdCoroutine((string inviteId) =>
+            string uniqueInviteId = GenerateUniqueInviteId();
+
+            if (!string.IsNullOrEmpty(uniqueInviteId))
             {
                 Lobby lobbyProperties = new()
                 {
-                    BucketId = inviteId,
-                    MaxNumLobbyMembers = MAX_PLAYERS,
+                    BucketId = uniqueInviteId,
+                    MaxNumLobbyMembers = MaxPlayers,
                     LobbyPermissionLevel = LobbyPermissionLevel.Publicadvertised,
                     AllowInvites = true,
                     PresenceEnabled = false, // TODO: Enable this when we have a presence system
@@ -125,20 +139,20 @@ namespace KitchenKrapper
 
                 LobbyAttribute levelAttribute = new LobbyAttribute
                 {
-                    Key = LOBBY_LEVEL,
+                    Key = LobbyLevel,
                     AsInt64 = GameManager.Instance.GetCurrentLevel().levelNumber,
                     ValueType = AttributeType.Int64,
                     Visibility = LobbyAttributeVisibility.Public
                 };
 
                 lobbyProperties.Attributes.Add(levelAttribute);
-                eOSLobbyManager.CreateLobby(lobbyProperties, OnLobbyUpdated);
-            }));
+                eOSLobbyManager.CreateLobby(lobbyProperties, OnLobbyCreatedOrJoined);
+            }
         }
 
         public void JoinLobby(Lobby lobbyRef, LobbyDetails lobbyDetailsRef)
         {
-            eOSLobbyManager.JoinLobby(lobbyRef.Id, lobbyDetailsRef, true, OnLobbyUpdated);
+            eOSLobbyManager.JoinLobby(lobbyRef.Id, lobbyDetailsRef, true, OnLobbyCreatedOrJoined);
         }
 
         public void SearchLobbies(string inviteId)
@@ -179,7 +193,7 @@ namespace KitchenKrapper
             Lobby lobbyProperties = new()
             {
                 BucketId = currentLobby.BucketId,
-                MaxNumLobbyMembers = MAX_PLAYERS,
+                MaxNumLobbyMembers = MaxPlayers,
                 LobbyPermissionLevel = LobbyPermissionLevel.Publicadvertised,
                 AllowInvites = true,
                 PresenceEnabled = false, // TODO: Enable this when we have a presence system
@@ -188,7 +202,7 @@ namespace KitchenKrapper
 
             LobbyAttribute levelAttribute = new LobbyAttribute
             {
-                Key = LOBBY_LEVEL,
+                Key = LobbyLevel,
                 AsInt64 = GameManager.Instance.GetCurrentLevel().levelNumber,
                 ValueType = AttributeType.String,
                 Visibility = LobbyAttributeVisibility.Public
@@ -220,34 +234,41 @@ namespace KitchenKrapper
             LobbyLeft?.Invoke();
         }
 
-        private IEnumerator CreateUniqueInviteIdCoroutine(Action<string> onInviteIdGenerated)
+        private void OnLobbyCreatedOrJoined(Result result)
         {
-            int inviteIdLength = 10;
-            StringBuilder inviteIdBuilder = new StringBuilder();
+            OnLobbyUpdated(result);
+            Lobby currentLobby = eOSLobbyManager.GetCurrentLobby();
 
-            for (int i = 0; i < inviteIdLength; i++)
+            if (currentLobby.IsOwner(EOSManager.Instance.GetProductUserId()))
             {
-                int randomIndex = UnityEngine.Random.Range(0, allowedCharacters.Length);
-                char randomCharacter = allowedCharacters[randomIndex];
-                inviteIdBuilder.Append(randomCharacter);
-            }
-
-            string inviteId = inviteIdBuilder.ToString().ToUpper();
-
-            bool matchFound = false;
-
-            eOSLobbyManager.SearchByAttribute("bucket", inviteId, (Result result) =>
-            {
-                if (result == Result.Success)
+                LobbyCreated?.Invoke(currentLobby);
+                MultiplayerManager.Instance.StartHost((bool success) =>
                 {
-                    Debug.Log("Found a match, regenerating invite code");
-                    matchFound = true;
+                    if (success)
+                    {
+                        LobbyJoined?.Invoke(currentLobby);
+                        lobbyPlayers.Add(GetLocalPlayer());
+                    }
+                });
+            }
+            else
+            {
+                if (currentLobby.LobbyOwner.IsValid())
+                {
+                    MultiplayerManager.Instance.StartClient(currentLobby.LobbyOwner, (bool success) =>
+                    {
+                        if (success)
+                        {
+                            LobbyJoined?.Invoke(currentLobby);
+                            lobbyPlayers.Add(GetLocalPlayer());
+                        }
+                    });
                 }
-            });
-
-            yield return new WaitUntil(() => !matchFound);
-
-            onInviteIdGenerated?.Invoke(inviteId);
+                else
+                {
+                    Debug.LogError("LobbyManager (OnLobbyUpdated): invalid server user id");
+                }
+            }
         }
 
         private void OnLobbyUpdated(Result result)
@@ -266,15 +287,6 @@ namespace KitchenKrapper
                 LobbyCreatedFailed?.Invoke();
                 Debug.LogErrorFormat("LobbyManager (OnLobbyUpdated): OnLobbyCreated returned invalid CurrentLobby.Id: {0}", currentLobby.Id);
                 return;
-            }
-
-            if (currentLobby.IsOwner(EOSManager.Instance.GetProductUserId()))
-            {
-                LobbyCreated?.Invoke(currentLobby);
-            }
-            else
-            {
-                LobbyJoined?.Invoke(currentLobby);
             }
         }
 
@@ -321,7 +333,129 @@ namespace KitchenKrapper
 
         public void StartMatchmaking()
         {
-            matchmakingManager.StartMatchmaking(isRankedMatch, GetCurrentLobby());
+            MatchmakingManager.Instance.StartMatchmaking(currentMatchType);
+        }
+
+        public void CancelMatchmaking()
+        {
+            MatchmakingManager.Instance.CancelMatchmaking();
+        }
+
+        public void FindAndJoinLobby(string inviteId)
+        {
+            SearchLobbies(inviteId);
+        }
+
+        private string GenerateUniqueInviteId()
+        {
+            StringBuilder inviteIdBuilder = new StringBuilder();
+
+            bool matchFound = false;
+
+            while (!matchFound)
+            {
+                inviteIdBuilder.Clear();
+
+                for (int i = 0; i < InviteIdLength; i++)
+                {
+                    int randomIndex = UnityEngine.Random.Range(0, AllowedCharacters.Length);
+                    char randomCharacter = AllowedCharacters[randomIndex];
+                    inviteIdBuilder.Append(randomCharacter);
+                }
+
+                string inviteId = inviteIdBuilder.ToString().ToUpper();
+
+                eOSLobbyManager.SearchByAttribute("bucket", inviteId, (Result result) =>
+                {
+                    if (result == Result.Success)
+                    {
+                        Debug.Log("Found a match, regenerating invite code");
+                        matchFound = true;
+                    }
+                });
+            }
+
+            return inviteIdBuilder.ToString().ToUpper();
+        }
+
+        public PlayerData GetLocalPlayer()
+        {
+            ulong localClientId = NetworkManager.Singleton.LocalClientId;
+            foreach (PlayerData player in lobbyPlayers)
+            {
+                if (player.clientId == localClientId)
+                {
+                    return player;
+                }
+            }
+
+            PlayerData newPlayer = new PlayerData
+            {
+                clientId = NetworkManager.Singleton.LocalClientId,
+                playerGameState = PlayerGameState.NotReady,
+                playerName = GameManager.Instance.GetPlayerName(),
+                playerId = EOSManager.Instance.GetProductUserId().ToString()
+            };
+
+            return newPlayer;
+        }
+
+        public List<PlayerData> GetPlayers()
+        {
+            List<PlayerData> players = new List<PlayerData>();
+            foreach (PlayerData player in lobbyPlayers)
+            {
+                players.Add(player);
+            }
+
+            return players;
+        }
+
+        public void TogglePlayerReadyState()
+        {
+            ulong localClientId = NetworkManager.Singleton.LocalClientId;
+            for (int i = 0; i < lobbyPlayers.Count; i++)
+            {
+                if (lobbyPlayers[i].clientId == localClientId)
+                {
+                    PlayerData modifiedPlayer = lobbyPlayers[i];
+                    modifiedPlayer.playerGameState = modifiedPlayer.playerGameState == PlayerGameState.NotReady ? PlayerGameState.Ready : PlayerGameState.NotReady;
+                    lobbyPlayers[i] = modifiedPlayer;
+                    break;
+                }
+            }
+        }
+
+        public void ReturnToLobby()
+        {
+            if (currentLobbyCache == null)
+            {
+                Debug.LogError("LobbyManager (ReturnToLobby): CurrentLobby is null");
+                return;
+            }
+
+            lobbyPlayers.Clear();
+
+            OnLobbyCreatedOrJoined(Result.Success);
+        }
+
+        public void SetMatchType(MatchType matchType)
+        {
+            currentMatchType = matchType;
+        }
+
+        public void UpdateLobbyPlayerList(string playerId, PlayerSessionState playerSessionState)
+        {
+            for (int i = 0; i < lobbyPlayers.Count; i++)
+            {
+                if (lobbyPlayers[i].playerId == playerId)
+                {
+                    PlayerData modifiedPlayer = lobbyPlayers[i];
+                    modifiedPlayer.playerSessionState = playerSessionState;
+                    lobbyPlayers[i] = modifiedPlayer;
+                    break;
+                }
+            }
         }
     }
 }

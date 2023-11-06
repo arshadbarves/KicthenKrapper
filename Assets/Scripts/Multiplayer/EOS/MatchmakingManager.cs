@@ -1,118 +1,35 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
+using Epic.OnlineServices.Sessions;
 using PlayEveryWare.EpicOnlineServices;
 using PlayEveryWare.EpicOnlineServices.Samples;
 using Epic.OnlineServices;
-using Epic.OnlineServices.Sessions;
-using System.Collections.Generic;
 using Unity.Netcode;
 
 namespace KitchenKrapper
 {
-    public enum PlayerSessionState
+    public class MatchmakingManager : NetworkSingleton<MatchmakingManager>
     {
-        None,
-        Joined,
-        Left,
-        Kicked,
-        Banned,
-        Disconnected,
-        Failed
-    }
-
-    public class MatchmakingManager : MonoBehaviour
-    {
-        public const string SESSION_LEVEL = "LEVEL";
-        private const int MAX_PLAYERS = 8;
-        public static MatchmakingManager Instance { get; private set; }
-
-        public static event Action OnMatchmakingStarted;
-        public static event Action OnMatchmakingCanceled;
-        public static event Action OnMatchmakingFailed;
-        public static event Action OnMatchmakingSucceeded;
-
+        public static event Action MatchmakingStarted;
+        public static event Action MatchmakingCanceled;
+        public static event Action MatchmakingFailed;
+        public static event Action MatchmakingSucceeded;
 
         public bool IsInQueue { get; private set; }
-        private EOSSessionsManager sessionsManager;
 
-        private bool isRankedMatch;
+        private MatchType matchType;
         private Lobby currentLobby;
-        private NetworkVariable<Session> currentSession = new NetworkVariable<Session>();
-        private NetworkVariable<Dictionary<string, PlayerSessionState>> lobbyPlayers = new NetworkVariable<Dictionary<string, PlayerSessionState>>(new Dictionary<string, PlayerSessionState>(), NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
-        private SessionDetails currentSessionDetails;
-
-        private void Awake()
-        {
-            Instance = this;
-        }
-
-        private void Start()
-        {
-            sessionsManager = EOSManager.Instance.GetOrCreateManager<EOSSessionsManager>();
-            currentSession.OnValueChanged += CurrentSession_OnValueChanged;
-        }
-
-        private void CurrentSession_OnValueChanged(Session previousValue, Session newValue)
-        {
-            SessionDetails newSessionDetails = sessionsManager.GetCurrentSearch().GetResults()[newValue];
-            if (currentSessionDetails != newSessionDetails)
-            {
-                currentSessionDetails = newSessionDetails;
-            }
-
-            // lobbyPlayers
-            foreach (KeyValuePair<string, PlayerSessionState> player in lobbyPlayers.Value)
-            {
-                if (player.Value == PlayerSessionState.Failed || player.Value == PlayerSessionState.Left)
-                {
-                    ExitAllLobbyPlayers();
-                    return;
-                }
-
-                if (player.Value == PlayerSessionState.None)
-                {
-                    return;
-                }
-            }
-        }
-
-        private void ExitAllLobbyPlayers()
-        {
-            foreach (KeyValuePair<string, PlayerSessionState> player in lobbyPlayers.Value)
-            {
-                if (player.Value == PlayerSessionState.Joined)
-                {
-                    LeaveSessionServerRpc(player.Key);
-                }
-            }
-        }
 
         private void Update()
         {
-            if (currentSession != null && currentSession.Value != null)
-            {
-                if (currentSession.Value.SessionState == OnlineSessionState.Ended)
-                {
-                    Debug.Log("Session ended");
-                    currentSession.Value = null;
-                    lobbyPlayers.Value.Clear();
-                    OnMatchmakingCanceled?.Invoke();
-                }
+            if (!IsServer || !SessionManager.Instance.IsSessionReady())
+                return;
 
-                if (currentSession.Value.NumConnections == currentSession.Value.MaxPlayers)
-                {
-                    Debug.Log("Session starting");
-                }
-            }
+            StartMatch();
         }
 
-        private void OnDestroy()
-        {
-            // Unity crashes if you try to access EOSSinglton OnDestroy
-            EOSManager.Instance.RemoveManager<EOSSessionsManager>();
-        }
-
-        public void StartMatchmaking(bool isRankedMatch, Lobby lobby = null)
+        public void StartMatchmaking(MatchType matchType)
         {
             if (IsInQueue)
             {
@@ -121,39 +38,17 @@ namespace KitchenKrapper
             }
 
             IsInQueue = true;
-            OnMatchmakingStarted?.Invoke();
+            MatchmakingStarted?.Invoke();
 
-            this.isRankedMatch = isRankedMatch;
-            currentLobby = lobby;
+            this.matchType = matchType;
+            currentLobby = LobbyManager.Instance.GetCurrentLobby();
 
             Debug.Log("Starting matchmaking");
 
-            foreach (LobbyMember member in currentLobby.Members)
-            {
-                lobbyPlayers.Value.Add(member.ProductId.ToString(), PlayerSessionState.None);
-            }
-
-            currentSession.Value = FindBestMatch();
-
-            if (currentSession != null)
-            {
-                Debug.Log("Found best match");
-
-                currentSessionDetails = sessionsManager.GetCurrentSearch().GetResults()[currentSession.Value];
-                if (currentLobby != null)
-                {
-                    JoinSessionServerRpc();
-                }
-                else
-                {
-                    JoinSession(currentSessionDetails);
-                }
-            }
+            if (currentLobby == null)
+                FindBestMatchesOrCreateSession();
             else
-            {
-                Debug.Log("No best match found");
                 CreateSession();
-            }
         }
 
         public void CancelMatchmaking()
@@ -165,126 +60,129 @@ namespace KitchenKrapper
             }
 
             IsInQueue = false;
+            ExitGameSession();
 
-            OnMatchmakingCanceled?.Invoke();
+            MatchmakingCanceled?.Invoke();
             Debug.Log("Canceling matchmaking");
         }
 
-        public Session FindBestMatch()
+        private void FindBestMatchesOrCreateSession()
         {
-            SearchSession(GameManager.Instance.GetCurrentLevel().levelNumber.ToString());
-            Dictionary<Session, SessionDetails> sessions = sessionsManager.GetCurrentSearch().GetResults();
-            Session bestMatch = null;
+            SessionManager.Instance.SearchSessions(GameManager.Instance.GetCurrentLevel().levelNumber, sessions =>
+            {
+                if (sessions.Count == 0)
+                {
+                    Debug.Log("No sessions found, creating a new session");
+                    CreateSession();
+                }
+                else
+                {
+                    KeyValuePair<Session, SessionDetails>? session = FindBestSessionToJoin(sessions);
+                    if (session == null)
+                    {
+                        Debug.Log("No suitable sessions found, creating a new session");
+                        CreateSession();
+                    }
+                    else
+                    {
+                        Debug.Log("Found a session, joining it");
+                        JoinSession(session.Value);
+                    }
+                }
+            });
+        }
 
-
+        private KeyValuePair<Session, SessionDetails>? FindBestSessionToJoin(Dictionary<Session, SessionDetails> sessions)
+        {
+            int playerCount = 1;
             foreach (KeyValuePair<Session, SessionDetails> kvp in sessions)
             {
-                Session session = kvp.Key;
-                SessionDetails details = kvp.Value;
-
-                // Ignore sessions that are full or do not allow joining in progress
-                if (session.NumConnections >= session.MaxPlayers || !session.AllowJoinInProgress || session.MaxPlayers - session.NumConnections < currentLobby.Members.Count || session.SessionState != OnlineSessionState.Starting)
+                if (!ShouldIgnoreSession(kvp.Key, playerCount))
                 {
-                    continue;
+                    return kvp;
                 }
-
-                bestMatch = session;
-                break;
             }
-
-            return bestMatch;
+            return null;
         }
 
-        public void SearchSession(string searchPattern)
+        private bool ShouldIgnoreSession(Session session, int playerCount)
         {
-            if (string.IsNullOrEmpty(searchPattern))
-            {
-                return;
-            }
-
-            SessionAttribute levelAttribute = new SessionAttribute
-            {
-                Key = SESSION_LEVEL,
-                ValueType = AttributeType.Int64,
-                AsInt64 = long.Parse(searchPattern),
-                Advertisement = SessionAttributeAdvertisementType.Advertise
-            };
-
-            List<SessionAttribute> attributes = new List<SessionAttribute>() { levelAttribute };
-
-            sessionsManager.Search(attributes);
+            return session.NumConnections == session.MaxPlayers ||
+                   session.NumConnections + playerCount > session.MaxPlayers ||
+                   session.SessionState != OnlineSessionState.Pending;
         }
 
-        public void CreateSession()
+        private void CreateSession()
         {
             if (!IsInQueue)
             {
-                Debug.Log("Not in queue");
+                Debug.Log("Not in the queue");
                 return;
             }
 
             IsInQueue = false;
-            Debug.Log("Creating session");
-
-
-            bool joinViaLobby = currentLobby != null;
+            Debug.Log("Creating a session");
 
             bool presenceEnabled = false;
+            bool permissionLevel = matchType == MatchType.Ranked;
 
-            Session session = new Session
-            {
-                AllowJoinInProgress = false,
-                InvitesAllowed = false,
-                SanctionsEnabled = false,
-                MaxPlayers = MAX_PLAYERS,
-                Name = "Test Session",
-                PermissionLevel = isRankedMatch ? OnlineSessionPermissionLevel.PublicAdvertised : OnlineSessionPermissionLevel.InviteOnly
-            };
-
-            SessionAttribute attribute = new SessionAttribute
-            {
-                Key = SESSION_LEVEL,
-                AsInt64 = joinViaLobby ? currentLobby.Attributes.Find((LobbyAttribute attrib) => { return attrib.Key == LobbyManager.LOBBY_LEVEL; }).AsInt64 : GameManager.Instance.GetCurrentLevel().levelNumber,
-                ValueType = AttributeType.Int64,
-                Advertisement = SessionAttributeAdvertisementType.Advertise
-            };
-
-            session.Attributes.Add(attribute);
-
-            sessionsManager.CreateSession(session, presenceEnabled, OnSessionCreated);
+            SessionManager.Instance.CreateSession(permissionLevel, presenceEnabled, OnSessionCreated);
         }
 
         private void OnSessionCreated()
         {
             Debug.Log("Session created");
-            foreach (KeyValuePair<Session, SessionDetails> session in sessionsManager.GetCurrentSearch().GetResults())
-            {
-                Debug.Log("Session:" + session.Key.Name + " NumConnections:" + session.Key.NumConnections + " MaxPlayers:" + session.Key.MaxPlayers + " AllowJoinInProgress:" + session.Key.AllowJoinInProgress + " SessionState:" + session.Key.SessionState);
-            }
-
-            OnMatchmakingSucceeded?.Invoke();
+            MatchmakingSucceeded?.Invoke();
         }
 
-        public void LeaveSession()
+        private void ExitGameSession()
         {
+            Session currentSession = SessionManager.Instance.GetCurrentSession();
             if (currentSession == null)
             {
-                Debug.Log("Not in session");
+                Debug.Log("Not in a session");
                 return;
             }
 
-            lobbyPlayers.Value[EOSManager.Instance.GetProductUserId().ToString()] = PlayerSessionState.Left;
+            SessionManager.Instance.EndSession((Result result) =>
+            {
+                if (result != Result.Success)
+                {
+                    Debug.Log("Failed to end the session");
+                    return;
+                }
 
-            LeaveSessionServerRpc(EOSManager.Instance.GetProductUserId().ToString());
+                Debug.Log("Session ended");
+
+                if (currentLobby != null)
+                {
+                    ReturnToLobby();
+                }
+            });
         }
 
-        public void JoinSession(SessionDetails sessionDetails)
+        private void ReturnToLobby()
         {
-            // Send Client Call to all lobby the players
-            if (currentLobby != null)
-            {
-                sessionsManager.JoinSession(sessionDetails, false, OnSessionJoined);
-            }
+            LobbyManager.Instance.ReturnToLobby();
+            LeaveSessionServerRpc();
+        }
+
+        private void StartMatch()
+        {
+            Debug.Log("Starting the match");
+            SessionManager.Instance.StartSession();
+
+            int levelNumber = SessionManager.Instance.GetSessionLevel() != -1
+                ? SessionManager.Instance.GetSessionLevel()
+                : GameManager.Instance.GetCurrentLevel().levelNumber;
+
+            // TODO: Add a level number to level name mapping
+            // SceneLoaderWrapper.Instance.LoadScene();
+        }
+
+        private void JoinSession(KeyValuePair<Session, SessionDetails> session)
+        {
+            SessionManager.Instance.JoinSession(session.Key, session.Value, false, OnSessionJoined);
         }
 
         private void OnSessionJoined(Result result)
@@ -292,65 +190,39 @@ namespace KitchenKrapper
             if (result == Result.Success)
             {
                 Debug.Log("Session joined");
-                lobbyPlayers.Value[EOSManager.Instance.GetProductUserId().ToString()] = PlayerSessionState.Joined;
-                OnMatchmakingSucceeded?.Invoke();
+                Session joinedSession = SessionManager.Instance.GetCurrentSession();
+                LobbyManager.Instance.UpdateLobbyPlayerList(EOSManager.Instance.GetProductUserId().ToString(), PlayerSessionState.Joined);
+
+                ProductUserId hostId = ProductUserId.FromString(joinedSession.Name);
+                if (LobbyManager.Instance.GetCurrentLobby() != null)
+                {
+                    // Do something when there's a lobby
+                }
+                else
+                {
+                    MultiplayerManager.Instance.StartClient(hostId);
+                }
+
+                MatchmakingSucceeded?.Invoke();
             }
             else
             {
-                Debug.Log("Failed to join session");
-                lobbyPlayers.Value[EOSManager.Instance.GetProductUserId().ToString()] = PlayerSessionState.Failed;
-                OnMatchmakingFailed?.Invoke();
+                Debug.Log("Failed to join the session");
+                LobbyManager.Instance.UpdateLobbyPlayerList(EOSManager.Instance.GetProductUserId().ToString(), PlayerSessionState.Failed);
+                MatchmakingFailed?.Invoke();
             }
         }
 
         [ServerRpc]
-        private void JoinSessionServerRpc()
+        private void LeaveSessionServerRpc()
         {
-            if (currentSession == null)
-            {
-                Debug.Log("Not in session");
-                return;
-            }
-            JoinSessionClientRpc();
+            LeaveSessionClientRpc();
         }
 
         [ClientRpc]
-        private void JoinSessionClientRpc()
+        private void LeaveSessionClientRpc()
         {
-            if (currentSession == null)
-            {
-                Debug.Log("Not in session");
-                return;
-            }
-            sessionsManager.JoinSession(currentSessionDetails, false, OnSessionJoined);
-        }
-
-        [ServerRpc]
-        private void LeaveSessionServerRpc(string player)
-        {
-            if (currentSession == null)
-            {
-                Debug.Log("Not in session");
-                return;
-            }
-            LeaveSessionClientRpc(player);
-        }
-
-        [ClientRpc]
-        private void LeaveSessionClientRpc(string player)
-        {
-            if (EOSManager.Instance.GetProductUserId().ToString() != player)
-            {
-                return;
-            }
-
-            if (currentSession == null)
-            {
-                Debug.Log("Not in session");
-                return;
-            }
-            lobbyPlayers.Value[player] = PlayerSessionState.Left;
-            sessionsManager.DestroySession(currentSession.Value.Id);
+            SessionManager.Instance.LeaveSession();
         }
     }
 }

@@ -11,7 +11,7 @@ namespace KitchenKrapper
             CuttingCounter.ResetStaticData();
             BaseStation.ResetStaticData();
             TrashCounter.ResetStaticData();
-            Player.ResetStaticData();
+            PlayerController.ResetStaticData();
         }
     }
 }

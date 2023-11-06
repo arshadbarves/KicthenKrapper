@@ -49,12 +49,12 @@ namespace KitchenKrapper
             TutorialManager.Instance?.CompleteTutorialStep(tutorialStepIndex);
         }
 
-        public virtual void Interact(Player player)
+        public virtual void Interact(PlayerController player)
         {
             Debug.LogException(new Exception("Interact() not implemented in " + GetType().Name));
         }
 
-        public virtual void InteractAlternate(Player player)
+        public virtual void InteractAlternate(PlayerController player)
         {
             // Optional implementation
         }

@@ -5,7 +5,7 @@ using UnityEngine.UIElements;
 
 namespace KitchenKrapper
 {
-    public class OptionbarScreen : Screen
+    public class OptionbarScreen : BaseScreen
     {
         private const string HOME_BUTTON_NAME = "optionbar__home-button";
         private const string SETTINGS_BUTTON_NAME = "optionbar__settings-button";
@@ -136,11 +136,11 @@ namespace KitchenKrapper
         void OnPlayerDataChanged()
         {
 
-            SetCoin(GameManager.Instance.PlayerGameData.Coins);
-            SetGems(GameManager.Instance.PlayerGameData.Gems);
-            SetPlayerName(GameManager.Instance.PlayerGameData.PlayerDisplayName);
-            print("[Option]" + GameManager.Instance.PlayerGameData.ToJson());
-            SetPlayerProgress(GameManager.Instance.PlayerGameData.PlayerTrophies);
+            SetCoin(GameManager.Instance.PlayerData.Coins);
+            SetGems(GameManager.Instance.PlayerData.Gems);
+            SetPlayerName(GameManager.Instance.PlayerData.PlayerDisplayName);
+            print("[Option]" + GameManager.Instance.PlayerData.ToJson());
+            SetPlayerProgress(GameManager.Instance.PlayerData.PlayerTrophies);
         }
 
         IEnumerator LerpProgressRoutine(ProgressBar progressBar, float startValue, float endValue, float duration)

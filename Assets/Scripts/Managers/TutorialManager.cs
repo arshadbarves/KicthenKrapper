@@ -7,10 +7,8 @@ using BrunoMikoski.AnimationSequencer;
 
 namespace KitchenKrapper
 {
-    public class TutorialManager : MonoBehaviour
+    public class TutorialManager : Singleton<TutorialManager>
     {
-        public static TutorialManager Instance { get; private set; }
-
         [SerializeField] private TextMeshProUGUI tutorialText;
         [SerializeField] private GameObject tutorialOverUI;
         [SerializeField] private GameObject tutorialCanvas;
@@ -36,13 +34,8 @@ namespace KitchenKrapper
             public bool isAltInteract;
         }
 
-        private void Awake()
+        protected override void Awake()
         {
-            if (Instance == null)
-            {
-                Instance = this;
-            }
-
             indicator = Instantiate(indicatorPrefab, Vector3.zero, Quaternion.identity);
             indicator.SetActive(false);
         }
@@ -60,7 +53,7 @@ namespace KitchenKrapper
             CompleteTutorialStep(currentStepIndex);
             tutorialOverUI.gameObject.SetActive(false);
 
-            EOSKitchenGameMultiplayer.Instance.StartHost();
+            MultiplayerManager.Instance.StartHost(new PlayerData { clientId = NetworkManager.Singleton.LocalClientId });
 
             StartCoroutine(ShowGameController());
         }

@@ -5,7 +5,7 @@ using UnityEngine.UIElements;
 
 namespace KitchenKrapper
 {
-    public class SettingsScreen : Screen
+    public class SettingsScreen : BaseScreen
     {
         private const string SETTINGS_PANEL_NAME = "settings__panel";
         private const string SOUND_EFFECTS_SLIDER_NAME = "sound-effect__slider";
@@ -20,6 +20,8 @@ namespace KitchenKrapper
         private Button rateUsButton;
         private Button supportButton;
         private Button logoutButton;
+
+        private bool isSettingPanelActive = false;
 
         private void Start()
         {
@@ -43,21 +45,21 @@ namespace KitchenKrapper
             logoutButton = root.Q<Button>(LOGOUT_BUTTON_NAME);
         }
 
-        public override void ShowScreen()
+        public override void Show()
         {
-            base.ShowScreen();
+            base.Show();
 
             OnGameDataUpdated();
-
+            isSettingPanelActive = true;
             // add active style
             settingPanel.AddToClassList(MainMenuUIManager.MODAL_PANEL_ACTIVE_CLASS_NAME);
             settingPanel.RemoveFromClassList(MainMenuUIManager.MODAL_PANEL_INACTIVE_CLASS_NAME);
         }
 
-        public override void HideScreen()
+        public override void Hide()
         {
-            base.HideScreen();
-
+            base.Hide();
+            isSettingPanelActive = false;
             // add inactive style
             settingPanel.AddToClassList(MainMenuUIManager.MODAL_PANEL_INACTIVE_CLASS_NAME);
             settingPanel.RemoveFromClassList(MainMenuUIManager.MODAL_PANEL_ACTIVE_CLASS_NAME);
@@ -65,7 +67,6 @@ namespace KitchenKrapper
 
         private void OnGameDataUpdated()
         {
-            print("SettingsScreen: OnGameDataUpdated");
             soundEffectSlider.value = GameManager.Instance.GameData.SoundEffectsEnabled;
             musicSlider.value = GameManager.Instance.GameData.MusicEnabled;
         }
@@ -90,14 +91,24 @@ namespace KitchenKrapper
 
         private void ChangeSoundEffectToggle(ChangeEvent<bool> evt)
         {
-            AudioManager.Instance.PlayDefaultButtonSound();
+            // Check if the event is triggered by the user click
+            if (isSettingPanelActive)
+            {
+                AudioManager.Instance.PlayDefaultButtonSound();
+            }
+
             GameManager.Instance.GameData.SoundEffectsEnabled = evt.newValue;
             AudioManager.Instance.ToggleSoundEffectsMute(evt.newValue);
         }
 
         private void ChangeMusicVolume(ChangeEvent<bool> evt)
         {
-            AudioManager.Instance.PlayDefaultButtonSound();
+            // Check if the event is triggered by the user clicking the toggle or by the code
+            if (isSettingPanelActive)
+            {
+                AudioManager.Instance.PlayDefaultButtonSound();
+            }
+
             GameManager.Instance.GameData.MusicEnabled = evt.newValue;
             AudioManager.Instance.ToggleMusicMute(evt.newValue);
         }

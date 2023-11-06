@@ -23,12 +23,12 @@ namespace KitchenKrapper
             }
         }
 
-        public override void Interact(Player player)
+        public override void Interact(PlayerController player)
         {
             HandlePlayerInteraction(player);
         }
 
-        private void HandlePlayerInteraction(Player player)
+        private void HandlePlayerInteraction(PlayerController player)
         {
             if (player.HasKitchenObject())
             {

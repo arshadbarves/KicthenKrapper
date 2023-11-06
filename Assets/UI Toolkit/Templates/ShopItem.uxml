@@ -2,7 +2,7 @@
     <Style src="project://database/Assets/UI%20Toolkit/Styles/ShopItem.uss?fileID=7433441132597879392&amp;guid=a9a8edff2c75dab45b856b7e85a36882&amp;type=3#ShopItem" />
     <Style src="project://database/Assets/UI%20Toolkit/Styles/style.uss?fileID=7433441132597879392&amp;guid=ab993c0e454983847b10aeb86aa545af&amp;type=3#style" />
     <ui:VisualElement name="shop-item__parent-container" class="shop-item">
-        <ui:VisualElement name="shop-item__contents" style="flex-grow: 1; background-color: rgba(0, 0, 0, 0); height: 100%;">
+        <ui:VisualElement name="shop-item__contents" style="background-color: rgba(0, 0, 0, 0); flex-grow: 1;">
             <ui:VisualElement name="shop-item-body" style="background-color: rgb(51, 201, 234); border-top-left-radius: 20px; border-bottom-left-radius: 20px; border-top-right-radius: 20px; border-bottom-right-radius: 20px; flex-grow: 1;">
                 <ui:VisualElement name="shop-item__product-image" class="shop-item__product-image" />
                 <ui:Button display-tooltip-when-elided="true" name="shop-item__buy-button" class="button shop-item__buy-button" style="border-top-left-radius: 0; border-top-right-radius: 0; border-left-color: rgb(247, 153, 27); border-right-color: rgb(247, 153, 27); border-top-color: rgb(247, 153, 27); border-bottom-color: rgb(247, 153, 27); border-bottom-left-radius: 20px;">

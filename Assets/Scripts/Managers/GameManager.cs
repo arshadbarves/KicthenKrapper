@@ -1,81 +1,88 @@
 using System;
 using System.Collections;
-using PlayEveryWare.EpicOnlineServices;
 using UnityEngine;
 using UnityEngine.Android;
+using PlayEveryWare.EpicOnlineServices;
 
 namespace KitchenKrapper
 {
-    public class GameManager : MonoBehaviour
+    public class GameManager : Singleton<GameManager>
     {
-        public static GameManager Instance { get; private set; }
-
-        private PlatformType currentPlatform = PlatformManager.CurrentPlatform;
+        private PlatformType currentPlatform => PlatformManager.CurrentPlatform;
         private GameStatus gameStatus = GameStatus.None;
 
         public LevelSO currentLevel;
+        public PlayerGameData PlayerData
+        {
+            get { return playerData; }
+            set
+            {
+                if (playerData != value)
+                {
+                    playerData = value;
+                    PlayerDataChanged?.Invoke();
+                }
+            }
+        }
+        public GameData GameData
+        {
+            get { return gameData; }
+            set
+            {
+                if (gameData != value)
+                {
+                    gameData = value;
+                    GameDataUpdated?.Invoke();
+                }
+            }
+        }
 
         public static event Action PlayerDataChanged;
         public static event Action GameDataUpdated;
 
-        [SerializeField] private PlayerGameData playerGameData;
+        [SerializeField] private PlayerGameData playerData;
         [SerializeField] private GameData gameData;
-
-        public PlayerGameData PlayerGameData
-        {
-            get { return playerGameData; }
-            set { playerGameData = value; }
-        }
-
-        public GameData GameData
-        {
-            get { return gameData; }
-            set { gameData = value; }
-        }
-
-        private void Awake()
-        {
-            if (Instance == null)
-            {
-                Instance = this;
-            }
-            else if (Instance != this)
-            {
-                Destroy(gameObject);
-                return;
-            }
-
-            DontDestroyOnLoad(gameObject);
-        }
 
         private void Start()
         {
-            AudioManager.Instance.AudioSettingsChanged += OnGameDataUpdated;
-            PlayerNamePopupScreen.PlayerNameSet += CreatePlayerData;
-            PlayerDataStorage.PlayerDataCreated += StartGame;
-            EULAScreen.EULAAccepted += OnEULAAccepted;
-
-            if (currentPlatform == PlatformType.Android)
-            {
-                if (!Permission.HasUserAuthorizedPermission(Permission.ExternalStorageRead) || !Permission.HasUserAuthorizedPermission(Permission.ExternalStorageWrite))
-                {
-                    Permission.RequestUserPermission(Permission.ExternalStorageRead);
-                    Permission.RequestUserPermission(Permission.ExternalStorageWrite);
-                }
-            }
-
+            SetupEventListeners();
+            RequestStoragePermissionsIfNeeded();
             InitializeApplication();
         }
 
-        private void OnDestroy()
+        protected override void OnDestroy()
         {
-            AudioManager.Instance.AudioSettingsChanged -= OnGameDataUpdated;
+            RemoveEventListeners();
+        }
+
+        private void SetupEventListeners()
+        {
+            PlayerNamePopupScreen.PlayerNameSet += CreatePlayerData;
+            PlayerDataStorage.PlayerDataCreated += StartGame;
+            EULAScreen.EULAAccepted += OnEULAAccepted;
+        }
+
+        private void RemoveEventListeners()
+        {
             PlayerNamePopupScreen.PlayerNameSet -= CreatePlayerData;
             PlayerDataStorage.PlayerDataCreated -= StartGame;
             EULAScreen.EULAAccepted -= OnEULAAccepted;
         }
 
-        public void InitializeApplication()
+        private void RequestStoragePermissionsIfNeeded()
+        {
+            if (currentPlatform == PlatformType.Android)
+            {
+                if (!Permission.HasUserAuthorizedPermission(Permission.ExternalStorageRead) ||
+                    !Permission.HasUserAuthorizedPermission(Permission.ExternalStorageWrite))
+                {
+                    Permission.RequestUserPermission(Permission.ExternalStorageRead);
+                    Permission.RequestUserPermission(Permission.ExternalStorageWrite);
+                }
+            }
+        }
+
+        private void InitializeApplication()
         {
             SaveManager.Instance.LoadGame();
             MainMenuUIManager.Instance.ShowLoginScreen();
@@ -90,7 +97,7 @@ namespace KitchenKrapper
             }
         }
 
-        public void ShowEULAScreen()
+        private void ShowEULAScreen()
         {
             MainMenuUIManager.Instance.ShowEULAScreen();
         }
@@ -120,14 +127,8 @@ namespace KitchenKrapper
 
         private void OnEULAAccepted()
         {
-            gameData.EulaAgreed = true;
-            GameDataUpdated?.Invoke();
+            GameData.EulaAgreed = true;
             InitializeApplication();
-        }
-
-        private void OnGameDataUpdated()
-        {
-            GameDataUpdated?.Invoke();
         }
 
         private IEnumerator CheckInternetConnection()
@@ -151,8 +152,8 @@ namespace KitchenKrapper
         {
             if (!string.IsNullOrEmpty(playerData))
             {
-                PlayerGameData = JsonUtility.FromJson<PlayerGameData>(playerData);
-                print("[GameManager]: Player Data: " + playerData);
+                PlayerData = JsonUtility.FromJson<PlayerGameData>(playerData);
+                Debug.Log("[GameManager]: Player Data: " + playerData);
                 MainMenuUIManager.Instance.ShowHomeScreen();
                 PlayerDataChanged?.Invoke();
             }
@@ -182,40 +183,45 @@ namespace KitchenKrapper
 
         public void UpdatePlayerData()
         {
-            PlayerDataStorage.Instance.SetPlayerData(playerGameData.ToJson());
+            PlayerDataStorage.Instance.SetPlayerData(playerData.ToJson());
+        }
+
+        public string GetPlayerName()
+        {
+            return playerData.PlayerDisplayName;
         }
 
         public void SetCoins(uint coins)
         {
-            playerGameData.Coins = coins;
+            playerData.Coins = coins;
             UpdatePlayerData();
             PlayerDataChanged?.Invoke();
         }
 
         public void SetGems(uint gems)
         {
-            playerGameData.Gems = gems;
+            playerData.Gems = gems;
             UpdatePlayerData();
             PlayerDataChanged?.Invoke();
         }
 
         public void SetPlayerDisplayName(string playerDisplayName)
         {
-            playerGameData.PlayerDisplayName = playerDisplayName;
+            playerData.PlayerDisplayName = playerDisplayName;
             UpdatePlayerData();
             PlayerDataChanged?.Invoke();
         }
 
         public void SetPlayerIcon(string playerIcon)
         {
-            playerGameData.PlayerIcon = playerIcon;
+            playerData.PlayerIcon = playerIcon;
             UpdatePlayerData();
             PlayerDataChanged?.Invoke();
         }
 
         public void SetPlayerTrophies(uint playerTrophies)
         {
-            playerGameData.PlayerTrophies = playerTrophies;
+            playerData.PlayerTrophies = playerTrophies;
             UpdatePlayerData();
             PlayerDataChanged?.Invoke();
         }

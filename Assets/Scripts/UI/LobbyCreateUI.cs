@@ -31,7 +31,7 @@ namespace KitchenKrapper
 
         private void Start()
         {
-            MaxPlayersVal = EOSKitchenGameMultiplayer.MAX_PLAYERS;
+            // MaxPlayersVal = MultiplayerManager.MAX_PLAYERS;
         }
 
         private void CloseButton_OnClick()

@@ -1,8 +1,8 @@
 <ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" editor-extension-mode="False">
     <ui:Template name="Background" src="project://database/Assets/UI%20Toolkit/Templates/Background.uxml?fileID=9197481963319205126&amp;guid=f9fd50bea5ee3f541a1e738d74bdf45c&amp;type=3#Background" />
     <ui:Template name="TopBar" src="project://database/Assets/UI%20Toolkit/Templates/OptionbarScreen.uxml?fileID=9197481963319205126&amp;guid=6cf58f0a372439b4a95f331858d82561&amp;type=3#OptionbarScreen" />
-    <ui:Template name="HomeScreen" src="project://database/Assets/UI%20Toolkit/Layouts/HomeScreen.uxml?fileID=9197481963319205126&amp;guid=000d7f017f1a9a44d86d3dc32aaf1aea&amp;type=3#HomeScreen" />
     <ui:Template name="SettingsScreen" src="project://database/Assets/UI%20Toolkit/Layouts/SettingsScreen.uxml?fileID=9197481963319205126&amp;guid=41c206f6ff1f2144e9eff17ab1d71844&amp;type=3#SettingsScreen" />
+    <ui:Template name="HomeScreen" src="project://database/Assets/UI%20Toolkit/Layouts/HomeScreen.uxml?fileID=9197481963319205126&amp;guid=000d7f017f1a9a44d86d3dc32aaf1aea&amp;type=3#HomeScreen" />
     <ui:Template name="ShopScreen" src="project://database/Assets/UI%20Toolkit/Layouts/ShopScreen.uxml?fileID=9197481963319205126&amp;guid=e4193eaabe5a9394d91cb757cecd4d1d&amp;type=3#ShopScreen" />
     <ui:Template name="LoginScreen" src="project://database/Assets/UI%20Toolkit/Layouts/LoginScreen.uxml?fileID=9197481963319205126&amp;guid=d8dcddb93389b1d49bac4fac0e917369&amp;type=3#LoginScreen" />
     <ui:Template name="LoadingScreen" src="project://database/Assets/UI%20Toolkit/Layouts/LoadingScreen.uxml?fileID=9197481963319205126&amp;guid=c48fea526295fc445ab51be473c5d12b&amp;type=3#LoadingScreen" />
@@ -15,9 +15,11 @@
     <Style src="project://database/Assets/UI%20Toolkit/Styles/ShopItem.uss?fileID=7433441132597879392&amp;guid=a9a8edff2c75dab45b856b7e85a36882&amp;type=3#ShopItem" />
     <ui:VisualElement name="MainMenuScreen" class="cotainer" style="display: flex;">
         <ui:Instance template="Background" name="Background" style="position: absolute; height: 100%; width: 100%;" />
-        <ui:Instance template="TopBar" name="OptionbarScreen" style="width: auto; height: 150px;" />
-        <ui:Instance template="HomeScreen" name="HomeScreen" class="template-screen" style="display: flex;" />
+        <ui:Instance template="TopBar" name="OptionbarScreen" style="min-height: 150px;" />
         <ui:Instance template="SettingsScreen" name="SettingsScreen" class="template-screen" style="display: none;" />
+        <ui:Instance template="HomeScreen" name="HomeScreen" class="template-screen" style="display: flex;">
+            <ui:Instance template="SettingsScreen" name="SettingsScreen" class="template-screen" style="display: none;" />
+        </ui:Instance>
         <ui:Instance template="ShopScreen" name="ShopScreen" class="template-screen" style="display: none;" />
     </ui:VisualElement>
     <ui:Instance template="LoginScreen" name="LoginScreen" style="position: absolute; width: 100%; height: 100%; display: none;" />

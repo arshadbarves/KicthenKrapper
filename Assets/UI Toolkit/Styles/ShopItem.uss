@@ -12,13 +12,12 @@
     border-bottom-left-radius: 25px;
     border-top-right-radius: 25px;
     border-bottom-right-radius: 25px;
-    margin-left: 25px;
-    margin-right: 25px;
-    margin-top: 25px;
-    margin-bottom: 25px;
-    min-height: 90%;
-    min-width: 20%;
+    margin-left: 50px;
+    margin-right: 50px;
+    margin-top: 50px;
+    margin-bottom: 50px;
     align-self: center;
+    flex-grow: 1;
 }
 
 .shop-item-label {

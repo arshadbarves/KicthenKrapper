@@ -2,14 +2,11 @@
     <ui:Template name="ShopItem" src="project://database/Assets/UI%20Toolkit/Templates/ShopItem.uxml?fileID=9197481963319205126&amp;guid=78eaf8cfdc05692419b93c9cd8e6fd5c&amp;type=3#ShopItem" />
     <Style src="project://database/Assets/UI%20Toolkit/Styles/style.uss?fileID=7433441132597879392&amp;guid=ab993c0e454983847b10aeb86aa545af&amp;type=3#style" />
     <ui:VisualElement name="ShopScreen" style="flex-grow: 1;">
-        <ui:VisualElement name="RefreshTimer" style="flex-grow: 1; align-self: center; width: 400px; height: 75px; border-top-left-radius: 25px; border-bottom-left-radius: 25px; border-top-right-radius: 25px; border-bottom-right-radius: 25px; flex-direction: row; justify-content: space-around; padding-left: 25px; padding-right: 25px; padding-top: 25px; padding-bottom: 25px; background-color: rgba(34, 33, 38, 0.78);">
+        <ui:VisualElement name="RefreshTimer" style="align-self: center; width: 400px; height: 75px; border-top-left-radius: 25px; border-bottom-left-radius: 25px; border-top-right-radius: 25px; border-bottom-right-radius: 25px; flex-direction: row; justify-content: space-around; padding-left: 25px; padding-right: 25px; padding-top: 25px; padding-bottom: 25px; background-color: rgba(34, 33, 38, 0.78); margin-top: 25px; margin-right: 25px; margin-bottom: 25px; margin-left: 25px;">
             <ui:Label tabindex="-1" text="Refresh in:" display-tooltip-when-elided="true" class="label" />
             <ui:Label tabindex="-1" text="1d 5h" display-tooltip-when-elided="true" class="label" />
         </ui:VisualElement>
-        <ui:ScrollView mode="Horizontal" touch-scroll-type="Elastic" class="panel" style="margin-top: 25px; background-color: rgb(70, 68, 175); margin-bottom: 25px;">
-            <ui:Instance template="ShopItem" name="ShopItem" />
-            <ui:Instance template="ShopItem" name="ShopItem" />
-            <ui:Instance template="ShopItem" name="ShopItem" />
+        <ui:ScrollView mode="Horizontal" touch-scroll-type="Elastic" class="panel" style="background-color: rgb(70, 68, 175);">
             <ui:Instance template="ShopItem" name="ShopItem" />
             <ui:Instance template="ShopItem" name="ShopItem" />
             <ui:Instance template="ShopItem" name="ShopItem" />

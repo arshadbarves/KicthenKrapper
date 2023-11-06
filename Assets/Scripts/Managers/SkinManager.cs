@@ -3,29 +3,16 @@ using UnityEngine;
 
 namespace KitchenKrapper
 {
-    public class SkinManager : MonoBehaviour
+    public class SkinManager : Singleton<SkinManager>
     {
-        // Singleton instance
-        public static SkinManager Instance { get; private set; }
-
         // Dictionary of all the skins
         private Dictionary<string, SkinSO> skins = new Dictionary<string, SkinSO>();
 
         // The currently selected skin
         private SkinSO selectedSkin;
 
-        private void Awake()
+        protected override void Awake()
         {
-            // Singleton pattern
-            if (Instance != null && Instance != this)
-            {
-                Destroy(gameObject);
-            }
-            else
-            {
-                Instance = this;
-            }
-
             // Load all the skins
             LoadAllSkins();
         }

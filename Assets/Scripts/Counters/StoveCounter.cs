@@ -108,7 +108,7 @@ namespace KitchenKrapper
                 KitchenObject.CreateKitchenObject(cookingRecipeSO.outputFoodObjectSO, this);
                 stoveCounterState.Value = StoveCounterState.Done;
                 burningTimer.Value = 0f;
-                SetBurningRecipeSOClientRpc(EOSKitchenGameMultiplayer.Instance.GetKitchenObjectSOIndex(GetKitchenObject().GetKitchenObjectSO()));
+                SetBurningRecipeSOClientRpc(MultiplayerManager.Instance.GetKitchenObjectSOIndex(GetKitchenObject().GetKitchenObjectSO()));
                 StepComplete();
             }
         }
@@ -126,7 +126,7 @@ namespace KitchenKrapper
             }
         }
 
-        public override void Interact(Player player)
+        public override void Interact(PlayerController player)
         {
             if (!HasKitchenObject())
             {
@@ -139,7 +139,7 @@ namespace KitchenKrapper
                         KitchenObject kitchenObject = player.GetKitchenObject();
                         kitchenObject.SetKitchenObjectParent(this);
 
-                        InteractServerRpc(EOSKitchenGameMultiplayer.Instance.GetKitchenObjectSOIndex(kitchenObject.GetKitchenObjectSO()));
+                        InteractServerRpc(MultiplayerManager.Instance.GetKitchenObjectSOIndex(kitchenObject.GetKitchenObjectSO()));
                         StepComplete();
                     }
                 }
@@ -192,7 +192,7 @@ namespace KitchenKrapper
         [ClientRpc]
         private void SetCookingRecipeSOClientRpc(int kitchenObjectSOIndex)
         {
-            KitchenObjectSO kitchenObjectSO = EOSKitchenGameMultiplayer.Instance.GetKitchenObjectSOFromIndex(kitchenObjectSOIndex);
+            KitchenObjectSO kitchenObjectSO = MultiplayerManager.Instance.GetKitchenObjectSOFromIndex(kitchenObjectSOIndex);
 
             cookingRecipeSO = GetCookingRecipeSO(kitchenObjectSO);
         }
@@ -200,7 +200,7 @@ namespace KitchenKrapper
         [ClientRpc]
         private void SetBurningRecipeSOClientRpc(int kitchenObjectSOIndex)
         {
-            KitchenObjectSO kitchenObjectSO = EOSKitchenGameMultiplayer.Instance.GetKitchenObjectSOFromIndex(kitchenObjectSOIndex);
+            KitchenObjectSO kitchenObjectSO = MultiplayerManager.Instance.GetKitchenObjectSOFromIndex(kitchenObjectSOIndex);
 
             burningRecipeSO = GetBurningRecipeSO(kitchenObjectSO);
         }

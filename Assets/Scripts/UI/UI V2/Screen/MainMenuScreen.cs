@@ -1,6 +1,6 @@
 namespace KitchenKrapper
 {
-    public class MainMenuScreen : Screen
+    public class MainMenuScreen : BaseScreen
     {
         // Placeholder for now
     }

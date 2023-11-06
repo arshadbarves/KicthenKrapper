@@ -4,13 +4,13 @@ namespace KitchenKrapper
 {
     public class PlayerSounds : MonoBehaviour
     {
-        private Player player;
+        private PlayerController player;
         private float footStepTimer = 0f;
         private float footStepTimerMax = 0.1f;
 
         private void Awake()
         {
-            player = GetComponent<Player>();
+            player = GetComponent<PlayerController>();
         }
 
         private void Update()

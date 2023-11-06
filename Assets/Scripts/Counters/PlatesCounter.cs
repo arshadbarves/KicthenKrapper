@@ -62,12 +62,12 @@ namespace KitchenKrapper
             OnPlateSpawned?.Invoke(this, EventArgs.Empty);
         }
 
-        public override void Interact(Player player)
+        public override void Interact(PlayerController player)
         {
             HandlePlayerInteraction(player);
         }
 
-        private void HandlePlayerInteraction(Player player)
+        private void HandlePlayerInteraction(PlayerController player)
         {
             if (!player.HasKitchenObject() && platesSpawned > 0)
             {
@@ -75,7 +75,7 @@ namespace KitchenKrapper
             }
         }
 
-        private void CreateAndInteractPlate(Player player)
+        private void CreateAndInteractPlate(PlayerController player)
         {
             KitchenObject.CreateKitchenObject(platesKitchenObjectSO, player);
             InteractServerRpc();

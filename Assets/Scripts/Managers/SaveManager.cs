@@ -3,34 +3,18 @@ using UnityEngine;
 namespace KitchenKrapper
 {
     [RequireComponent(typeof(GameManager))]
-    public class SaveManager : MonoBehaviour
+    public class SaveManager : Singleton<SaveManager>
     {
-        public static SaveManager Instance { get; private set; }
-
         private const string GAME_DATA_KEY = "GameData";
-
-        private void Awake()
-        {
-            if (Instance == null)
-            {
-                Instance = this;
-            }
-            else if (Instance != null)
-            {
-                Destroy(gameObject);
-                return;
-            }
-
-            DontDestroyOnLoad(gameObject);
-        }
 
         private void Start()
         {
             GameManager.GameDataUpdated += SaveGame;
         }
 
-        private void OnDestroy()
+        protected override void OnDestroy()
         {
+            base.OnDestroy();
             GameManager.GameDataUpdated -= SaveGame;
         }
 

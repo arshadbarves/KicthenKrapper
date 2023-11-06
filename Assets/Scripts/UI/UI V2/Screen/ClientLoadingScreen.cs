@@ -4,7 +4,7 @@ using UnityEngine.UIElements;
 
 namespace KitchenKrapper
 {
-    public class ClientLoadingScreen : Screen
+    public class ClientLoadingScreen : BaseScreen
     {
         [SerializeField] private float delayBeforeFadeOut = 0.5f;
         [SerializeField] private float fadeOutDuration = 0.1f;
@@ -57,17 +57,17 @@ namespace KitchenKrapper
             }
         }
 
-        public override void ShowScreen()
+        public override void Show()
         {
-            base.ShowScreen();
+            base.Show();
             loadingScreenRunning = true;
             loadingTipLabel.text = "Tip: " + loadingTips.GetRandomTip();
             UpdateLoadingScreen();
         }
 
-        public override void HideScreen()
+        public override void Hide()
         {
-            base.HideScreen();
+            base.Hide();
             loadingScreenRunning = false;
         }
 
@@ -97,6 +97,11 @@ namespace KitchenKrapper
             // Wait for the last frame to finish
             yield return null;
             Invoke("HideScreen", 0.5f);
+        }
+
+        private void HideScreen()
+        {
+            MainMenuUIManager.Instance.HideLoadingScreen();
         }
     }
 }

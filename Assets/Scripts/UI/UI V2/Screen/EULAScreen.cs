@@ -4,7 +4,7 @@ using UnityEngine.UIElements;
 
 namespace KitchenKrapper
 {
-    public class EULAScreen : Screen
+    public class EULAScreen : BaseScreen
     {
         public static event Action EULAAccepted;
         private const string TERMS_OF_USE_BUTTON_NAME = "eula-privacy__terms-of-use-button";
@@ -37,18 +37,18 @@ namespace KitchenKrapper
             declineEULAButton?.RegisterCallback<ClickEvent>(ClickDeclineEULAButton);
         }
 
-        public override void ShowScreen()
+        public override void Show()
         {
-            base.ShowScreen();
+            base.Show();
 
             // add active style
             eulaPopupPanel.RemoveFromClassList(MainMenuUIManager.POPUP_PANEL_INACTIVE_CLASS_NAME);
             eulaPopupPanel.AddToClassList(MainMenuUIManager.POPUP_PANEL_ACTIVE_CLASS_NAME);
         }
 
-        public override void HideScreen()
+        public override void Hide()
         {
-            base.HideScreen();
+            base.Hide();
 
             // add inactive style
             eulaPopupPanel.RemoveFromClassList(MainMenuUIManager.POPUP_PANEL_ACTIVE_CLASS_NAME);
@@ -70,14 +70,14 @@ namespace KitchenKrapper
         private void ClickAcceptEULAButton(ClickEvent evt)
         {
             AudioManager.Instance.PlayDefaultButtonSound();
-            HideScreen();
+            MainMenuUIManager.Instance.HideEULAScreen();
             EULAAccepted?.Invoke();
         }
 
         private void ClickDeclineEULAButton(ClickEvent evt)
         {
             AudioManager.Instance.PlayDefaultButtonSound();
-            HideScreen();
+            MainMenuUIManager.Instance.HideEULAScreen();
             GameManager.Instance.QuitGame();
         }
     }
