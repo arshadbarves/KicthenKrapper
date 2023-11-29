@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.12731704, g: 0.13414727, b: 0.121078536, a: 1}
+  m_IndirectSpecularColor: {r: 0.12731716, g: 0.13414738, b: 0.121078566, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -4045,7 +4045,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   currentLevel: {fileID: 11400000, guid: 09cf8050ebe51ef40b81b2af2b5a5f6d, type: 2}
-  playerGameData:
+  playerData:
     coins: 500
     gems: 50
     playerDisplayName: Player
@@ -4212,7 +4212,7 @@ GameObject:
   - component: {fileID: 491267018}
   - component: {fileID: 491267017}
   m_Layer: 0
-  m_Name: GameDataSource
+  m_Name: '[Obsolete]GameDataSource'
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -6911,12 +6911,12 @@ GameObject:
   - component: {fileID: 1154749971}
   - component: {fileID: 1154749970}
   m_Layer: 0
-  m_Name: MainMenuCleanUp
+  m_Name: '[Obsolete]MainMenuCleanUp'
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &1154749970
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -12256,7 +12256,7 @@ GameObject:
   - component: {fileID: 1982285439}
   - component: {fileID: 1982285441}
   m_Layer: 0
-  m_Name: Debug(ShouldRemoveBeforeBuild)
+  m_Name: '[Obsolete]Debug(ShouldRemoveBeforeBuild)'
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
