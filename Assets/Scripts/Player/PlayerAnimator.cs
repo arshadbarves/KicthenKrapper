@@ -7,7 +7,7 @@ namespace KitchenKrapper
     {
         private const string IS_WALKING = "IsWalking";
 
-        [SerializeField] private PlayerController player;
+        [SerializeField] private Player player;
         private Animator animator;
 
         private void Start()

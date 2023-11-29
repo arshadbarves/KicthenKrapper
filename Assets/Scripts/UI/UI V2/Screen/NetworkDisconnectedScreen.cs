@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace KitchenKrapper
 {
-    public class NetworkDisconnectedScreen : BaseScreen
+    public class NetworkDisconnectedScreen : Screen
     {
 
         public static event Action NetworkDisconnectedScreenShown;
@@ -53,15 +53,15 @@ namespace KitchenKrapper
             SceneLoaderWrapper.Instance.ReloadScene();
         }
 
-        public override void Show()
+        public override void ShowScreen()
         {
-            base.Show();
+            base.ShowScreen();
             NetworkDisconnectedScreenShown?.Invoke();
         }
 
-        public override void Hide()
+        public override void HideScreen()
         {
-            base.Hide();
+            base.HideScreen();
             NetworkDisconnectedScreenHidden?.Invoke();
         }
 

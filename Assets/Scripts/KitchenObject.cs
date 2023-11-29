@@ -84,12 +84,12 @@ namespace KitchenKrapper
 
         public static void CreateKitchenObject(KitchenObjectSO kitchenObjectSO, IKitchenObjectParent kitchenObjectParent)
         {
-            MultiplayerManager.Instance.CreateKitchenObject(kitchenObjectSO, kitchenObjectParent);
+            EOSKitchenGameMultiplayer.Instance.CreateKitchenObject(kitchenObjectSO, kitchenObjectParent);
         }
 
         public static void DestroyKitchenObject(KitchenObject kitchenObject)
         {
-            MultiplayerManager.Instance.DestroyKitchenObject(kitchenObject);
+            EOSKitchenGameMultiplayer.Instance.DestroyKitchenObject(kitchenObject);
         }
     }
 }

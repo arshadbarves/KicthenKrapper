@@ -5,7 +5,7 @@ using PlayEveryWare.EpicOnlineServices.Samples;
 
 namespace KitchenKrapper
 {
-    public class HomeScreen : BaseScreen
+    public class HomeScreen : Screen
     {
         public static event Action PlayButtonClicked;
         public static event Action HomeScreenShown;
@@ -21,6 +21,10 @@ namespace KitchenKrapper
         private const string LOBBY_PANEL_NAME = "home-play__lobby-panel";
         private const string JOIN_LOBBY_BUTTON_NAME = "home-play__join-lobby-button";
         private const string CREATE_JOIN_LOBBY_CONTAINER_NAME = "home-play__create-join-lobby-container";
+        private const string JOIN_PANEL_POPUP_NAME = "home-play__join-panel__popup";
+        private const string JOIN_PANEL_POPUP_CLOSE_BUTTON_NAME = "home-play__join-panel__popup__close-button";
+        private const string JOIN_PANEL_INVITE_CODE_FIELD_NAME = "home-play__join-panel__invite-code-field";
+        private const string JOIN_PANEL_JOIN_BUTTON_NAME = "home-play__join-panel__join-button";
 
         private VisualElement homePanelScreen;
         private Button playLevelButton;
@@ -32,6 +36,10 @@ namespace KitchenKrapper
         private Button leaveLobbyButton;
         private Button joinLobbyButton;
         private VisualElement createJoinLobbyContainer;
+        private VisualElement joinPanelPopup;
+        private Button joinPanelPopupCloseButton;
+        private TextField joinPanelInviteCodeField;
+        private Button joinPanelJoinButton;
 
         private void Start()
         {
@@ -42,7 +50,6 @@ namespace KitchenKrapper
             LobbyManager.Instance.LobbyCreatedFailed += OnLobbyCreatedFailed;
             LobbyManager.Instance.LobbyJoinedFailed += OnLobbyJoinedFailed;
             LobbyManager.Instance.LobbyUpdated += OnLobbyUpdated;
-            JoinPopupScreen.JoinPopupScreenHidden += OnJoinPopupScreenHidden;
 
             OnLobbyLeft();
         }
@@ -60,6 +67,10 @@ namespace KitchenKrapper
             leaveLobbyButton = root.Q<Button>(LEAVE_LOBBY_BUTTON_NAME);
             joinLobbyButton = root.Q<Button>(JOIN_LOBBY_BUTTON_NAME);
             createJoinLobbyContainer = root.Q<VisualElement>(CREATE_JOIN_LOBBY_CONTAINER_NAME);
+            joinPanelPopup = root.Q<VisualElement>(JOIN_PANEL_POPUP_NAME);
+            joinPanelPopupCloseButton = root.Q<Button>(JOIN_PANEL_POPUP_CLOSE_BUTTON_NAME);
+            joinPanelInviteCodeField = root.Q<TextField>(JOIN_PANEL_INVITE_CODE_FIELD_NAME);
+            joinPanelJoinButton = root.Q<Button>(JOIN_PANEL_JOIN_BUTTON_NAME);
         }
 
         protected override void OnDestroy()
@@ -81,11 +92,13 @@ namespace KitchenKrapper
             inviteFriendsButton?.RegisterCallback<ClickEvent>(ClickInviteFriendsButton);
             leaveLobbyButton?.RegisterCallback<ClickEvent>(ClickLeaveLobbyButton);
             joinLobbyButton?.RegisterCallback<ClickEvent>(ClickJoinLobbyButton);
+            joinPanelPopupCloseButton?.RegisterCallback<ClickEvent>(ClickJoinPanelPopupCloseButton);
+            joinPanelJoinButton?.RegisterCallback<ClickEvent>(ClickJoinPanelJoinButton);
         }
 
         private void OnLobbyCreated(Lobby lobby)
         {
-            inviteCodeLabel.text = GetFormattedInviteCode(lobby.BucketId);
+            inviteCodeLabel.text = string.Format("INVITE CODE: {0}", lobby?.BucketId);
             inviteCodeLabel.style.display = DisplayStyle.Flex;
             leaveLobbyButton.style.display = DisplayStyle.Flex;
             createJoinLobbyContainer.style.display = DisplayStyle.None;
@@ -95,12 +108,14 @@ namespace KitchenKrapper
 
         private void OnLobbyJoined(Lobby lobby)
         {
-            inviteCodeLabel.text = GetFormattedInviteCode(lobby?.BucketId);
+            inviteCodeLabel.text = string.Format("INVITE CODE: {0}", lobby?.BucketId);
             inviteCodeLabel.style.display = DisplayStyle.Flex;
             leaveLobbyButton.style.display = DisplayStyle.Flex;
             createJoinLobbyContainer.style.display = DisplayStyle.None;
 
             leaveLobbyButton.SetEnabled(true);
+
+            HidePopupScreen();
         }
 
         private void OnLobbyLeft()
@@ -129,21 +144,12 @@ namespace KitchenKrapper
             createJoinLobbyContainer.style.display = DisplayStyle.Flex;
 
             joinLobbyButton.SetEnabled(true);
+            joinPanelJoinButton.SetEnabled(true);
         }
 
         private void OnLobbyUpdated(Lobby lobby)
         {
             inviteCodeLabel.text = lobby?.BucketId;
-        }
-
-        private void OnJoinPopupScreenHidden()
-        {
-            joinLobbyButton.SetEnabled(true);
-        }
-
-        private string GetFormattedInviteCode(string inviteCode)
-        {
-            return string.Format("Invite Code: {0}", inviteCode);
         }
 
         private void ClickLeaveLobbyButton(ClickEvent evt)
@@ -179,15 +185,53 @@ namespace KitchenKrapper
         private void ClickJoinLobbyButton(ClickEvent evt)
         {
             AudioManager.Instance.PlayDefaultButtonSound();
-
-            MainMenuUIManager.Instance.ShowJoinPopupScreen();
+            joinPanelPopup.style.display = DisplayStyle.Flex;
 
             joinLobbyButton.SetEnabled(false);
         }
 
-        public override void Show()
+        private void ClickJoinPanelPopupCloseButton(ClickEvent evt)
         {
-            base.Show();
+            AudioManager.Instance.PlayDefaultButtonSound();
+            joinPanelPopup.style.display = DisplayStyle.None;
+
+            joinLobbyButton.SetEnabled(true);
+
+            HidePopupScreen();
+        }
+
+        private void ClickJoinPanelJoinButton(ClickEvent evt)
+        {
+            AudioManager.Instance.PlayDefaultButtonSound();
+            LobbyManager.Instance.FindAndJoinLobby(joinPanelInviteCodeField.text);
+
+            joinPanelJoinButton.SetEnabled(false);
+        }
+
+        public void ShowPopupScreen()
+        {
+            if (joinPanelJoinButton.style.display == DisplayStyle.None)
+                joinPanelJoinButton.SetEnabled(true);
+
+            joinPanelPopup.style.display = DisplayStyle.Flex;
+
+            // add active style
+            joinPanelPopup.RemoveFromClassList(MainMenuUIManager.POPUP_PANEL_INACTIVE_CLASS_NAME);
+            joinPanelPopup.AddToClassList(MainMenuUIManager.POPUP_PANEL_ACTIVE_CLASS_NAME);
+        }
+
+        public void HidePopupScreen()
+        {
+            joinPanelPopup.style.display = DisplayStyle.None;
+
+            // add inactive style
+            joinPanelPopup.RemoveFromClassList(MainMenuUIManager.POPUP_PANEL_ACTIVE_CLASS_NAME);
+            joinPanelPopup.AddToClassList(MainMenuUIManager.POPUP_PANEL_INACTIVE_CLASS_NAME);
+        }
+
+        public override void ShowScreen()
+        {
+            base.ShowScreen();
             HomeScreenShown?.Invoke();
 
             // add active style
@@ -195,9 +239,9 @@ namespace KitchenKrapper
             homePanelScreen.RemoveFromClassList(MainMenuUIManager.MODAL_PANEL_INACTIVE_CLASS_NAME);
         }
 
-        public override void Hide()
+        public override void HideScreen()
         {
-            base.Hide();
+            base.HideScreen();
 
             // add inactive style
             homePanelScreen.AddToClassList(MainMenuUIManager.MODAL_PANEL_INACTIVE_CLASS_NAME);

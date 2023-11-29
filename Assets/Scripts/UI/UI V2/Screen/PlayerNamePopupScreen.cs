@@ -4,7 +4,7 @@ using UnityEngine.UIElements;
 
 namespace KitchenKrapper
 {
-    public class PlayerNamePopupScreen : BaseScreen
+    public class PlayerNamePopupScreen : Screen
     {
         public static event Action<string> PlayerNameSet;
         private const string SET_PLAYER_NAME_BUTTON_NAME = "set-player-name__button";
@@ -22,18 +22,18 @@ namespace KitchenKrapper
             playerNamePopupPanel = root.Q<VisualElement>(POPUP_PANEL_NAME);
         }
 
-        public override void Show()
+        public override void ShowScreen()
         {
-            base.Show();
+            base.ShowScreen();
 
             // add active style
             playerNamePopupPanel.RemoveFromClassList(MainMenuUIManager.POPUP_PANEL_INACTIVE_CLASS_NAME);
             playerNamePopupPanel.AddToClassList(MainMenuUIManager.POPUP_PANEL_ACTIVE_CLASS_NAME);
         }
 
-        public override void Hide()
+        public override void HideScreen()
         {
-            base.Hide();
+            base.HideScreen();
 
             // add inactive style
             playerNamePopupPanel.RemoveFromClassList(MainMenuUIManager.POPUP_PANEL_ACTIVE_CLASS_NAME);
@@ -56,7 +56,7 @@ namespace KitchenKrapper
             else
             {
                 PlayerNameSet?.Invoke(playerName);
-                MainMenuUIManager.Instance.HidePlayerNamePopupScreen();
+                HideScreen();
             }
 
         }

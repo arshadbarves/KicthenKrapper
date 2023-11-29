@@ -4,16 +4,19 @@ using System;
 
 namespace KitchenKrapper
 {
-    public enum ScreenType { None, FullScreen, Popup, Overlay }
-    public abstract class BaseScreen : MonoBehaviour
+    public enum ScreenType { None, Modal, Overlay, PopUp }
+    public abstract class Screen : MonoBehaviour
     {
+        [Tooltip("String ID from the UXML for this menu panel/screen.")]
         [SerializeField] protected string screenName;
+        [Tooltip("Type of screen (Modal, Overlay, PopUp).")]
         [SerializeField] protected ScreenType screenType;
 
         [Header("UI Management")]
+        [Tooltip("Set the Main Menu here explicitly (or get automatically from the current GameObject).")]
         [SerializeField] protected MainMenuUIManager mainMenuUIManager;
+        [Tooltip("Set the UI Document here explicitly (or get automatically from the current GameObject).")]
         [SerializeField] protected UIDocument document;
-        [SerializeField] protected BaseScreen parentScreen = null;
 
         protected VisualElement screen;
         protected VisualElement root;
@@ -36,7 +39,7 @@ namespace KitchenKrapper
                 document = GetComponent<UIDocument>();
 
             if (document == null && mainMenuUIManager != null)
-                document = mainMenuUIManager.GetMainDocument();
+                document = mainMenuUIManager.MainMenuDocument;
 
             if (document == null)
             {
@@ -84,7 +87,7 @@ namespace KitchenKrapper
             if (visualElement == null)
                 return;
 
-            visualElement.style.display = state ? DisplayStyle.Flex : DisplayStyle.None;
+            visualElement.style.display = (state) ? DisplayStyle.Flex : DisplayStyle.None;
         }
 
         public VisualElement GetVisualElement(string elementName)
@@ -95,16 +98,13 @@ namespace KitchenKrapper
             return root.Q(elementName);
         }
 
-        public virtual void Show()
+        public virtual void ShowScreen()
         {
-            if (IsVisible())
-                return;
-
             ShowVisualElement(screen, true);
             ScreenStarted?.Invoke();
         }
 
-        public virtual void Hide()
+        public virtual void HideScreen()
         {
             if (IsVisible())
             {
@@ -116,11 +116,6 @@ namespace KitchenKrapper
         public ScreenType GetScreenType()
         {
             return screenType;
-        }
-
-        public BaseScreen GetParentScreen()
-        {
-            return parentScreen;
         }
     }
 }

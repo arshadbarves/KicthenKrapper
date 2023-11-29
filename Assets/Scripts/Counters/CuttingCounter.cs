@@ -20,7 +20,7 @@ namespace KitchenKrapper
             OnAnyCut = null;
         }
 
-        public override void Interact(PlayerController player)
+        public override void Interact(Player player)
         {
             if (!HasKitchenObject())
             {
@@ -32,7 +32,7 @@ namespace KitchenKrapper
             }
         }
 
-        private void HandleKitchenObjectInteraction(PlayerController player)
+        private void HandleKitchenObjectInteraction(Player player)
         {
             if (player.HasKitchenObject())
             {
@@ -44,7 +44,7 @@ namespace KitchenKrapper
             }
         }
 
-        private void HandleKitchenObjectPickup(PlayerController player)
+        private void HandleKitchenObjectPickup(Player player)
         {
             if (HasCuttingRecipe(player.GetKitchenObject().GetKitchenObjectSO()))
             {
@@ -55,7 +55,7 @@ namespace KitchenKrapper
             }
         }
 
-        private void HandleExistingKitchenObjectInteraction(PlayerController player)
+        private void HandleExistingKitchenObjectInteraction(Player player)
         {
             if (player.HasKitchenObject())
             {
@@ -67,7 +67,7 @@ namespace KitchenKrapper
             }
         }
 
-        private void HandleExistingPlayerKitchenObject(PlayerController player)
+        private void HandleExistingPlayerKitchenObject(Player player)
         {
             if (player.GetKitchenObject().TryGetPlateKitchenObject(out PlateKitchenObject plateKitchenObject))
             {
@@ -75,7 +75,7 @@ namespace KitchenKrapper
             }
         }
 
-        private void HandlePlateKitchenObject(PlayerController player, PlateKitchenObject plateKitchenObject)
+        private void HandlePlateKitchenObject(Player player, PlateKitchenObject plateKitchenObject)
         {
             if (plateKitchenObject.TryAddIngredient(GetKitchenObject().GetKitchenObjectSO()))
             {
@@ -84,7 +84,7 @@ namespace KitchenKrapper
             }
         }
 
-        private void HandleNoPlayerKitchenObject(PlayerController player)
+        private void HandleNoPlayerKitchenObject(Player player)
         {
             GetKitchenObject().SetKitchenObjectParent(player);
             StepComplete();
@@ -103,7 +103,7 @@ namespace KitchenKrapper
             OnProgressChanged?.Invoke(this, new IHasProgress.ProgressChangedEventArgs { progressNormalized = 0f });
         }
 
-        public override void InteractAlternate(PlayerController player)
+        public override void InteractAlternate(Player player)
         {
             if (HasKitchenObject() && HasCuttingRecipe(GetKitchenObject().GetKitchenObjectSO()))
             {

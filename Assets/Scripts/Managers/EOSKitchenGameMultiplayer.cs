@@ -1,6 +1,5 @@
 using System;
 using Epic.OnlineServices;
-using Epic.OnlineServices.Sessions;
 using PlayEveryWare.EpicOnlineServices;
 using PlayEveryWare.EpicOnlineServices.Samples;
 using PlayEveryWare.EpicOnlineServices.Samples.Network;
@@ -9,13 +8,6 @@ using UnityEngine;
 
 namespace KitchenKrapper
 {
-    public enum MultiplayerStatus
-    {
-        NotConnected,   // Player is not connected to any session
-        Hosting,        // Player is hosting a session
-        Joined          // Player has joined a session
-    }
-
     public class P2PTransportPresenceData
     {
         public const string ValidIdentifier = "P2PTRANSPORT";
@@ -29,142 +21,159 @@ namespace KitchenKrapper
         }
     }
 
-    public class MultiplayerManager : NetworkSingleton<MultiplayerManager>
+    public class EOSKitchenGameMultiplayer : NetworkBehaviour
     {
-        public event Action JoiningGame;
-        public event Action FailedToJoinGame;
-        public event Action PlayerDataNetworkListChanged;
+        public const int MAX_PLAYERS = 4;
+        public static EOSKitchenGameMultiplayer Instance { get; private set; }
+
+        public event EventHandler OnTryingToJoinGame;
+        public event EventHandler OnFailedToJoinGame;
+        public event EventHandler OnPlayerDataNetworkListChanged;
 
         [SerializeField] private KitchenObjectListSO kitchenObjectListSO;
 
         private EOSTransportManager transportManager = null;
-        private NetworkList<PlayerData> sessionPlayers = new NetworkList<PlayerData>();
-        private MultiplayerStatus multiplayerStatus = MultiplayerStatus.NotConnected;
-        private bool isHosting = false;
-        private bool isJoined = false;
+        private NetworkList<PlayerData> playerDataNetworkList = new NetworkList<PlayerData>();
+        private bool isHost = false;
+        private bool isClient = false;
+
+        private void Awake()
+        {
+            if (Instance != null && Instance != this)
+            {
+                Destroy(gameObject);
+            }
+
+            Instance = this;
+
+            DontDestroyOnLoad(gameObject);
+        }
 
         private void Start()
         {
+            if (!GameDataSource.PlayMultiplayer)
+            {
+                SceneLoaderWrapper.Instance.LoadScene(SceneType.Map_City_001.ToString(), false);
+            }
+            // if (!ClientPrefs.GetTutorialCompleted())
+            // {
+            //     SceneLoaderWrapper.Instance.LoadScene(SceneType.Tutorial.ToString(), false);
+            //     // StartHost();
+
+            // }
             transportManager = EOSManager.Instance.GetOrCreateManager<EOSTransportManager>();
-            sessionPlayers.OnListChanged += PlayerDataNetworkList_OnListChanged;
+            playerDataNetworkList.OnListChanged += PlayerDataNetworkList_OnListChanged;
         }
 
         public override void OnDestroy()
         {
             base.OnDestroy();
 
-            sessionPlayers.OnListChanged -= PlayerDataNetworkList_OnListChanged;
+            playerDataNetworkList.OnListChanged -= PlayerDataNetworkList_OnListChanged;
+
+            if (Instance == this)
+            {
+                Instance = null;
+            }
 
             transportManager?.Disconnect();
 
-            PlayerController.DestroyNetworkManager();
+            Player.DestroyNetworkManager();
         }
 
         private void PlayerDataNetworkList_OnListChanged(NetworkListEvent<PlayerData> changeEvent)
         {
-            PlayerDataNetworkListChanged?.Invoke();
+            OnPlayerDataNetworkListChanged?.Invoke(this, EventArgs.Empty);
         }
 
-        public void StartHost(Action<bool> callback = null)
+        public void StartHost()
         {
-            if (multiplayerStatus == MultiplayerStatus.Hosting)
+            if (isHost)
             {
-                Debug.LogError("MultiplayerManager (StartHost): Unable to start hosting a session. A session is already being hosted.");
-                callback?.Invoke(false);
+                Debug.LogError("UIP2PTransportMenu (StartHostOnClick): already hosting");
                 return;
             }
 
             if (transportManager.StartHost())
             {
-                multiplayerStatus = MultiplayerStatus.Hosting;
+                isHost = true;
                 RegisterHostCallbacks();
+                if (!ClientPrefs.GetTutorialCompleted()) return;
                 SetJoinInfo(EOSManager.Instance.GetProductUserId());
-                callback?.Invoke(true);
+                SceneLoaderWrapper.Instance.LoadScene(SceneType.Lobby.ToString(), true);
             }
             else
             {
-                Debug.LogError("MultiplayerManager (StartHost): Failed to initiate hosting a session. Check your network settings.");
-                callback?.Invoke(false);
+                Debug.LogError("UIP2PTransportMenu (StartHostOnClick): failed to start host");
             }
         }
 
-        public void StartClient(ProductUserId hostId, Action<bool> callback = null)
+        public void StartClient(ProductUserId hostId)
         {
             if (!hostId.IsValid())
             {
-                Debug.LogError("MultiplayerManager (StartClient): Invalid server user ID. Unable to join the game.");
-                callback?.Invoke(false);
+                Debug.LogError("UIP2PTransportMenu (JoinGame): invalid server user id");
                 return;
             }
-            if (multiplayerStatus == MultiplayerStatus.Joined)
+            if (isClient)
             {
-                Debug.LogError("MultiplayerManager (StartClient): Already joined a game session. You cannot join multiple sessions simultaneously.");
-                callback?.Invoke(false);
+                Debug.LogError("UIP2PTransportMenu (StartClientOnClick): already client");
                 return;
             }
-            JoiningGame?.Invoke();
-            PlayerController.SetNetworkHostId(hostId);
+            OnTryingToJoinGame?.Invoke(this, EventArgs.Empty);
+            Player.SetNetworkHostId(hostId);
             if (transportManager.StartClient())
             {
-                multiplayerStatus = MultiplayerStatus.Joined;
-                RegisterClientCallbacks();
-                SetJoinInfo(hostId);
-                callback?.Invoke(true);
+                RegisterCallbacks();
+                isClient = true;
             }
             else
             {
-                Debug.LogError("MultiplayerManager (StartClient): Failed to initiate joining the game. Please check your network connection.");
-                callback?.Invoke(false);
+                Debug.LogError("UIP2PTransportMenu (StartClientOnClick): failed to start client");
             }
         }
 
-
         private void SetJoinInfo(ProductUserId serverUserId)
         {
-            // Create the join data to communicate with the server
             var joinData = new P2PTransportPresenceData()
             {
                 SceneIdentifier = P2PTransportPresenceData.ValidIdentifier,
                 ServerUserId = serverUserId.ToString()
             };
-            // Serialize the join data to JSON
+
             string joinString = JsonUtility.ToJson(joinData);
-            // Set the join information for the session
+
             EOSSessionsManager.SetJoinInfo(joinString);
         }
-        public void Disconnect()
+
+        public void DisconnectOnClick()
         {
-            if (multiplayerStatus != MultiplayerStatus.Hosting && multiplayerStatus != MultiplayerStatus.Joined)
-            {
-                Debug.LogError("MultiplayerManager (Disconnect): Cannot disconnect - Not hosting or joined to a session.");
-                return;
-            }
-            // Disconnect from the current session
             transportManager?.Disconnect();
-            multiplayerStatus = MultiplayerStatus.NotConnected;
+            isHost = false;
+            isClient = false;
             EOSSessionsManager.SetJoinInfo(null);
         }
+
         private void OnDisconnect(ulong clientId)
         {
-            Debug.LogWarning("MultiplayerManager (OnDisconnect): Disconnected from the session.");
-            multiplayerStatus = MultiplayerStatus.NotConnected;
+            Debug.LogWarning("UIP2PTransportMenu (OnDisconnect): server disconnected");
+            isClient = false;
             EOSSessionsManager.SetJoinInfo(null);
-            // Remove the disconnected player from the session
-            foreach (PlayerData playerData in sessionPlayers)
+            foreach (PlayerData playerData in playerDataNetworkList)
             {
                 if (playerData.clientId == clientId)
                 {
-                    sessionPlayers.Remove(playerData);
+                    playerDataNetworkList.Remove(playerData);
                     break;
                 }
             }
-            if (multiplayerStatus == MultiplayerStatus.Hosting)
+            if (isHost)
             {
                 UnregisterHostCallbacks();
             }
             else
             {
-                UnregisterClientCallbacks();
+                UnregisterCallbacks();
             }
         }
 
@@ -183,17 +192,16 @@ namespace KitchenKrapper
             NetworkManager.Singleton.OnClientDisconnectCallback -= NetworkManager_Server_OnClientDisconnectCallback;
         }
 
-        public void RegisterClientCallbacks()
+        public void RegisterCallbacks()
         {
-            JoiningGame?.Invoke();
-            UnregisterClientCallbacks();
-
+            OnTryingToJoinGame?.Invoke(this, EventArgs.Empty);
+            UnregisterCallbacks();
             // Subscribe to events
             NetworkManager.Singleton.OnClientDisconnectCallback += NetworkManager_Client_OnClientDisconnectCallback;
             NetworkManager.Singleton.OnClientConnectedCallback += NetworkManager_Client_OnClientConnectedCallback;
         }
 
-        public void UnregisterClientCallbacks()
+        public void UnregisterCallbacks()
         {
             // Unsubscribe from events
             NetworkManager.Singleton.OnClientDisconnectCallback -= NetworkManager_Client_OnClientDisconnectCallback;
@@ -202,11 +210,11 @@ namespace KitchenKrapper
 
         private void NetworkManager_Server_OnClientDisconnectCallback(ulong playerID)
         {
-            foreach (PlayerData playerData in sessionPlayers)
+            foreach (PlayerData playerData in playerDataNetworkList)
             {
                 if (playerData.clientId == playerID)
                 {
-                    sessionPlayers.Remove(playerData);
+                    playerDataNetworkList.Remove(playerData);
                     break;
                 }
             }
@@ -215,25 +223,24 @@ namespace KitchenKrapper
 
         private void NetworkManager_OnClientConnectedCallback(ulong clientId)
         {
-            sessionPlayers.Add(new PlayerData { clientId = clientId, playerName = GameManager.Instance.GetPlayerName() });
+            playerDataNetworkList.Add(new PlayerData { clientId = clientId, playerName = GameDataSource.Instance.GetPlayerData().PlayerName });
         }
 
         private void NetworkManager_ConnectionApprovalCallback(NetworkManager.ConnectionApprovalRequest connectionApprovalRequest, NetworkManager.ConnectionApprovalResponse connectionApprovalResponse)
         {
-            Session session = SessionManager.Instance.GetCurrentSession();
-            // Check if game is already in progress
-            if (session.SessionState == OnlineSessionState.InProgress)
+            // Get Active Scene Name and check if it is Lobby Scene Name or not
+            if (SceneLoaderWrapper.Instance.GetActiveSceneName() != SceneType.Lobby.ToString())
             {
                 connectionApprovalResponse.Approved = false;
                 connectionApprovalResponse.Reason = "Game is already in progress";
                 return;
             }
 
-            // Check if player count is less than session max player count
-            if (NetworkManager.Singleton.ConnectedClientsList.Count >= session.MaxPlayers)
+            // Check if player count is less than max player count
+            if (NetworkManager.Singleton.ConnectedClientsList.Count >= MAX_PLAYERS)
             {
                 connectionApprovalResponse.Approved = false;
-                connectionApprovalResponse.Reason = "Game is full";
+                connectionApprovalResponse.Reason = "Server is full";
                 return;
             }
 
@@ -255,14 +262,14 @@ namespace KitchenKrapper
         public void SetPlayerIdServerRpc(string playerId, ServerRpcParams serverRpcParams = default)
         {
             int playerIndex = GetPlayerDataIndexFromPlayerId(serverRpcParams.Receive.SenderClientId);
-            PlayerData playerData = sessionPlayers[playerIndex];
+            PlayerData playerData = playerDataNetworkList[playerIndex];
             playerData.playerId = playerId;
-            sessionPlayers[playerIndex] = playerData;
+            playerDataNetworkList[playerIndex] = playerData;
         }
 
         private void NetworkManager_Client_OnClientDisconnectCallback(ulong clientId)
         {
-            FailedToJoinGame?.Invoke();
+            OnFailedToJoinGame?.Invoke(this, EventArgs.Empty);
             OnDisconnect(clientId);
         }
 
@@ -336,7 +343,7 @@ namespace KitchenKrapper
 
         public PlayerData GetPlayerDataFromPlayerId(ulong playerID)
         {
-            foreach (PlayerData playerData in sessionPlayers)
+            foreach (PlayerData playerData in playerDataNetworkList)
             {
                 if (playerData.clientId == playerID)
                 {
@@ -349,7 +356,7 @@ namespace KitchenKrapper
 
         public NetworkList<PlayerData> GetPlayerDataNetworkList()
         {
-            return sessionPlayers;
+            return playerDataNetworkList;
         }
 
         public PlayerData GetPlayerData()
@@ -357,18 +364,18 @@ namespace KitchenKrapper
             return GetPlayerDataFromPlayerId(NetworkManager.Singleton.LocalClientId);
         }
 
-        public void SetPlayerReady(PlayerGameState playerGameState)
+        public void SetPlayerReady(bool isReady)
         {
             PlayerData playerData = GetPlayerData();
-            playerData.playerGameState = playerGameState;
+            playerData.isReady = isReady;
             SetPlayerDataServerRpc(playerData);
         }
 
         public int GetPlayerDataIndexFromPlayerId(ulong playerID)
         {
-            for (int i = 0; i < sessionPlayers.Count; i++)
+            for (int i = 0; i < playerDataNetworkList.Count; i++)
             {
-                if (sessionPlayers[i].clientId == playerID)
+                if (playerDataNetworkList[i].clientId == playerID)
                 {
                     return i;
                 }
@@ -381,10 +388,10 @@ namespace KitchenKrapper
         private void SetPlayerDataServerRpc(PlayerData playerData, ServerRpcParams serverRpcParams = default)
         {
             PlayerData playerDataToChange = GetPlayerDataFromPlayerId(serverRpcParams.Receive.SenderClientId);
-            playerDataToChange.playerGameState = playerData.playerGameState;
+            playerDataToChange.isReady = playerData.isReady;
 
             int playerDataIndex = GetPlayerDataIndexFromPlayerId(serverRpcParams.Receive.SenderClientId);
-            sessionPlayers[playerDataIndex] = playerDataToChange;
+            playerDataNetworkList[playerDataIndex] = playerDataToChange;
         }
 
         public void KickPlayer(ulong playerID)

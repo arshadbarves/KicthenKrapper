@@ -336,11 +336,6 @@ namespace PlayEveryWare.EpicOnlineServices.Samples
     /// </summary>
     public class EOSSessionsManager : IEOSSubManager
     {
-        // Callbacks
-        public static event Action<Result> OnLeaveSession;
-        public static event Action<Result> OnSessionEnded;
-        public static event Action OnSessionSearchCompleted;
-
         private Dictionary<string, Session> CurrentSessions;
 
         private SessionSearch CurrentSearch;
@@ -912,7 +907,7 @@ namespace PlayEveryWare.EpicOnlineServices.Samples
             CurrentSearch.Release();
 
             CreateSessionSearchOptions searchOptions = new CreateSessionSearchOptions();
-            searchOptions.MaxSearchResults = 100;
+            searchOptions.MaxSearchResults = 10;
 
             SessionsInterface sessionInterface = EOSManager.Instance.GetEOSPlatformInterface().GetSessionsInterface();
             Result result = sessionInterface.CreateSessionSearch(ref searchOptions, out Epic.OnlineServices.Sessions.SessionSearch sessionSearchHandle);
@@ -1370,8 +1365,6 @@ namespace PlayEveryWare.EpicOnlineServices.Samples
             {
                 AcknowledgeEventId(Result.NotFound);
             }
-
-            OnSessionSearchCompleted.Invoke();
         }
 
         private void OnJoinSessionFinished(Action<Result> callback)
@@ -1641,7 +1634,6 @@ namespace PlayEveryWare.EpicOnlineServices.Samples
             }
 
             Debug.LogFormat("Session Matchmaking(OnEndSessionCompleteCallback): Ended session: {0}", sessionName);
-            OnSessionEnded.Invoke(data.ResultCode);
 
             //OnSessionEnded(sessionName); // Not used in C# wrapper
         }
@@ -1653,7 +1645,7 @@ namespace PlayEveryWare.EpicOnlineServices.Samples
             //    Debug.LogError("Session Matchmaking (OnDestroySessionCompleteCallback): data is null!");
             //    return;
             //}
-            OnLeaveSession(data.ResultCode);
+
             if (data.ClientData == null)
             {
                 Debug.LogError("Session Matchmaking (OnDestroySessionCompleteCallback): data.ClientData is null!");

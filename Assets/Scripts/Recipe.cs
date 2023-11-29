@@ -1,3 +1,5 @@
+using UnityEngine;
+
 namespace KitchenKrapper
 {
     public class Recipe

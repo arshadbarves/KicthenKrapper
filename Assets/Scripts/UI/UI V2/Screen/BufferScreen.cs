@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace KitchenKrapper
 {
-    public class BufferScreen : BaseScreen
+    public class BufferScreen : Screen
     {
         private const string BUFFER_ICON_NAME = "buffer__icon";
 
