@@ -127,7 +127,11 @@ namespace KitchenKrapper
 
         private void OnEULAAccepted()
         {
-            GameData.EulaAgreed = true;
+            GameData data = new GameData
+            {
+                EulaAgreed = true
+            };
+            GameData = data;
             InitializeApplication();
         }
 

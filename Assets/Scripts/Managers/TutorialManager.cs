@@ -53,7 +53,7 @@ namespace KitchenKrapper
             CompleteTutorialStep(currentStepIndex);
             tutorialOverUI.gameObject.SetActive(false);
 
-            MultiplayerManager.Instance.StartHost(new PlayerData { clientId = NetworkManager.Singleton.LocalClientId });
+            MultiplayerManager.Instance.StartHost();
 
             StartCoroutine(ShowGameController());
         }
