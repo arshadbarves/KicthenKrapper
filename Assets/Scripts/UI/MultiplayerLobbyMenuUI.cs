@@ -31,8 +31,8 @@ namespace KitchenKrapper
 
         private void Start()
         {
-            MultiplayerManager.Instance.JoiningGame += OnJoiningGame;
-            MultiplayerManager.Instance.FailedToJoinGame += OnFailedToJoinGame;
+            EOSKitchenGameMultiplayer.Instance.OnTryingToJoinGame += EOSKitchenGameMultiplayer_OnTryingToJoinGame;
+            EOSKitchenGameMultiplayer.Instance.OnFailedToJoinGame += EOSKitchenGameMultiplayer_OnFailedToJoinGame;
             // LobbyManager.Instance.OnLobbyListChanged += EOSKitchenGameLobby_OnLobbyListChanged;
             UpdateLobbyList(new Dictionary<Lobby, LobbyDetails>());
         }
@@ -46,8 +46,8 @@ namespace KitchenKrapper
         {
             try
             {
-                MultiplayerManager.Instance.JoiningGame -= OnJoiningGame;
-                MultiplayerManager.Instance.FailedToJoinGame -= OnFailedToJoinGame;
+                EOSKitchenGameMultiplayer.Instance.OnTryingToJoinGame -= EOSKitchenGameMultiplayer_OnTryingToJoinGame;
+                EOSKitchenGameMultiplayer.Instance.OnFailedToJoinGame -= EOSKitchenGameMultiplayer_OnFailedToJoinGame;
                 // LobbyManager.Instance.OnLobbyListChanged -= EOSKitchenGameLobby_OnLobbyListChanged;
             }
             catch (Exception e)
@@ -56,7 +56,7 @@ namespace KitchenKrapper
             }
         }
 
-        private void OnFailedToJoinGame()
+        private void EOSKitchenGameMultiplayer_OnFailedToJoinGame(object sender, EventArgs e)
         {
             string message = NetworkManager.Singleton.DisconnectReason;
 
@@ -69,7 +69,7 @@ namespace KitchenKrapper
 
         }
 
-        private void OnJoiningGame()
+        private void EOSKitchenGameMultiplayer_OnTryingToJoinGame(object sender, EventArgs e)
         {
             messagePanel.ShowMessage("Trying to connect to game");
         }

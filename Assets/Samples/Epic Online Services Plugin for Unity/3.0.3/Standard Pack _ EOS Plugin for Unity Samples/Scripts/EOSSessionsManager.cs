@@ -912,7 +912,7 @@ namespace PlayEveryWare.EpicOnlineServices.Samples
             CurrentSearch.Release();
 
             CreateSessionSearchOptions searchOptions = new CreateSessionSearchOptions();
-            searchOptions.MaxSearchResults = 100;
+            searchOptions.MaxSearchResults = 10;
 
             SessionsInterface sessionInterface = EOSManager.Instance.GetEOSPlatformInterface().GetSessionsInterface();
             Result result = sessionInterface.CreateSessionSearch(ref searchOptions, out Epic.OnlineServices.Sessions.SessionSearch sessionSearchHandle);

@@ -1,88 +1,81 @@
 using System;
 using System.Collections;
+using PlayEveryWare.EpicOnlineServices;
 using UnityEngine;
 using UnityEngine.Android;
-using PlayEveryWare.EpicOnlineServices;
 
 namespace KitchenKrapper
 {
-    public class GameManager : Singleton<GameManager>
+    public class GameManager : MonoBehaviour
     {
-        private PlatformType currentPlatform => PlatformManager.CurrentPlatform;
+        public static GameManager Instance { get; private set; }
+
+        private PlatformType currentPlatform = PlatformManager.CurrentPlatform;
         private GameStatus gameStatus = GameStatus.None;
 
         public LevelSO currentLevel;
-        public PlayerGameData PlayerData
-        {
-            get { return playerData; }
-            set
-            {
-                if (playerData != value)
-                {
-                    playerData = value;
-                    PlayerDataChanged?.Invoke();
-                }
-            }
-        }
-        public GameData GameData
-        {
-            get { return gameData; }
-            set
-            {
-                if (gameData != value)
-                {
-                    gameData = value;
-                    GameDataUpdated?.Invoke();
-                }
-            }
-        }
 
         public static event Action PlayerDataChanged;
         public static event Action GameDataUpdated;
 
-        [SerializeField] private PlayerGameData playerData;
+        [SerializeField] private PlayerGameData playerGameData;
         [SerializeField] private GameData gameData;
+
+        public PlayerGameData PlayerGameData
+        {
+            get { return playerGameData; }
+            set { playerGameData = value; }
+        }
+
+        public GameData GameData
+        {
+            get { return gameData; }
+            set { gameData = value; }
+        }
+
+        private void Awake()
+        {
+            if (Instance == null)
+            {
+                Instance = this;
+            }
+            else if (Instance != this)
+            {
+                Destroy(gameObject);
+                return;
+            }
+
+            DontDestroyOnLoad(gameObject);
+        }
 
         private void Start()
         {
-            SetupEventListeners();
-            RequestStoragePermissionsIfNeeded();
-            InitializeApplication();
-        }
-
-        protected override void OnDestroy()
-        {
-            RemoveEventListeners();
-        }
-
-        private void SetupEventListeners()
-        {
+            AudioManager.Instance.AudioSettingsChanged += OnGameDataUpdated;
             PlayerNamePopupScreen.PlayerNameSet += CreatePlayerData;
             PlayerDataStorage.PlayerDataCreated += StartGame;
             EULAScreen.EULAAccepted += OnEULAAccepted;
-        }
 
-        private void RemoveEventListeners()
-        {
-            PlayerNamePopupScreen.PlayerNameSet -= CreatePlayerData;
-            PlayerDataStorage.PlayerDataCreated -= StartGame;
-            EULAScreen.EULAAccepted -= OnEULAAccepted;
-        }
-
-        private void RequestStoragePermissionsIfNeeded()
-        {
             if (currentPlatform == PlatformType.Android)
             {
-                if (!Permission.HasUserAuthorizedPermission(Permission.ExternalStorageRead) ||
-                    !Permission.HasUserAuthorizedPermission(Permission.ExternalStorageWrite))
+                if (!Permission.HasUserAuthorizedPermission(Permission.ExternalStorageRead) || !Permission.HasUserAuthorizedPermission(Permission.ExternalStorageWrite))
                 {
                     Permission.RequestUserPermission(Permission.ExternalStorageRead);
                     Permission.RequestUserPermission(Permission.ExternalStorageWrite);
                 }
             }
+
+            InitializeApplication();
         }
 
-        private void InitializeApplication()
+        private void OnDestroy()
+        {
+            AudioManager.Instance.AudioSettingsChanged -= OnGameDataUpdated;
+            PlayerNamePopupScreen.PlayerNameSet -= CreatePlayerData;
+            PlayerDataStorage.PlayerDataCreated -= StartGame;
+            EULAScreen.EULAAccepted -= OnEULAAccepted;
+        }
+
+        public void InitializeApplication()
         {
             SaveManager.Instance.LoadGame();
             MainMenuUIManager.Instance.ShowLoginScreen();
@@ -97,7 +90,7 @@ namespace KitchenKrapper
             }
         }
 
-        private void ShowEULAScreen()
+        public void ShowEULAScreen()
         {
             MainMenuUIManager.Instance.ShowEULAScreen();
         }
@@ -135,6 +128,11 @@ namespace KitchenKrapper
             InitializeApplication();
         }
 
+        private void OnGameDataUpdated()
+        {
+            GameDataUpdated?.Invoke();
+        }
+
         private IEnumerator CheckInternetConnection()
         {
             while (true)
@@ -156,8 +154,8 @@ namespace KitchenKrapper
         {
             if (!string.IsNullOrEmpty(playerData))
             {
-                PlayerData = JsonUtility.FromJson<PlayerGameData>(playerData);
-                Debug.Log("[GameManager]: Player Data: " + playerData);
+                PlayerGameData = JsonUtility.FromJson<PlayerGameData>(playerData);
+                print("[GameManager]: Player Data: " + playerData);
                 MainMenuUIManager.Instance.ShowHomeScreen();
                 PlayerDataChanged?.Invoke();
             }
@@ -187,45 +185,40 @@ namespace KitchenKrapper
 
         public void UpdatePlayerData()
         {
-            PlayerDataStorage.Instance.SetPlayerData(playerData.ToJson());
-        }
-
-        public string GetPlayerName()
-        {
-            return playerData.PlayerDisplayName;
+            PlayerDataStorage.Instance.SetPlayerData(playerGameData.ToJson());
         }
 
         public void SetCoins(uint coins)
         {
-            playerData.Coins = coins;
+            playerGameData.Coins = coins;
             UpdatePlayerData();
             PlayerDataChanged?.Invoke();
         }
 
         public void SetGems(uint gems)
         {
-            playerData.Gems = gems;
+            playerGameData.Gems = gems;
             UpdatePlayerData();
             PlayerDataChanged?.Invoke();
         }
 
         public void SetPlayerDisplayName(string playerDisplayName)
         {
-            playerData.PlayerDisplayName = playerDisplayName;
+            playerGameData.PlayerDisplayName = playerDisplayName;
             UpdatePlayerData();
             PlayerDataChanged?.Invoke();
         }
 
         public void SetPlayerIcon(string playerIcon)
         {
-            playerData.PlayerIcon = playerIcon;
+            playerGameData.PlayerIcon = playerIcon;
             UpdatePlayerData();
             PlayerDataChanged?.Invoke();
         }
 
         public void SetPlayerTrophies(uint playerTrophies)
         {
-            playerData.PlayerTrophies = playerTrophies;
+            playerGameData.PlayerTrophies = playerTrophies;
             UpdatePlayerData();
             PlayerDataChanged?.Invoke();
         }

@@ -15,7 +15,7 @@ namespace KitchenKrapper
         public event EventHandler OnLocalPlayerReadyChanged;
 
         [SerializeField] private GameModeSO gameModeSO;
-        [SerializeField] private PlayerController playerPrefab;
+        [SerializeField] private Player playerPrefab;
         public bool isDebugMode = false;
 
         private Dictionary<ulong, bool> playerReadyDictionary;
@@ -85,7 +85,7 @@ namespace KitchenKrapper
             DeliveryManager.Instance.OnRecipeDeliveryFailed += DeliveryManager_OnRecipeFailed;
             DeliveryManager.Instance.OnRecipeExpired += DeliveryManager_OnRecipeExpired;
             CuttingCounter.OnAnyCut += CuttingCounter_OnAnyCut;
-            PlayerController.OnAnyPickupObject += Player_OnPickedUpObject;
+            Player.OnAnyPickupObject += Player_OnPickedUpObject;
             BaseStation.OnAnyObjectPlacedOnCounter += BaseCounter_OnAnyObjectPlacedOnCounter;
             TrashCounter.OnAnyObjectTrashed += TrashCounter_OnAnyObjectTrashed;
         }
@@ -97,7 +97,7 @@ namespace KitchenKrapper
             DeliveryManager.Instance.OnRecipeDeliveryFailed -= DeliveryManager_OnRecipeFailed;
             DeliveryManager.Instance.OnRecipeExpired -= DeliveryManager_OnRecipeExpired;
             CuttingCounter.OnAnyCut -= CuttingCounter_OnAnyCut;
-            PlayerController.OnAnyPickupObject -= Player_OnPickedUpObject;
+            Player.OnAnyPickupObject -= Player_OnPickedUpObject;
             BaseStation.OnAnyObjectPlacedOnCounter -= BaseCounter_OnAnyObjectPlacedOnCounter;
             TrashCounter.OnAnyObjectTrashed -= TrashCounter_OnAnyObjectTrashed;
         }
@@ -203,9 +203,9 @@ namespace KitchenKrapper
             return gameMode;
         }
 
-        public PlayerController SpawnPlayerSinglePlayerMode()
+        public Player SpawnPlayerSinglePlayerMode()
         {
-            PlayerController player = Instantiate(playerPrefab, Vector3.zero, Quaternion.identity);
+            Player player = Instantiate(playerPrefab, Vector3.zero, Quaternion.identity);
             if (gameMode == GameMode.Tutorial)
             {
                 player.SetIsTutorialPlayer(true);

@@ -40,10 +40,10 @@ namespace KitchenKrapper
 #if UNITY_EDITOR
             if (Application.isPlaying)
 #endif
-                if (LobbyManager.Instance.GetCurrentLobby() != null)
+                if (LobbyManager.Instance.GetCurrentLobby() == null)
                     LobbyManager.Instance.StartMatchmaking();
                 else
-                    MatchmakingManager.Instance.StartMatchmaking(MatchType.Ranked);
+                    MatchmakingManager.Instance.StartMatchmaking(false);
         }
     }
 }

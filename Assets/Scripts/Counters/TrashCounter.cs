@@ -12,7 +12,7 @@ namespace KitchenKrapper
             OnAnyObjectTrashed = null;
         }
 
-        public override void Interact(PlayerController player)
+        public override void Interact(Player player)
         {
             if (player.HasKitchenObject())
             {

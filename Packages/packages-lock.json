@@ -29,7 +29,7 @@
         "com.unity.modules.jsonserialize": "1.0.0",
         "com.unity.editorcoroutines": "1.0.0"
       },
-      "hash": "b8d00b1ece5dc8e324e90635b01c96551223da33"
+      "hash": "8e9b61a2bc44f321c60e0e69f1ad06b079f67148"
     },
     "com.unity.2d.animation": {
       "version": "9.0.3",
@@ -195,6 +195,17 @@
       "dependencies": {},
       "url": "https://packages.unity.com"
     },
+    "com.unity.dt.app-ui": {
+      "version": "0.5.1",
+      "depth": 2,
+      "source": "registry",
+      "dependencies": {
+        "com.unity.modules.androidjni": "1.0.0",
+        "com.unity.modules.uielements": "1.0.0",
+        "com.unity.modules.physics": "1.0.0"
+      },
+      "url": "https://packages.unity.com"
+    },
     "com.unity.editorcoroutines": {
       "version": "1.0.0",
       "depth": 1,
@@ -245,7 +256,7 @@
       "url": "https://packages.unity.com"
     },
     "com.unity.ide.rider": {
-      "version": "3.0.26",
+      "version": "3.0.24",
       "depth": 0,
       "source": "registry",
       "dependencies": {
@@ -311,6 +322,29 @@
         "com.unity.nuget.mono-cecil": "1.10.1",
         "com.unity.collections": "1.1.0",
         "com.unity.modules.uielements": "1.0.0"
+      },
+      "url": "https://packages.unity.com"
+    },
+    "com.unity.muse.common": {
+      "version": "0.3.0",
+      "depth": 1,
+      "source": "registry",
+      "dependencies": {
+        "com.unity.dt.app-ui": "0.5.1",
+        "com.unity.burst": "1.8.7",
+        "com.unity.settings-manager": "2.0.1",
+        "com.unity.modules.imageconversion": "1.0.0",
+        "com.unity.modules.unitywebrequesttexture": "1.0.0"
+      },
+      "url": "https://packages.unity.com"
+    },
+    "com.unity.muse.sprite": {
+      "version": "0.3.0",
+      "depth": 0,
+      "source": "registry",
+      "dependencies": {
+        "com.unity.modules.uielements": "1.0.0",
+        "com.unity.muse.common": "0.3.0"
       },
       "url": "https://packages.unity.com"
     },

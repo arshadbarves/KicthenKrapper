@@ -9,9 +9,9 @@ using Cinemachine;
 
 namespace KitchenKrapper
 {
-    public class PlayerController : NetworkBehaviour, IKitchenObjectParent
+    public class Player : NetworkBehaviour, IKitchenObjectParent
     {
-        public static PlayerController LocalInstance { get; private set; }
+        public static Player LocalInstance { get; private set; }
 
         public static event EventHandler OnAnyPlayerSpawned;
         public static event EventHandler OnAnyPickupObject;
@@ -27,12 +27,7 @@ namespace KitchenKrapper
         {
             public BaseStation selectedCounter;
         }
-
-        [SerializeField] private CharacterController controller;
-        [SerializeField] private Vector3 playerVelocity;
-        [SerializeField] private bool groundedPlayer;
-        [SerializeField] private float playerSpeed = 2.0f;
-        [SerializeField] private float gravityValue = -9.81f;
+        [SerializeField] private readonly float playerSpeed = 7f;
         [SerializeField] private readonly float playerRotationSpeed = 10f;
         [SerializeField] private readonly float playerRadius = 0.7f;
         [SerializeField] private readonly float playerHeight = 2f;
@@ -55,8 +50,6 @@ namespace KitchenKrapper
 
         private void Start()
         {
-            controller = gameObject.AddComponent<CharacterController>();
-
             GameInput.Instance.OnInteractAction += GameInput_OnInteractAction;
             GameInput.Instance.OnInteractAlternateAction += GameInput_OnInteractAlternateAction;
 
@@ -85,6 +78,7 @@ namespace KitchenKrapper
             if (transportLayer != null)
             {
                 transportLayer.ServerUserIdToConnectTo = userId;
+                print($"SetNetworkHostId: {transportLayer.ServerUserIdToConnectTo}");
             }
         }
 
@@ -121,7 +115,7 @@ namespace KitchenKrapper
             }
             else
             {
-                displayNameText.text = MultiplayerManager.Instance.GetPlayerDataFromPlayerId(OwnerClientId).playerName.ToString();
+                displayNameText.text = EOSKitchenGameMultiplayer.Instance.GetPlayerDataFromPlayerId(OwnerClientId).playerName.ToString();
                 displayNameText.color = Color.red;
             }
         }
@@ -152,7 +146,7 @@ namespace KitchenKrapper
         {
             List<Vector3> freeSpawnPoints = new List<Vector3>(spawnPoints);
 
-            foreach (PlayerController player in FindObjectsOfType<PlayerController>())
+            foreach (Player player in FindObjectsOfType<Player>())
             {
                 if (player != this)
                 {
@@ -285,67 +279,50 @@ namespace KitchenKrapper
         {
             Vector2 inputVector = GameInput.Instance.GetMovementInputNormalized();
 
-            // Vector3 movDir = new Vector3(inputVector.x, 0f, inputVector.y);
+            Vector3 movDir = new Vector3(inputVector.x, 0f, inputVector.y);
 
             float moveDistance = playerSpeed * Time.deltaTime;
 
-            groundedPlayer = controller.isGrounded;
-            if (groundedPlayer && playerVelocity.y < 0)
+            bool canMove = !Physics.BoxCast(transform.position, new Vector3(playerRadius, playerHeight / 2f, playerRadius), movDir, Quaternion.identity, moveDistance, collisionsLayerMask);
+
+            if (!canMove)
             {
-                playerVelocity.y = 0f;
+                // If we can't move, we check if we can move in the direction of the input vector 
+                // but only in the horizontal plane
+                Vector3 movDirX = new Vector3(movDir.x, 0f, 0f).normalized;
+                canMove = (movDir.x < -.5f || movDir.x > +.5f) && !Physics.BoxCast(transform.position, new Vector3(playerRadius, playerHeight / 2f, playerRadius), movDirX, Quaternion.identity, moveDistance, collisionsLayerMask);
+                if (canMove)
+                {
+                    // Can move only in the X axis
+                    movDir = movDirX;
+                }
+                else
+                {
+                    // Can't move in the X axis, so we check if we can move in the Z axis
+                    Vector3 movDirZ = new Vector3(0f, 0f, movDir.z).normalized;
+                    canMove = (movDir.z < -.5f || movDir.z > +.5f) && !Physics.BoxCast(transform.position, new Vector3(playerRadius, playerHeight / 2f, playerRadius), movDirZ, Quaternion.identity, moveDistance, collisionsLayerMask);
+
+                    if (canMove)
+                    {
+                        // Can move only in the Z axis
+                        movDir = movDirZ;
+                    }
+                    else
+                    {
+                        // Can't move in the X or Z axis, so we can't move at all
+                        canMove = false;
+                    }
+                }
+
             }
 
-            Vector3 move = new(inputVector.x, 0f, inputVector.y);
-            controller.Move(playerSpeed * Time.deltaTime * move);
-
-            if (move != Vector3.zero)
+            if (canMove)
             {
-                gameObject.transform.forward = move;
+                transform.position += movDir * moveDistance;
             }
 
-            playerVelocity.y += gravityValue * Time.deltaTime;
-            controller.Move(playerVelocity * Time.deltaTime);
-
-            bool canMove = !Physics.BoxCast(transform.position, new Vector3(playerRadius, playerHeight / 2f, playerRadius), move, Quaternion.identity, moveDistance, collisionsLayerMask);
-
-            // if (!canMove)
-            // {
-            //     // If we can't move, we check if we can move in the direction of the input vector 
-            //     // but only in the horizontal plane
-            //     Vector3 movDirX = new Vector3(movDir.x, 0f, 0f).normalized;
-            //     canMove = (movDir.x < -.5f || movDir.x > +.5f) && !Physics.BoxCast(transform.position, new Vector3(playerRadius, playerHeight / 2f, playerRadius), movDirX, Quaternion.identity, moveDistance, collisionsLayerMask);
-            //     if (canMove)
-            //     {
-            //         // Can move only in the X axis
-            //         movDir = movDirX;
-            //     }
-            //     else
-            //     {
-            //         // Can't move in the X axis, so we check if we can move in the Z axis
-            //         Vector3 movDirZ = new Vector3(0f, 0f, movDir.z).normalized;
-            //         canMove = (movDir.z < -.5f || movDir.z > +.5f) && !Physics.BoxCast(transform.position, new Vector3(playerRadius, playerHeight / 2f, playerRadius), movDirZ, Quaternion.identity, moveDistance, collisionsLayerMask);
-
-            //         if (canMove)
-            //         {
-            //             // Can move only in the Z axis
-            //             movDir = movDirZ;
-            //         }
-            //         else
-            //         {
-            //             // Can't move in the X or Z axis, so we can't move at all
-            //             canMove = false;
-            //         }
-            //     }
-
-            // }
-
-            // if (canMove)
-            // {
-            //     transform.position += movDir * moveDistance;
-            // }
-
-            isWalking = canMove;
-            transform.forward = Vector3.Slerp(transform.forward, move, Time.deltaTime * playerRotationSpeed);
+            isWalking = movDir != Vector3.zero;
+            transform.forward = Vector3.Slerp(transform.forward, movDir, Time.deltaTime * playerRotationSpeed);
         }
 
         private void SetSelectedCounter(BaseStation selectedCounter)

@@ -10,12 +10,12 @@ namespace KitchenKrapper
 
         [SerializeField] private KitchenObjectSO kitchenObjectSO;
 
-        public override void Interact(PlayerController player)
+        public override void Interact(Player player)
         {
             HandleInteract(player);
         }
 
-        private void HandleInteract(PlayerController player)
+        private void HandleInteract(Player player)
         {
             if (!player.HasKitchenObject())
             {
@@ -23,7 +23,7 @@ namespace KitchenKrapper
             }
         }
 
-        private void CreateAndInteractKitchenObject(PlayerController player)
+        private void CreateAndInteractKitchenObject(Player player)
         {
             KitchenObject.CreateKitchenObject(kitchenObjectSO, player);
             InteractServerRpc();

@@ -2,7 +2,7 @@ using UnityEngine.UIElements;
 
 namespace KitchenKrapper
 {
-    public class LoginScreen : BaseScreen
+    public class LoginScreen : Screen
     {
         private const string LOGIN_BUTTON_NAME = "login__login-button";
         private const string GUEST_BUTTON_NAME = "login__guest-button";
@@ -18,18 +18,18 @@ namespace KitchenKrapper
             guestButton = root.Q<Button>(GUEST_BUTTON_NAME);
         }
 
-        public override void Show()
+        public override void ShowScreen()
         {
-            base.Show();
+            base.ShowScreen();
 
             // add active style
             screen.AddToClassList(MainMenuUIManager.MODAL_PANEL_ACTIVE_CLASS_NAME);
             screen.RemoveFromClassList(MainMenuUIManager.MODAL_PANEL_INACTIVE_CLASS_NAME);
         }
 
-        public override void Hide()
+        public override void HideScreen()
         {
-            base.Hide();
+            base.HideScreen();
 
             // add inactive style
             screen.AddToClassList(MainMenuUIManager.MODAL_PANEL_INACTIVE_CLASS_NAME);

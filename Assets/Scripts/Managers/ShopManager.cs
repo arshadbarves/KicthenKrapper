@@ -4,10 +4,12 @@ using UnityEngine;
 
 namespace KitchenKrapper
 {
-    public class ShopManager : Singleton<ShopManager>
+    public class ShopManager : MonoBehaviour
     {
         public static event EventHandler OnShopItemBought;
         public static event EventHandler OnShopItemBoughtFailed;
+
+        public static ShopManager Instance { get; private set; }
 
         [Header("Shop Settings")]
         [SerializeField] private ShopSettingsSO shopSettings;
@@ -15,6 +17,11 @@ namespace KitchenKrapper
         private double networkDateTime;
 
         private Dictionary<ShopSection, Dictionary<string, ShopItemSO>> shopItems = new Dictionary<ShopSection, Dictionary<string, ShopItemSO>>();
+
+        private void Awake()
+        {
+            Instance = this;
+        }
 
         private void Start()
         {

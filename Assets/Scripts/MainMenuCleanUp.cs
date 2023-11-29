@@ -12,9 +12,9 @@ namespace KitchenKrapper
                 Destroy(NetworkManager.Singleton.gameObject);
             }
 
-            if (MultiplayerManager.Instance != null)
+            if (EOSKitchenGameMultiplayer.Instance != null)
             {
-                Destroy(MultiplayerManager.Instance.gameObject);
+                Destroy(EOSKitchenGameMultiplayer.Instance.gameObject);
             }
 
             if (LobbyManager.Instance != null)

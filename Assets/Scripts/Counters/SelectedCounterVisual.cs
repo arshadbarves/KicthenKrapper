@@ -8,25 +8,25 @@ namespace KitchenKrapper
         [SerializeField] private BaseStation baseCounter;
         [SerializeField] private GameObject[] visualGameObjectArray;
 
-        private PlayerController localPlayer;
+        private Player localPlayer;
 
         private void Awake()
         {
-            localPlayer = PlayerController.LocalInstance;
+            localPlayer = Player.LocalInstance;
             if (localPlayer != null)
             {
                 SubscribeToLocalPlayer();
             }
             else
             {
-                PlayerController.OnAnyPlayerSpawned += HandlePlayerSpawned;
+                Player.OnAnyPlayerSpawned += HandlePlayerSpawned;
             }
         }
 
         private void OnDestroy()
         {
             UnsubscribeFromLocalPlayer();
-            PlayerController.OnAnyPlayerSpawned -= HandlePlayerSpawned;
+            Player.OnAnyPlayerSpawned -= HandlePlayerSpawned;
         }
 
         private void SubscribeToLocalPlayer()
@@ -44,11 +44,11 @@ namespace KitchenKrapper
 
         private void HandlePlayerSpawned(object sender, EventArgs e)
         {
-            localPlayer = PlayerController.LocalInstance;
+            localPlayer = Player.LocalInstance;
             SubscribeToLocalPlayer();
         }
 
-        private void HandleSelectedCounterChanged(object sender, PlayerController.OnSelectedCounterChangedEventArgs e)
+        private void HandleSelectedCounterChanged(object sender, Player.OnSelectedCounterChangedEventArgs e)
         {
             if (e.selectedCounter == baseCounter)
             {

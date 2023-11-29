@@ -4,21 +4,43 @@ using UnityEngine.Audio;
 
 namespace KitchenKrapper
 {
-    public class AudioManager : Singleton<AudioManager>
+    public class AudioManager : MonoBehaviour
     {
+        private static AudioManager instance;
+
         private const string MUSIC_VOLUME_KEY = "MusicVolume";
         private const string SOUND_EFFECTS_VOLUME_KEY = "SoundEffectsVolume";
 
-        [SerializeField] private AudioSource musicPlayer;
-        [SerializeField] private AudioSource soundEffectsPlayer;
+        private AudioSource musicPlayer;
+        private AudioSource soundEffectsPlayer;
 
-        [SerializeField] private AudioMixer audioMixer;
+        public AudioMixer audioMixer;
+
+        public static AudioManager Instance { get { return instance; } }
 
         [SerializeField] private AudioClip defaultButtonSound;
 
-        protected override void Awake()
+        // Events for volume and mute changes
+        public event Action AudioSettingsChanged;
+
+        private void Awake()
         {
-            base.Awake();
+            if (instance != null && instance != this)
+            {
+                Destroy(this.gameObject);
+                return;
+            }
+
+            instance = this;
+            DontDestroyOnLoad(this.gameObject);
+
+            InitializeAudioSources();
+        }
+
+        private void InitializeAudioSources()
+        {
+            musicPlayer = gameObject.AddComponent<AudioSource>();
+            soundEffectsPlayer = gameObject.AddComponent<AudioSource>();
         }
 
         public void PlayMusic(AudioClip musicClip)
@@ -72,6 +94,7 @@ namespace KitchenKrapper
         public void ToggleMusicMute(bool isMuted)
         {
             musicPlayer.mute = isMuted;
+            AudioSettingsChanged?.Invoke();
         }
 
         public bool IsMusicMuted()
@@ -95,6 +118,7 @@ namespace KitchenKrapper
         public void ToggleSoundEffectsMute(bool isMuted)
         {
             soundEffectsPlayer.mute = isMuted;
+            AudioSettingsChanged?.Invoke();
         }
 
         public bool AreSoundEffectsMuted()
@@ -109,9 +133,9 @@ namespace KitchenKrapper
 
         public void PlayDefaultButtonSound()
         {
-            if (defaultButtonSound != null)
+            if (Instance.defaultButtonSound != null)
             {
-                soundEffectsPlayer.PlayOneShot(defaultButtonSound, GetSoundEffectsVolume());
+                Instance.soundEffectsPlayer.PlayOneShot(Instance.defaultButtonSound, Instance.GetSoundEffectsVolume());
             }
         }
     }

@@ -11,7 +11,7 @@ namespace KitchenKrapper
         [SerializeField] private InputManager inputManager;
         [SerializeField] private Grid grid;
         [SerializeField] private GameObject gridVisuals;
-        [SerializeField] private PlayerController player;
+        [SerializeField] private Player player;
         [SerializeField] private Material validMaterial, invalidMaterial;
 
         private GridData gridData = new GridData();
@@ -53,7 +53,7 @@ namespace KitchenKrapper
             cellIndicator.transform.position = grid.CellToWorld(gridPos);
         }
 
-        public void StartPlacingStation(PlayerController player, BaseStation prefab)
+        public void StartPlacingStation(Player player, BaseStation prefab)
         {
             if (cellIndicator != null)
                 Destroy(cellIndicator);

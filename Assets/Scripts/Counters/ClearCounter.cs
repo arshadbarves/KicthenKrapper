@@ -6,7 +6,7 @@ namespace KitchenKrapper
     {
         [SerializeField] private KitchenObjectSO kitchenObjectSO;
 
-        public override void Interact(PlayerController player)
+        public override void Interact(Player player)
         {
             if (!HasKitchenObject())
             {
@@ -18,7 +18,7 @@ namespace KitchenKrapper
             }
         }
 
-        private void HandleCounterEmpty(PlayerController player)
+        private void HandleCounterEmpty(Player player)
         {
             if (player.HasKitchenObject())
             {
@@ -28,7 +28,7 @@ namespace KitchenKrapper
             // No need for an else clause here since we're not doing anything if both are empty.
         }
 
-        private void HandleCounterOccupied(PlayerController player)
+        private void HandleCounterOccupied(Player player)
         {
             if (player.HasKitchenObject())
             {
