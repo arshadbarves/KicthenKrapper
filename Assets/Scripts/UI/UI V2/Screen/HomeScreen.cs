@@ -203,7 +203,7 @@ namespace KitchenKrapper
         private void ClickJoinPanelJoinButton(ClickEvent evt)
         {
             AudioManager.Instance.PlayDefaultButtonSound();
-            LobbyManager.Instance.FindAndJoinLobby(joinPanelInviteCodeField.text);
+            LobbyManager.Instance.SearchLobbies(joinPanelInviteCodeField.text);
 
             joinPanelJoinButton.SetEnabled(false);
         }
