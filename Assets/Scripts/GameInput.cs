@@ -3,6 +3,7 @@ using Managers;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UniversalMobileController;
+using Utils.Enums;
 
 namespace KitchenKrapper
 {
@@ -67,7 +68,7 @@ namespace KitchenKrapper
 
         public Vector2 GetMovementInputNormalized()
         {
-            Vector2 inputVector = Vector2.zero;
+            var inputVector = Vector2.zero;
 
             switch (inputType)
             {
@@ -77,6 +78,12 @@ namespace KitchenKrapper
                 case InputType.Touch:
                     inputVector = new Vector2(floatingJoyStick.GetHorizontalValue(), floatingJoyStick.GetVerticalValue()); // Get the movement input
                     break;
+                case InputType.Gamepad:
+                    break;
+                case InputType.None:
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
             }
             inputVector = inputVector.normalized; // Normalize the input vector
             return inputVector;

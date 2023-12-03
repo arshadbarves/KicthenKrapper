@@ -2,6 +2,7 @@ using System;
 using Managers;
 using UnityEngine;
 using UnityEngine.UI;
+using Utils.Enums;
 
 namespace KitchenKrapper
 {

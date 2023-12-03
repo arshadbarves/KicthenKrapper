@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using KitchenKrapper;
 using Unity.Netcode;
 using UnityEngine;
+using Utils.Enums;
 
 namespace Managers
 {

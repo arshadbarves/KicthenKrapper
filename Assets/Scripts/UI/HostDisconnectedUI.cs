@@ -2,6 +2,7 @@ using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.UI;
 using BrunoMikoski.AnimationSequencer;
+using Utils.Enums;
 
 namespace KitchenKrapper
 {

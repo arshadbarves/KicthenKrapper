@@ -1,5 +1,5 @@
 <ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" editor-extension-mode="False">
     <Style src="project://database/Assets/UI%20Toolkit/Styles/style.uss?fileID=7433441132597879392&amp;guid=ab993c0e454983847b10aeb86aa545af&amp;type=3#style" />
-    <ui:VisualElement name="Background" class="background" />
-    <ui:VisualElement name="Overlay" class="background-overlay" style="display: none;" />
+    <ui:VisualElement name="Background" class="background" style="background-image: url(&apos;project://database/Assets/Images/MainMenuTheme.png?fileID=2800000&amp;guid=a9059e5b456564129b9deda88e3c0c84&amp;type=3#MainMenuTheme&apos;); -unity-background-scale-mode: scale-and-crop;" />
+    <ui:VisualElement name="Overlay" class="background-overlay" style="background-image: url(&apos;project://database/Assets/Third%20Party%20Assets/GUI%20PRO%20Kit%20-%20Simple%20Casual/Sprite/Demo/Demo_Background/Background_Gradatient01_White.png?fileID=2800000&amp;guid=974b1df64136a4ef2a2c5c1590570e40&amp;type=3#Background_Gradatient01_White&apos;); -unity-background-image-tint-color: rgb(0, 26, 58);" />
 </ui:UXML>

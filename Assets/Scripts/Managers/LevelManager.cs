@@ -4,6 +4,7 @@ using KitchenKrapper;
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using Utils.Enums;
 
 namespace Managers
 {

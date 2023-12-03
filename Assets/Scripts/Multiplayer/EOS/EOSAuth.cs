@@ -4,6 +4,7 @@ using Epic.OnlineServices.Connect;
 using Managers;
 using PlayEveryWare.EpicOnlineServices;
 using UnityEngine;
+using Utils.Enums;
 
 namespace KitchenKrapper
 {
