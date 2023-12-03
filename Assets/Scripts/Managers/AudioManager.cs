@@ -1,8 +1,8 @@
-using System;
+using KitchenKrapper;
 using UnityEngine;
 using UnityEngine.Audio;
 
-namespace KitchenKrapper
+namespace Managers
 {
     public class AudioManager : Singleton<AudioManager>
     {

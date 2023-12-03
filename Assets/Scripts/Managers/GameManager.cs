@@ -1,39 +1,37 @@
 using System;
 using System.Collections;
+using KitchenKrapper;
+using PlayEveryWare.EpicOnlineServices;
 using UnityEngine;
 using UnityEngine.Android;
-using PlayEveryWare.EpicOnlineServices;
 
-namespace KitchenKrapper
+namespace Managers
 {
     public class GameManager : Singleton<GameManager>
     {
-        private PlatformType currentPlatform => PlatformManager.CurrentPlatform;
-        private GameStatus gameStatus = GameStatus.None;
+        private static PlatformType CurrentPlatform => PlatformManager.CurrentPlatform;
+        private GameStatus _gameStatus = GameStatus.None;
+        private InputType _gameInputType;
 
         public LevelSO currentLevel;
         public PlayerGameData PlayerData
         {
-            get { return playerData; }
-            set
+            get => playerData;
+            private set
             {
-                if (playerData != value)
-                {
-                    playerData = value;
-                    PlayerDataChanged?.Invoke();
-                }
+                if (playerData == value) return;
+                playerData = value;
+                PlayerDataChanged?.Invoke();
             }
         }
         public GameData GameData
         {
-            get { return gameData; }
+            get => gameData;
             set
             {
-                if (gameData != value)
-                {
-                    gameData = value;
-                    GameDataUpdated?.Invoke();
-                }
+                if (gameData == value) return;
+                gameData = value;
+                GameDataUpdated?.Invoke();
             }
         }
 
@@ -71,15 +69,30 @@ namespace KitchenKrapper
 
         private void RequestStoragePermissionsIfNeeded()
         {
-            if (currentPlatform == PlatformType.Android)
+            switch (CurrentPlatform)
             {
-                if (!Permission.HasUserAuthorizedPermission(Permission.ExternalStorageRead) ||
-                    !Permission.HasUserAuthorizedPermission(Permission.ExternalStorageWrite))
-                {
+                case PlatformType.Android:
+                    if (Permission.HasUserAuthorizedPermission(Permission.ExternalStorageRead) &&
+                        Permission.HasUserAuthorizedPermission(Permission.ExternalStorageWrite)) return;
                     Permission.RequestUserPermission(Permission.ExternalStorageRead);
                     Permission.RequestUserPermission(Permission.ExternalStorageWrite);
-                }
+                    _gameInputType = InputType.Touch;
+                    break;
+                case PlatformType.iOS:
+                    break;
+                case PlatformType.Windows:
+                    _gameInputType = InputType.Keyboard;
+                    break;
+                case PlatformType.Unknown:
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
             }
+        }
+        
+        public InputType GetInputType()
+        {
+            return _gameInputType;
         }
 
         private void InitializeApplication()
@@ -93,11 +106,11 @@ namespace KitchenKrapper
             }
             else
             {
-                Invoke(nameof(ShowEULAScreen), 0.5f);
+                Invoke(nameof(ShowEulaScreen), 0.5f);
             }
         }
 
-        private void ShowEULAScreen()
+        private void ShowEulaScreen()
         {
             MainMenuUIManager.Instance.ShowEULAScreen();
         }
@@ -110,13 +123,13 @@ namespace KitchenKrapper
 
         public void StartGame()
         {
-            gameStatus = GameStatus.GameStarted;
+            _gameStatus = GameStatus.GameStarted;
             PlayerDataStorage.Instance.GetPlayerData(PlayerDataStorageCallback);
         }
 
         public void QuitGame()
         {
-            gameStatus = GameStatus.GameQuit;
+            _gameStatus = GameStatus.GameQuit;
 
 #if UNITY_EDITOR
             UnityEditor.EditorApplication.isPlaying = false;
@@ -150,14 +163,15 @@ namespace KitchenKrapper
 
                 yield return new WaitForSeconds(1.0f);
             }
+            // ReSharper disable once IteratorNeverReturns
         }
 
-        public void PlayerDataStorageCallback(string playerData)
+        private void PlayerDataStorageCallback(string newPlayerData)
         {
-            if (!string.IsNullOrEmpty(playerData))
+            if (!string.IsNullOrEmpty(newPlayerData))
             {
-                PlayerData = JsonUtility.FromJson<PlayerGameData>(playerData);
-                Debug.Log("[GameManager]: Player Data: " + playerData);
+                PlayerData = JsonUtility.FromJson<PlayerGameData>(newPlayerData);
+                Debug.Log("[GameManager]: Player Data: " + newPlayerData);
                 MainMenuUIManager.Instance.ShowHomeScreen();
                 PlayerDataChanged?.Invoke();
             }
@@ -174,18 +188,18 @@ namespace KitchenKrapper
                 return;
             }
 
-            PlayerGameData playerData = new PlayerGameData
+            var playerGameData = new PlayerGameData
             {
                 PlayerDisplayName = playerName,
                 PlayerId = EOSManager.Instance.GetProductUserId()
             };
 
-            Debug.Log("[GameManager]: Creating Player Account: " + playerData.PlayerId + " " + playerData.PlayerDisplayName);
+            Debug.Log("[GameManager]: Creating Player Account: " + playerGameData.PlayerId + " " + playerGameData.PlayerDisplayName);
 
-            PlayerDataStorage.Instance.CreatePlayerData(playerData);
+            PlayerDataStorage.Instance.CreatePlayerData(playerGameData);
         }
 
-        public void UpdatePlayerData()
+        private void UpdatePlayerData()
         {
             PlayerDataStorage.Instance.SetPlayerData(playerData.ToJson());
         }
@@ -233,7 +247,7 @@ namespace KitchenKrapper
         public void Logout()
         {
             EOSAuth.Instance.Logout();
-            gameStatus = GameStatus.None;
+            _gameStatus = GameStatus.None;
             SaveManager.Instance.ResetGame();
             InitializeApplication();
         }

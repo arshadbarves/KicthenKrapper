@@ -1,8 +1,9 @@
 using System.Collections.Generic;
+using KitchenKrapper;
 using UnityEngine;
 using UnityEngine.UIElements;
 
-namespace KitchenKrapper
+namespace Managers
 {
     [RequireComponent(typeof(UIDocument))]
     public class MainMenuUIManager : Singleton<MainMenuUIManager>

@@ -1,7 +1,8 @@
 using System.Collections.Generic;
+using KitchenKrapper;
 using UnityEngine;
 
-namespace KitchenKrapper
+namespace Managers
 {
     public class SkinManager : Singleton<SkinManager>
     {

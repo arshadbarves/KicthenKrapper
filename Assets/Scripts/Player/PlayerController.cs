@@ -6,6 +6,7 @@ using TMPro;
 using Unity.Netcode;
 using UnityEngine;
 using Cinemachine;
+using Managers;
 
 namespace KitchenKrapper
 {
@@ -60,10 +61,10 @@ namespace KitchenKrapper
             GameInput.Instance.OnInteractAction += GameInput_OnInteractAction;
             GameInput.Instance.OnInteractAlternateAction += GameInput_OnInteractAlternateAction;
 
-            if (!GameDataSource.PlayMultiplayer)
-            {
-                SpawnPlayer();
-            }
+            // if (!GameDataSource.PlayMultiplayer)
+            // {
+            //     SpawnPlayer();
+            // }
             if (TutorialManager.Instance != null)
             {
                 isTutorialPlayer = true;

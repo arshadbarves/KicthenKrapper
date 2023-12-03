@@ -1,13 +1,14 @@
 using System;
 using Epic.OnlineServices;
 using Epic.OnlineServices.Sessions;
+using KitchenKrapper;
 using PlayEveryWare.EpicOnlineServices;
 using PlayEveryWare.EpicOnlineServices.Samples;
 using PlayEveryWare.EpicOnlineServices.Samples.Network;
 using Unity.Netcode;
 using UnityEngine;
 
-namespace KitchenKrapper
+namespace Managers
 {
     public enum MultiplayerStatus
     {

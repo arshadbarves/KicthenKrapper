@@ -1,4 +1,5 @@
 using System;
+using Managers;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UniversalMobileController;
@@ -15,7 +16,7 @@ namespace KitchenKrapper
         public event EventHandler OnInteractAction;
         public event EventHandler OnInteractAlternateAction;
 
-        public PlayerInputActions playerInputActions;
+        private PlayerInputActions _playerInputActions;
 
         [SerializeField] private InputType inputType;
 
@@ -30,28 +31,28 @@ namespace KitchenKrapper
                 Instance = this;
             }
 
-            playerInputActions = new PlayerInputActions();
-            playerInputActions.Player.Enable(); // Enable the player input actions
+            _playerInputActions = new PlayerInputActions();
+            _playerInputActions.Player.Enable(); // Enable the player input actions
 
-            playerInputActions.Player.Interact.performed += Interact_performed; // Subscribe to the Interact action
-            playerInputActions.Player.InteractAlternate.performed += InteractAlternate_performed; // Subscribe to the InteractAlternate action
+            _playerInputActions.Player.Interact.performed += Interact_performed; // Subscribe to the Interact action
+            _playerInputActions.Player.InteractAlternate.performed += InteractAlternate_performed; // Subscribe to the InteractAlternate action
         }
 
         private void Start()
         {
-            if (LevelManager.Instance.isDebugMode == true)
+            if (LevelManager.Instance.isDebugMode)
             {
                 return;
             }
-            inputType = GameDataSource.Instance.GetInputType();
+            inputType = GameManager.Instance.GetInputType();
         }
 
         private void OnDestroy()
         {
-            playerInputActions.Player.Interact.performed -= Interact_performed; // Unsubscribe from the Interact action
-            playerInputActions.Player.InteractAlternate.performed -= InteractAlternate_performed; // Unsubscribe from the InteractAlternate action
+            _playerInputActions.Player.Interact.performed -= Interact_performed; // Unsubscribe from the Interact action
+            _playerInputActions.Player.InteractAlternate.performed -= InteractAlternate_performed; // Unsubscribe from the InteractAlternate action
 
-            playerInputActions.Dispose(); // Dispose of the player input actions
+            _playerInputActions.Dispose(); // Dispose of the player input actions
         }
 
         private void InteractAlternate_performed(InputAction.CallbackContext obj)
@@ -71,9 +72,9 @@ namespace KitchenKrapper
             switch (inputType)
             {
                 case InputType.Keyboard:
-                    inputVector = playerInputActions.Player.Movement.ReadValue<Vector2>(); // Get the movement input
+                    inputVector = _playerInputActions.Player.Movement.ReadValue<Vector2>(); // Get the movement input
                     break;
-                case InputType.Mobile:
+                case InputType.Touch:
                     inputVector = new Vector2(floatingJoyStick.GetHorizontalValue(), floatingJoyStick.GetVerticalValue()); // Get the movement input
                     break;
             }

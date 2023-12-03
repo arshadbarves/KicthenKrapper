@@ -1,4 +1,5 @@
 using System;
+using Managers;
 using TMPro;
 using Unity.Netcode;
 using UnityEngine;
@@ -18,15 +19,6 @@ namespace KitchenKrapper
         private void Awake()
         {
             animator = GetComponent<Animator>();
-
-            if (GameDataSource.PlayMultiplayer)
-            {
-                playAgainButton.onClick.AddListener(OnPlayAgainButtonClicked);
-            }
-            else
-            {
-                playAgainButton.gameObject.SetActive(false);
-            }
 
             quitButton.onClick.AddListener(OnQuitButtonClicked);
         }
@@ -80,12 +72,6 @@ namespace KitchenKrapper
         {
             ShutdownNetworkManager();
             LoadScene(SceneType.MainMenu.ToString());
-        }
-
-        private void OnPlayAgainButtonClicked()
-        {
-            string currentMap = GameDataSource.Instance.GetCurrentMap().ToString();
-            LoadScene(currentMap);
         }
 
         private void LoadScene(string sceneName)

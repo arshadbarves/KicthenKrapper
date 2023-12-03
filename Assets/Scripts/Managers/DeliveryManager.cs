@@ -1,9 +1,10 @@
 using System;
 using System.Collections.Generic;
+using KitchenKrapper;
 using Unity.Netcode;
 using UnityEngine;
 
-namespace KitchenKrapper
+namespace Managers
 {
     public class DeliveryManager : NetworkBehaviour
     {

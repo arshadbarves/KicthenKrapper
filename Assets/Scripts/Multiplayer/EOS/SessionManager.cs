@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Epic.OnlineServices;
 using Epic.OnlineServices.Sessions;
+using Managers;
 using PlayEveryWare.EpicOnlineServices;
 using PlayEveryWare.EpicOnlineServices.Samples;
 

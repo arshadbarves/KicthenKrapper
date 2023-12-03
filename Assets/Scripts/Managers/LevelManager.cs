@@ -1,10 +1,11 @@
 using System;
 using System.Collections.Generic;
+using KitchenKrapper;
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-namespace KitchenKrapper
+namespace Managers
 {
     public class LevelManager : NetworkBehaviour
     {
@@ -56,10 +57,10 @@ namespace KitchenKrapper
 
         private void Start()
         {
-            if (!GameDataSource.PlayMultiplayer)
-            {
-                SpawnPlayerSinglePlayerMode();
-            }
+            // if (!GameDataSource.PlayMultiplayer)
+            // {
+            //     SpawnPlayerSinglePlayerMode();
+            // }
 
             if (IsHost)
             {

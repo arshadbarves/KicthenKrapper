@@ -1,11 +1,12 @@
 using System.Collections;
+using BrunoMikoski.AnimationSequencer;
+using KitchenKrapper;
 using TMPro;
+using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.UI;
-using Unity.Netcode;
-using BrunoMikoski.AnimationSequencer;
 
-namespace KitchenKrapper
+namespace Managers
 {
     public class TutorialManager : Singleton<TutorialManager>
     {

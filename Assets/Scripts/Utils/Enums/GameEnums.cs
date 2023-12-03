@@ -11,7 +11,10 @@ public enum GameMode
 public enum InputType
 {
     Keyboard,
-    Mobile
+    Gamepad,
+    Touch,
+    VR,
+    None
 }
 
 public enum ShopItemCostType

@@ -1,6 +1,7 @@
+using KitchenKrapper;
 using UnityEngine;
 
-namespace KitchenKrapper
+namespace Managers
 {
     [RequireComponent(typeof(GameManager))]
     public class SaveManager : Singleton<SaveManager>

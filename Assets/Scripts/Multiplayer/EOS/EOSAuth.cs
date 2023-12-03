@@ -1,6 +1,7 @@
 using Epic.OnlineServices;
 using Epic.OnlineServices.Auth;
 using Epic.OnlineServices.Connect;
+using Managers;
 using PlayEveryWare.EpicOnlineServices;
 using UnityEngine;
 

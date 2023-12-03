@@ -1,5 +1,6 @@
 using TMPro;
 using System;
+using Managers;
 using UnityEngine;
 using UnityEngine.UI;
 using PlayEveryWare.EpicOnlineServices.Samples;

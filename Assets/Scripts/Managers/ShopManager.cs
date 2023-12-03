@@ -1,8 +1,9 @@
 using System;
 using System.Collections.Generic;
+using KitchenKrapper;
 using UnityEngine;
 
-namespace KitchenKrapper
+namespace Managers
 {
     public class ShopManager : Singleton<ShopManager>
     {
@@ -103,13 +104,13 @@ namespace KitchenKrapper
         {
             switch (shopItem.contentType)
             {
-                case ShopItemType.Skin:
+                case KitchenKrapper.ShopItemType.Skin:
                     // Handle skin unlocking
                     break;
-                case ShopItemType.Coin:
+                case KitchenKrapper.ShopItemType.Coin:
                     PlayerInventory.Instance.AddCoins((int)shopItem.cost);
                     break;
-                case ShopItemType.Gems:
+                case KitchenKrapper.ShopItemType.Gems:
                     PlayerInventory.Instance.AddGems((int)shopItem.cost);
                     break;
             }
