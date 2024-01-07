@@ -1,95 +1,88 @@
-using UnityEngine;
 using Unity.Netcode;
+using UnityEngine;
 
-namespace KitchenKrapper
+// Singleton
+public class Singleton<T> : MonoBehaviour where T : MonoBehaviour
 {
-    // Singleton
-    public class Singleton<T> : MonoBehaviour where T : MonoBehaviour
+    private static T _instance;
+
+    public static T Instance
     {
-        private static T instance;
-
-        public static T Instance
+        get
         {
-            get
+            if (_instance != null) return _instance;
+            _instance = FindObjectOfType<T>();
+
+            if (_instance == null)
             {
-                if (instance == null)
-                {
-                    instance = FindObjectOfType<T>();
-
-                    if (instance == null)
-                    {
-                        Debug.LogError($"[Singleton] No instance of {typeof(T)} found in the scene.");
-                    }
-                }
-
-                return instance;
-            }
-        }
-
-        protected virtual void Awake()
-        {
-            if (instance != null && instance != this)
-            {
-                Debug.LogWarning($"[Singleton] An instance of {typeof(T)} already exists. Destroying this instance.");
-                Destroy(this);
-                return;
+                Debug.LogError($"[Singleton] No instance of {typeof(T)} found in the scene.");
             }
 
-            instance = this as T;
-            DontDestroyOnLoad(gameObject);
-        }
-
-        protected virtual void OnDestroy()
-        {
-            if (instance == this)
-            {
-                instance = null;
-            }
+            return _instance;
         }
     }
 
-    // NetworkSingleton
-    public class NetworkSingleton<T> : NetworkBehaviour where T : NetworkBehaviour
+    protected virtual void Awake()
     {
-        private static T instance;
-
-        public static T Instance
+        if (_instance != null && _instance != this)
         {
-            get
-            {
-                if (instance == null)
-                {
-                    instance = FindObjectOfType<T>();
-
-                    if (instance == null)
-                    {
-                        Debug.LogError($"[NetworkSingleton] No instance of {typeof(T)} found in the scene.");
-                    }
-                }
-
-                return instance;
-            }
+            Debug.LogWarning($"[Singleton] An instance of {typeof(T)} already exists. Destroying this instance.");
+            Destroy(this);
+            return;
         }
 
-        protected virtual void Awake()
+        _instance = this as T;
+        DontDestroyOnLoad(gameObject);
+    }
+
+    protected virtual void OnDestroy()
+    {
+        if (_instance == this)
         {
-            if (instance != null && instance != this)
+            _instance = null;
+        }
+    }
+}
+
+// NetworkSingleton
+public class NetworkSingleton<T> : NetworkBehaviour where T : NetworkBehaviour
+{
+    private static T _instance;
+
+    public static T Instance
+    {
+        get
+        {
+            if (_instance != null) return _instance;
+            _instance = FindObjectOfType<T>();
+
+            if (_instance == null)
             {
-                Debug.LogWarning($"[NetworkSingleton] An instance of {typeof(T)} already exists. Destroying this instance.");
-                Destroy(this);
-                return;
+                Debug.LogError($"[NetworkSingleton] No instance of {typeof(T)} found in the scene.");
             }
 
-            instance = this as T;
-            DontDestroyOnLoad(gameObject);
+            return _instance;
+        }
+    }
+
+    protected virtual void Awake()
+    {
+        if (_instance != null && _instance != this)
+        {
+            Debug.LogWarning($"[NetworkSingleton] An instance of {typeof(T)} already exists. Destroying this instance.");
+            Destroy(this);
+            return;
         }
 
-        public override void OnDestroy()
+        _instance = this as T;
+        DontDestroyOnLoad(gameObject);
+    }
+
+    public override void OnDestroy()
+    {
+        if (_instance == this)
         {
-            if (instance == this)
-            {
-                instance = null;
-            }
+            _instance = null;
         }
     }
 }

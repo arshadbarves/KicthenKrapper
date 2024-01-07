@@ -28,7 +28,7 @@ namespace KitchenKrapper
         {
             if (validIngredients.Contains(ingredient) && !ingredients.Contains(ingredient))
             {
-                AddIngredientServerRpc(MultiplayerManager.Instance.GetKitchenObjectSOIndex(ingredient));
+                AddIngredientServerRpc(MultiplayerManager.Instance.GetKitchenObjectSoIndex(ingredient));
 
                 return true;
             }
@@ -47,7 +47,7 @@ namespace KitchenKrapper
         [ClientRpc]
         private void AddIngredientClientRpc(int kitchenObjectSOIndex)
         {
-            KitchenObjectSO ingredient = MultiplayerManager.Instance.GetKitchenObjectSOFromIndex(kitchenObjectSOIndex);
+            KitchenObjectSO ingredient = MultiplayerManager.Instance.GetKitchenObjectSoFromIndex(kitchenObjectSOIndex);
 
             ingredients.Add(ingredient);
 

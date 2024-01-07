@@ -1,3 +1,4 @@
+using Player;
 using UnityEngine;
 
 namespace KitchenKrapper
@@ -26,7 +27,7 @@ namespace KitchenKrapper
             {
                 footStepTimer = footStepTimerMax;
 
-                if (player.IsWalking())
+                if (player.IsMoving())
                 {
                     // LevelManager.Instance.PlayFootstepSound(player.transform.position);
                 }

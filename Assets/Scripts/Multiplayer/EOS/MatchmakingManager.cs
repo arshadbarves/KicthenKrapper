@@ -1,32 +1,41 @@
 using System;
 using System.Collections.Generic;
-using UnityEngine;
+using System.Linq;
+using Epic.OnlineServices;
 using Epic.OnlineServices.Sessions;
+using KitchenKrapper;
+using Managers;
 using PlayEveryWare.EpicOnlineServices;
 using PlayEveryWare.EpicOnlineServices.Samples;
-using Epic.OnlineServices;
-using Managers;
+using SceneManagement;
 using Unity.Netcode;
+using UnityEngine;
 
-namespace KitchenKrapper
+namespace Multiplayer.EOS
 {
     public class MatchmakingManager : NetworkSingleton<MatchmakingManager>
     {
-        public static event Action MatchmakingStarted;
-        public static event Action MatchmakingCanceled;
-        public static event Action MatchmakingFailed;
-        public static event Action MatchmakingSucceeded;
+        public static event Action OnMatchmakingStarted;
+        public static event Action OnMatchmakingCanceled;
+        public static event Action OnMatchmakingFailed;
+        public static event Action OnMatchmakingSucceeded;
+        private bool IsInQueue { get; set; }
+        private MatchType _matchType;
+        private Lobby _currentLobby;
 
-        public bool IsInQueue { get; private set; }
-
-        private MatchType matchType;
-        private Lobby currentLobby;
-
-        private void Update()
+        private void Start()
         {
-            if (!IsServer || !SessionManager.Instance.IsSessionReady())
-                return;
+            SessionManager.Instance.OnSessionFull += OnSessionFullHandler;
+        }
+        
+        public void OnDisable()
+        {
+            SessionManager.Instance.OnSessionFull -= OnSessionFullHandler;
+        }
 
+        private void OnSessionFullHandler()
+        {
+            Debug.Log("Session is full");
             StartMatch();
         }
 
@@ -39,16 +48,13 @@ namespace KitchenKrapper
             }
 
             IsInQueue = true;
-            MatchmakingStarted?.Invoke();
-
-            this.matchType = matchType;
-            currentLobby = LobbyManager.Instance.GetCurrentLobby();
-
+            OnMatchmakingStarted?.Invoke();
+            _matchType = matchType;
+            _currentLobby = LobbyManager.Instance.GetCurrentLobby();
             Debug.Log("Starting matchmaking");
-
-            if (currentLobby == null)
-                FindBestMatchesOrCreateSession();
-            else
+            // if (!LobbyManager.Instance.IsCurrentLobbyValid())
+            //     FindBestMatchesOrCreateSession();
+            // else
                 CreateSession();
         }
 
@@ -62,8 +68,7 @@ namespace KitchenKrapper
 
             IsInQueue = false;
             ExitGameSession();
-
-            MatchmakingCanceled?.Invoke();
+            OnMatchmakingCanceled?.Invoke();
             Debug.Log("Canceling matchmaking");
         }
 
@@ -93,24 +98,23 @@ namespace KitchenKrapper
             });
         }
 
-        private KeyValuePair<Session, SessionDetails>? FindBestSessionToJoin(Dictionary<Session, SessionDetails> sessions)
+        private static KeyValuePair<Session, SessionDetails>? FindBestSessionToJoin(
+            Dictionary<Session, SessionDetails> sessions)
         {
-            int playerCount = 1;
-            foreach (KeyValuePair<Session, SessionDetails> kvp in sessions)
+            const int playerCount = 1;
+            foreach (var kvp in sessions.Where(kvp => !ShouldIgnoreSession(kvp.Key, playerCount)))
             {
-                if (!ShouldIgnoreSession(kvp.Key, playerCount))
-                {
-                    return kvp;
-                }
+                return kvp;
             }
+
             return null;
         }
 
-        private bool ShouldIgnoreSession(Session session, int playerCount)
+        private static bool ShouldIgnoreSession(Session session, int playerCount)
         {
             return session.NumConnections == session.MaxPlayers ||
                    session.NumConnections + playerCount > session.MaxPlayers ||
-                   session.SessionState != OnlineSessionState.Pending;
+                   session.SessionState == OnlineSessionState.InProgress || session.NumConnections == session.MaxPlayers;
         }
 
         private void CreateSession()
@@ -123,29 +127,28 @@ namespace KitchenKrapper
 
             IsInQueue = false;
             Debug.Log("Creating a session");
-
-            bool presenceEnabled = false;
-            bool permissionLevel = matchType == MatchType.Ranked;
-
+            const bool presenceEnabled = false;
+            var permissionLevel = _matchType == MatchType.Ranked;
             SessionManager.Instance.CreateSession(permissionLevel, presenceEnabled, OnSessionCreated);
         }
 
         private void OnSessionCreated()
         {
             Debug.Log("Session created");
-            MatchmakingSucceeded?.Invoke();
+            MultiplayerManager.Instance.StartHost();
+            OnMatchmakingSucceeded?.Invoke();
         }
 
         private void ExitGameSession()
         {
-            Session currentSession = SessionManager.Instance.GetCurrentSession();
+            var currentSession = SessionManager.Instance.GetCurrentSession();
             if (currentSession == null)
             {
                 Debug.Log("Not in a session");
                 return;
             }
 
-            SessionManager.Instance.EndSession((Result result) =>
+            SessionManager.Instance.EndSession(result =>
             {
                 if (result != Result.Success)
                 {
@@ -154,8 +157,7 @@ namespace KitchenKrapper
                 }
 
                 Debug.Log("Session ended");
-
-                if (currentLobby != null)
+                if (_currentLobby != null)
                 {
                     ReturnToLobby();
                 }
@@ -170,15 +172,15 @@ namespace KitchenKrapper
 
         private void StartMatch()
         {
+            if(!IsServer) return;
             Debug.Log("Starting the match");
             SessionManager.Instance.StartSession();
-
-            int levelNumber = SessionManager.Instance.GetSessionLevel() != -1
+            var levelNumber = SessionManager.Instance.GetSessionLevel() != -1
                 ? SessionManager.Instance.GetSessionLevel()
                 : GameManager.Instance.GetCurrentLevel().levelNumber;
 
             // TODO: Add a level number to level name mapping
-            // SceneLoaderWrapper.Instance.LoadScene();
+            SceneLoaderWrapper.Instance.LoadScene(GameManager.Instance.GetCurrentLevel().sceneName, true);
         }
 
         private void JoinSession(KeyValuePair<Session, SessionDetails> session)
@@ -191,10 +193,10 @@ namespace KitchenKrapper
             if (result == Result.Success)
             {
                 Debug.Log("Session joined");
-                Session joinedSession = SessionManager.Instance.GetCurrentSession();
-                LobbyManager.Instance.UpdateLobbyPlayerList(EOSManager.Instance.GetProductUserId().ToString(), PlayerSessionState.Joined);
-
-                ProductUserId hostId = ProductUserId.FromString(joinedSession.Name);
+                var joinedSession = SessionManager.Instance.GetCurrentSession();
+                LobbyManager.Instance.UpdateLobbyPlayerList(EOSManager.Instance.GetProductUserId().ToString(),
+                    PlayerSessionState.Joined);
+                var hostId = ProductUserId.FromString(joinedSession.Name);
                 if (LobbyManager.Instance.GetCurrentLobby() != null)
                 {
                     // Do something when there's a lobby
@@ -204,13 +206,14 @@ namespace KitchenKrapper
                     MultiplayerManager.Instance.StartClient(hostId);
                 }
 
-                MatchmakingSucceeded?.Invoke();
+                OnMatchmakingSucceeded?.Invoke();
             }
             else
             {
                 Debug.Log("Failed to join the session");
-                LobbyManager.Instance.UpdateLobbyPlayerList(EOSManager.Instance.GetProductUserId().ToString(), PlayerSessionState.Failed);
-                MatchmakingFailed?.Invoke();
+                LobbyManager.Instance.UpdateLobbyPlayerList(EOSManager.Instance.GetProductUserId().ToString(),
+                    PlayerSessionState.Failed);
+                OnMatchmakingFailed?.Invoke();
             }
         }
 

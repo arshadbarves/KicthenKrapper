@@ -1,56 +1,57 @@
-using System;
+using KitchenKrapper;
+using Player;
 using UnityEngine;
 
-namespace KitchenKrapper
+namespace Counters
 {
     public class SelectedCounterVisual : MonoBehaviour
     {
         [SerializeField] private BaseStation baseCounter;
         [SerializeField] private GameObject[] visualGameObjectArray;
 
-        private PlayerController localPlayer;
+        private PlayerController _localPlayer;
 
         private void Awake()
         {
-            localPlayer = PlayerController.LocalInstance;
-            if (localPlayer != null)
+            _localPlayer = PlayerController.LocalInstance;
+            if (_localPlayer != null)
             {
                 SubscribeToLocalPlayer();
             }
             else
             {
-                PlayerController.OnAnyPlayerSpawned += HandlePlayerSpawned;
+                BasePlayer.OnPlayerSpawned += HandlePlayerSpawnedHandler;
             }
         }
 
         private void OnDestroy()
         {
             UnsubscribeFromLocalPlayer();
-            PlayerController.OnAnyPlayerSpawned -= HandlePlayerSpawned;
+            BasePlayer.OnPlayerSpawned -= HandlePlayerSpawnedHandler;
         }
 
         private void SubscribeToLocalPlayer()
         {
-            localPlayer.OnSelectedCounterChanged += HandleSelectedCounterChanged;
+            _localPlayer.OnSelectedCounterChanged += HandleSelectedCounterChangedHandler;
         }
 
         private void UnsubscribeFromLocalPlayer()
         {
-            if (localPlayer != null)
+            if (_localPlayer != null)
             {
-                localPlayer.OnSelectedCounterChanged -= HandleSelectedCounterChanged;
+                _localPlayer.OnSelectedCounterChanged -= HandleSelectedCounterChangedHandler;
             }
         }
 
-        private void HandlePlayerSpawned(object sender, EventArgs e)
+        private void HandlePlayerSpawnedHandler()
         {
-            localPlayer = PlayerController.LocalInstance;
+            _localPlayer = PlayerController.LocalInstance;
             SubscribeToLocalPlayer();
         }
 
-        private void HandleSelectedCounterChanged(object sender, PlayerController.OnSelectedCounterChangedEventArgs e)
+        private void HandleSelectedCounterChangedHandler(BasePlayer.OnSelectedCounterChangedEventArgs onSelectedCounterChangedEventArgs)
         {
-            if (e.selectedCounter == baseCounter)
+            if (onSelectedCounterChangedEventArgs.SelectedCounter == baseCounter)
             {
                 ShowVisual();
             }
@@ -62,7 +63,7 @@ namespace KitchenKrapper
 
         private void ShowVisual()
         {
-            foreach (GameObject visualGameObject in visualGameObjectArray)
+            foreach (var visualGameObject in visualGameObjectArray)
             {
                 visualGameObject.SetActive(true);
             }
@@ -70,7 +71,7 @@ namespace KitchenKrapper
 
         private void HideVisual()
         {
-            foreach (GameObject visualGameObject in visualGameObjectArray)
+            foreach (var visualGameObject in visualGameObjectArray)
             {
                 visualGameObject.SetActive(false);
             }

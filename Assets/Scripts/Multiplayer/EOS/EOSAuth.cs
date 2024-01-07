@@ -1,12 +1,14 @@
 using Epic.OnlineServices;
 using Epic.OnlineServices.Auth;
 using Epic.OnlineServices.Connect;
+using KitchenKrapper;
 using Managers;
 using PlayEveryWare.EpicOnlineServices;
+using SceneManagement;
 using UnityEngine;
 using Utils.Enums;
 
-namespace KitchenKrapper
+namespace Multiplayer.EOS
 {
     public class EOSAuth : MonoBehaviour
     {

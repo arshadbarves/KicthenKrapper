@@ -2,11 +2,13 @@ using System;
 using Epic.OnlineServices;
 using Epic.OnlineServices.Sessions;
 using KitchenKrapper;
+using Multiplayer.EOS;
 using PlayEveryWare.EpicOnlineServices;
 using PlayEveryWare.EpicOnlineServices.Samples;
 using PlayEveryWare.EpicOnlineServices.Samples.Network;
 using Unity.Netcode;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace Managers
 {
@@ -32,52 +34,48 @@ namespace Managers
 
     public class MultiplayerManager : NetworkSingleton<MultiplayerManager>
     {
-        public event Action JoiningGame;
-        public event Action FailedToJoinGame;
-        public event Action PlayerDataNetworkListChanged;
+        public event Action OnJoiningGame;
+        public event Action OnFailedToJoinGame;
+        public event Action OnPlayerDataNetworkListChanged;
 
-        [SerializeField] private KitchenObjectListSO kitchenObjectListSO;
+        [FormerlySerializedAs("kitchenObjectListSO")] [SerializeField] private KitchenObjectListSO kitchenObjectListSo;
 
-        private EOSTransportManager transportManager = null;
-        private NetworkList<PlayerData> sessionPlayers = new NetworkList<PlayerData>();
-        private MultiplayerStatus multiplayerStatus = MultiplayerStatus.NotConnected;
-        private bool isHosting = false;
-        private bool isJoined = false;
+        private EOSTransportManager _transportManager;
+        private readonly NetworkList<PlayerData> _sessionPlayers = new();
+        private MultiplayerStatus _multiplayerStatus = MultiplayerStatus.NotConnected;
 
         private void Start()
         {
-            transportManager = EOSManager.Instance.GetOrCreateManager<EOSTransportManager>();
-            sessionPlayers.OnListChanged += PlayerDataNetworkList_OnListChanged;
+            _transportManager = EOSManager.Instance.GetOrCreateManager<EOSTransportManager>();
+            _sessionPlayers.OnListChanged += PlayerDataNetworkList_OnListChanged;
         }
 
         public override void OnDestroy()
         {
             base.OnDestroy();
 
-            sessionPlayers.OnListChanged -= PlayerDataNetworkList_OnListChanged;
+            _sessionPlayers.OnListChanged -= PlayerDataNetworkList_OnListChanged;
 
-            transportManager?.Disconnect();
-
-            PlayerController.DestroyNetworkManager();
+            _transportManager?.Disconnect();
         }
 
         private void PlayerDataNetworkList_OnListChanged(NetworkListEvent<PlayerData> changeEvent)
         {
-            PlayerDataNetworkListChanged?.Invoke();
+            OnPlayerDataNetworkListChanged?.Invoke();
         }
 
         public void StartHost(Action<bool> callback = null)
         {
-            if (multiplayerStatus == MultiplayerStatus.Hosting)
+            if (_multiplayerStatus == MultiplayerStatus.Hosting)
             {
                 Debug.LogError("MultiplayerManager (StartHost): Unable to start hosting a session. A session is already being hosted.");
                 callback?.Invoke(false);
                 return;
             }
 
-            if (transportManager.StartHost())
+            if (_transportManager.StartHost())
             {
-                multiplayerStatus = MultiplayerStatus.Hosting;
+                _multiplayerStatus = MultiplayerStatus.Hosting;
                 RegisterHostCallbacks();
                 SetJoinInfo(EOSManager.Instance.GetProductUserId());
                 callback?.Invoke(true);
@@ -97,17 +95,17 @@ namespace Managers
                 callback?.Invoke(false);
                 return;
             }
-            if (multiplayerStatus == MultiplayerStatus.Joined)
+            if (_multiplayerStatus == MultiplayerStatus.Joined)
             {
                 Debug.LogError("MultiplayerManager (StartClient): Already joined a game session. You cannot join multiple sessions simultaneously.");
                 callback?.Invoke(false);
                 return;
             }
-            JoiningGame?.Invoke();
-            PlayerController.SetNetworkHostId(hostId);
-            if (transportManager.StartClient())
+            OnJoiningGame?.Invoke();
+            // PlayerController.SetNetworkHostId(hostId);
+            if (_transportManager.StartClient())
             {
-                multiplayerStatus = MultiplayerStatus.Joined;
+                _multiplayerStatus = MultiplayerStatus.Joined;
                 RegisterClientCallbacks();
                 SetJoinInfo(hostId);
                 callback?.Invoke(true);
@@ -129,37 +127,35 @@ namespace Managers
                 ServerUserId = serverUserId.ToString()
             };
             // Serialize the join data to JSON
-            string joinString = JsonUtility.ToJson(joinData);
+            var joinString = JsonUtility.ToJson(joinData);
             // Set the join information for the session
             EOSSessionsManager.SetJoinInfo(joinString);
         }
         public void Disconnect()
         {
-            if (multiplayerStatus != MultiplayerStatus.Hosting && multiplayerStatus != MultiplayerStatus.Joined)
+            if (_multiplayerStatus != MultiplayerStatus.Hosting && _multiplayerStatus != MultiplayerStatus.Joined)
             {
                 Debug.LogError("MultiplayerManager (Disconnect): Cannot disconnect - Not hosting or joined to a session.");
                 return;
             }
             // Disconnect from the current session
-            transportManager?.Disconnect();
-            multiplayerStatus = MultiplayerStatus.NotConnected;
+            _transportManager?.Disconnect();
+            _multiplayerStatus = MultiplayerStatus.NotConnected;
             EOSSessionsManager.SetJoinInfo(null);
         }
         private void OnDisconnect(ulong clientId)
         {
             Debug.LogWarning("MultiplayerManager (OnDisconnect): Disconnected from the session.");
-            multiplayerStatus = MultiplayerStatus.NotConnected;
+            _multiplayerStatus = MultiplayerStatus.NotConnected;
             EOSSessionsManager.SetJoinInfo(null);
             // Remove the disconnected player from the session
-            foreach (PlayerData playerData in sessionPlayers)
+            foreach (var playerData in _sessionPlayers)
             {
-                if (playerData.clientId == clientId)
-                {
-                    sessionPlayers.Remove(playerData);
-                    break;
-                }
+                if (playerData.clientId != clientId) continue;
+                _sessionPlayers.Remove(playerData);
+                break;
             }
-            if (multiplayerStatus == MultiplayerStatus.Hosting)
+            if (_multiplayerStatus == MultiplayerStatus.Hosting)
             {
                 UnregisterHostCallbacks();
             }
@@ -169,7 +165,7 @@ namespace Managers
             }
         }
 
-        public void RegisterHostCallbacks()
+        private void RegisterHostCallbacks()
         {
             UnregisterHostCallbacks();
             NetworkManager.Singleton.ConnectionApprovalCallback += NetworkManager_ConnectionApprovalCallback;
@@ -177,16 +173,16 @@ namespace Managers
             NetworkManager.Singleton.OnClientDisconnectCallback += NetworkManager_Server_OnClientDisconnectCallback;
         }
 
-        public void UnregisterHostCallbacks()
+        private void UnregisterHostCallbacks()
         {
             NetworkManager.Singleton.ConnectionApprovalCallback -= NetworkManager_ConnectionApprovalCallback;
             NetworkManager.Singleton.OnClientConnectedCallback -= NetworkManager_OnClientConnectedCallback;
             NetworkManager.Singleton.OnClientDisconnectCallback -= NetworkManager_Server_OnClientDisconnectCallback;
         }
 
-        public void RegisterClientCallbacks()
+        private void RegisterClientCallbacks()
         {
-            JoiningGame?.Invoke();
+            OnJoiningGame?.Invoke();
             UnregisterClientCallbacks();
 
             // Subscribe to events
@@ -194,7 +190,7 @@ namespace Managers
             NetworkManager.Singleton.OnClientConnectedCallback += NetworkManager_Client_OnClientConnectedCallback;
         }
 
-        public void UnregisterClientCallbacks()
+        private void UnregisterClientCallbacks()
         {
             // Unsubscribe from events
             NetworkManager.Singleton.OnClientDisconnectCallback -= NetworkManager_Client_OnClientDisconnectCallback;
@@ -203,25 +199,23 @@ namespace Managers
 
         private void NetworkManager_Server_OnClientDisconnectCallback(ulong playerID)
         {
-            foreach (PlayerData playerData in sessionPlayers)
+            foreach (var playerData in _sessionPlayers)
             {
-                if (playerData.clientId == playerID)
-                {
-                    sessionPlayers.Remove(playerData);
-                    break;
-                }
+                if (playerData.clientId != playerID) continue;
+                _sessionPlayers.Remove(playerData);
+                break;
             }
             OnDisconnect(playerID);
         }
 
         private void NetworkManager_OnClientConnectedCallback(ulong clientId)
         {
-            sessionPlayers.Add(new PlayerData { clientId = clientId, playerName = GameManager.Instance.GetPlayerName() });
+            _sessionPlayers.Add(new PlayerData { clientId = clientId, playerName = GameManager.Instance.GetPlayerName() });
         }
 
         private void NetworkManager_ConnectionApprovalCallback(NetworkManager.ConnectionApprovalRequest connectionApprovalRequest, NetworkManager.ConnectionApprovalResponse connectionApprovalResponse)
         {
-            Session session = SessionManager.Instance.GetCurrentSession();
+            var session = SessionManager.Instance.GetCurrentSession();
             // Check if game is already in progress
             if (session.SessionState == OnlineSessionState.InProgress)
             {
@@ -253,33 +247,33 @@ namespace Managers
         }
 
         [ServerRpc(RequireOwnership = false)]
-        public void SetPlayerIdServerRpc(string playerId, ServerRpcParams serverRpcParams = default)
+        private void SetPlayerIdServerRpc(string playerId, ServerRpcParams serverRpcParams = default)
         {
-            int playerIndex = GetPlayerDataIndexFromPlayerId(serverRpcParams.Receive.SenderClientId);
-            PlayerData playerData = sessionPlayers[playerIndex];
+            var playerIndex = GetPlayerDataIndexFromPlayerId(serverRpcParams.Receive.SenderClientId);
+            var playerData = _sessionPlayers[playerIndex];
             playerData.playerId = playerId;
-            sessionPlayers[playerIndex] = playerData;
+            _sessionPlayers[playerIndex] = playerData;
         }
 
         private void NetworkManager_Client_OnClientDisconnectCallback(ulong clientId)
         {
-            FailedToJoinGame?.Invoke();
+            OnFailedToJoinGame?.Invoke();
             OnDisconnect(clientId);
         }
 
-        public void CreateKitchenObject(KitchenObjectSO kitchenObjectSO, IKitchenObjectParent kitchenObjectParent)
+        public void CreateKitchenObject(KitchenObjectSO kitchenObjectSo, IKitchenObjectParent kitchenObjectParent)
         {
-            CreateKitchenObjectServerRpc(GetKitchenObjectSOIndex(kitchenObjectSO), kitchenObjectParent.GetNetworkObject());
+            CreateKitchenObjectServerRpc(GetKitchenObjectSoIndex(kitchenObjectSo), kitchenObjectParent.GetNetworkObject());
         }
 
         [ServerRpc(RequireOwnership = false)]
-        public void CreateKitchenObjectServerRpc(int kitchenObjectSOIndex, NetworkObjectReference kitchenObjectParentNetworkObjectReference)
+        private void CreateKitchenObjectServerRpc(int kitchenObjectSoIndex, NetworkObjectReference kitchenObjectParentNetworkObjectReference)
         {
-            KitchenObjectSO kitchenObjectSO = GetKitchenObjectSOFromIndex(kitchenObjectSOIndex);
+            var kitchenObjectSo = GetKitchenObjectSoFromIndex(kitchenObjectSoIndex);
 
 
-            kitchenObjectParentNetworkObjectReference.TryGet(out NetworkObject kitchenObjectParentNetworkObject);
-            IKitchenObjectParent kitchenObjectParent = kitchenObjectParentNetworkObject.GetComponent<IKitchenObjectParent>();
+            kitchenObjectParentNetworkObjectReference.TryGet(out var kitchenObjectParentNetworkObject);
+            var kitchenObjectParent = kitchenObjectParentNetworkObject.GetComponent<IKitchenObjectParent>();
 
             if (kitchenObjectParent.HasKitchenObject())
             {
@@ -287,23 +281,23 @@ namespace Managers
                 return;
             }
 
-            Transform kitchenObjectTransform = Instantiate(kitchenObjectSO.prefab);
+            var kitchenObjectTransform = Instantiate(kitchenObjectSo.prefab);
 
-            NetworkObject kitchenObjectNetworkObject = kitchenObjectTransform.GetComponent<NetworkObject>();
+            var kitchenObjectNetworkObject = kitchenObjectTransform.GetComponent<NetworkObject>();
             kitchenObjectNetworkObject.Spawn(true);
 
-            KitchenObject kitchenObject = kitchenObjectTransform.GetComponent<KitchenObject>();
+            var kitchenObject = kitchenObjectTransform.GetComponent<KitchenObject>();
             kitchenObject.SetKitchenObjectParent(kitchenObjectParent);
         }
 
-        public int GetKitchenObjectSOIndex(KitchenObjectSO kitchenObjectSO)
+        public int GetKitchenObjectSoIndex(KitchenObjectSO kitchenObjectSo)
         {
-            return kitchenObjectListSO.kitchenObjectSOList.IndexOf(kitchenObjectSO);
+            return kitchenObjectListSo.kitchenObjectSOList.IndexOf(kitchenObjectSo);
         }
 
-        public KitchenObjectSO GetKitchenObjectSOFromIndex(int kitchenObjectSOIndex)
+        public KitchenObjectSO GetKitchenObjectSoFromIndex(int kitchenObjectSoIndex)
         {
-            return kitchenObjectListSO.kitchenObjectSOList[kitchenObjectSOIndex];
+            return kitchenObjectListSo.kitchenObjectSOList[kitchenObjectSoIndex];
         }
 
         public void DestroyKitchenObject(KitchenObject kitchenObject)
@@ -314,7 +308,7 @@ namespace Managers
         [ServerRpc(RequireOwnership = false)]
         private void DestroyKitchenObjectServerRpc(NetworkObjectReference kitchenObjectNetworkObjectReference)
         {
-            kitchenObjectNetworkObjectReference.TryGet(out NetworkObject kitchenObjectNetworkObject);
+            kitchenObjectNetworkObjectReference.TryGet(out var kitchenObjectNetworkObject);
 
             if (kitchenObjectNetworkObject == null)
             {
@@ -322,7 +316,7 @@ namespace Managers
                 return;
             }
 
-            KitchenObject kitchenObject = kitchenObjectNetworkObject.GetComponent<KitchenObject>();
+            var kitchenObject = kitchenObjectNetworkObject.GetComponent<KitchenObject>();
             RemoveKitchenObjectParentClientRpc(kitchenObjectNetworkObjectReference);
             kitchenObject.DestroySelf();
         }
@@ -330,14 +324,14 @@ namespace Managers
         [ClientRpc]
         private void RemoveKitchenObjectParentClientRpc(NetworkObjectReference kitchenObjectNetworkObjectReference)
         {
-            kitchenObjectNetworkObjectReference.TryGet(out NetworkObject kitchenObjectNetworkObject);
-            KitchenObject kitchenObject = kitchenObjectNetworkObject.GetComponent<KitchenObject>();
+            kitchenObjectNetworkObjectReference.TryGet(out var kitchenObjectNetworkObject);
+            var kitchenObject = kitchenObjectNetworkObject.GetComponent<KitchenObject>();
             kitchenObject.RemoveKitchenObjectParent();
         }
 
         public PlayerData GetPlayerDataFromPlayerId(ulong playerID)
         {
-            foreach (PlayerData playerData in sessionPlayers)
+            foreach (var playerData in _sessionPlayers)
             {
                 if (playerData.clientId == playerID)
                 {
@@ -350,26 +344,26 @@ namespace Managers
 
         public NetworkList<PlayerData> GetPlayerDataNetworkList()
         {
-            return sessionPlayers;
+            return _sessionPlayers;
         }
 
-        public PlayerData GetPlayerData()
+        private PlayerData GetPlayerData()
         {
             return GetPlayerDataFromPlayerId(NetworkManager.Singleton.LocalClientId);
         }
 
         public void SetPlayerReady(PlayerGameState playerGameState)
         {
-            PlayerData playerData = GetPlayerData();
+            var playerData = GetPlayerData();
             playerData.playerGameState = playerGameState;
             SetPlayerDataServerRpc(playerData);
         }
 
-        public int GetPlayerDataIndexFromPlayerId(ulong playerID)
+        private int GetPlayerDataIndexFromPlayerId(ulong playerID)
         {
-            for (int i = 0; i < sessionPlayers.Count; i++)
+            for (var i = 0; i < _sessionPlayers.Count; i++)
             {
-                if (sessionPlayers[i].clientId == playerID)
+                if (_sessionPlayers[i].clientId == playerID)
                 {
                     return i;
                 }
@@ -381,11 +375,11 @@ namespace Managers
         [ServerRpc(RequireOwnership = false)]
         private void SetPlayerDataServerRpc(PlayerData playerData, ServerRpcParams serverRpcParams = default)
         {
-            PlayerData playerDataToChange = GetPlayerDataFromPlayerId(serverRpcParams.Receive.SenderClientId);
+            var playerDataToChange = GetPlayerDataFromPlayerId(serverRpcParams.Receive.SenderClientId);
             playerDataToChange.playerGameState = playerData.playerGameState;
 
-            int playerDataIndex = GetPlayerDataIndexFromPlayerId(serverRpcParams.Receive.SenderClientId);
-            sessionPlayers[playerDataIndex] = playerDataToChange;
+            var playerDataIndex = GetPlayerDataIndexFromPlayerId(serverRpcParams.Receive.SenderClientId);
+            _sessionPlayers[playerDataIndex] = playerDataToChange;
         }
 
         public void KickPlayer(ulong playerID)

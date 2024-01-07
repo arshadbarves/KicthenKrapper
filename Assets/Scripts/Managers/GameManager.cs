@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using KitchenKrapper;
+using Multiplayer.EOS;
 using PlayEveryWare.EpicOnlineServices;
 using UnityEngine;
 using UnityEngine.Android;
@@ -113,7 +114,7 @@ namespace Managers
 
         private void ShowEulaScreen()
         {
-            MainMenuUIManager.Instance.ShowEULAScreen();
+            MainMenuUIManager.Instance.ShowEulaScreen();
         }
 
         public void StartApp()

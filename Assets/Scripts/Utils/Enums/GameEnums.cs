@@ -8,7 +8,6 @@ namespace Utils.Enums
         MultiPlayer
     }
 
-
     public enum InputType
     {
         Keyboard,

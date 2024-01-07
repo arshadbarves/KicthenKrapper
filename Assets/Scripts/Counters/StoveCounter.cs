@@ -1,5 +1,6 @@
 using System;
 using Managers;
+using Player;
 using Unity.Netcode;
 using UnityEngine;
 
@@ -109,7 +110,7 @@ namespace KitchenKrapper
                 KitchenObject.CreateKitchenObject(cookingRecipeSO.outputFoodObjectSO, this);
                 stoveCounterState.Value = StoveCounterState.Done;
                 burningTimer.Value = 0f;
-                SetBurningRecipeSOClientRpc(MultiplayerManager.Instance.GetKitchenObjectSOIndex(GetKitchenObject().GetKitchenObjectSO()));
+                SetBurningRecipeSOClientRpc(MultiplayerManager.Instance.GetKitchenObjectSoIndex(GetKitchenObject().GetKitchenObjectSO()));
                 StepComplete();
             }
         }
@@ -140,7 +141,7 @@ namespace KitchenKrapper
                         KitchenObject kitchenObject = player.GetKitchenObject();
                         kitchenObject.SetKitchenObjectParent(this);
 
-                        InteractServerRpc(MultiplayerManager.Instance.GetKitchenObjectSOIndex(kitchenObject.GetKitchenObjectSO()));
+                        InteractServerRpc(MultiplayerManager.Instance.GetKitchenObjectSoIndex(kitchenObject.GetKitchenObjectSO()));
                         StepComplete();
                     }
                 }
@@ -193,7 +194,7 @@ namespace KitchenKrapper
         [ClientRpc]
         private void SetCookingRecipeSOClientRpc(int kitchenObjectSOIndex)
         {
-            KitchenObjectSO kitchenObjectSO = MultiplayerManager.Instance.GetKitchenObjectSOFromIndex(kitchenObjectSOIndex);
+            KitchenObjectSO kitchenObjectSO = MultiplayerManager.Instance.GetKitchenObjectSoFromIndex(kitchenObjectSOIndex);
 
             cookingRecipeSO = GetCookingRecipeSO(kitchenObjectSO);
         }
@@ -201,7 +202,7 @@ namespace KitchenKrapper
         [ClientRpc]
         private void SetBurningRecipeSOClientRpc(int kitchenObjectSOIndex)
         {
-            KitchenObjectSO kitchenObjectSO = MultiplayerManager.Instance.GetKitchenObjectSOFromIndex(kitchenObjectSOIndex);
+            KitchenObjectSO kitchenObjectSO = MultiplayerManager.Instance.GetKitchenObjectSoFromIndex(kitchenObjectSOIndex);
 
             burningRecipeSO = GetBurningRecipeSO(kitchenObjectSO);
         }

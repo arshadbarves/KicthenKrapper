@@ -1,16 +1,12 @@
-
-
-using UnityEngine;
-
-namespace KitchenKrapper
+namespace Utils
 {
-    public class RecipeIDGenerator : MonoBehaviour
+    public static class RecipeIDGenerator
     {
-        private static int recipeID = 0;
+        private static int _recipeID;
 
         public static int GetRecipeID()
         {
-            return recipeID++;
+            return _recipeID++;
         }
     }
 }

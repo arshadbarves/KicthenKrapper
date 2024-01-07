@@ -1,5 +1,8 @@
+using System;
 using System.Collections.Generic;
 using KitchenKrapper;
+using UI.Base;
+using UI.Screen;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -30,22 +33,22 @@ namespace Managers
         [SerializeField] private OptionbarScreen optionbarScreen;
 
         // Constants
-        public const string POPUP_PANEL_ACTIVE_CLASS_NAME = "popup-panel";
-        public const string POPUP_PANEL_INACTIVE_CLASS_NAME = "popup-panel--inactive";
-        public const string MODAL_PANEL_ACTIVE_CLASS_NAME = "modal-panel";
-        public const string MODAL_PANEL_INACTIVE_CLASS_NAME = "modal-panel--inactive";
+        public const string PopupPanelActiveClassName = "popup-panel";
+        public const string PopupPanelInactiveClassName = "popup-panel--inactive";
+        public const string ModalPanelActiveClassName = "modal-panel";
+        public const string ModalPanelInactiveClassName = "modal-panel--inactive";
 
         // UI Elements and Stacks
-        private UIDocument mainMenuDocument;
-        private List<BaseScreen> allModalScreens = new List<BaseScreen>();
-        private Stack<BaseScreen> screenStack = new Stack<BaseScreen>();
-        private Stack<BaseScreen> popupStack = new Stack<BaseScreen>();
-        private Stack<BaseScreen> overlayStack = new Stack<BaseScreen>();
+        private UIDocument _mainMenuDocument;
+        private readonly List<BaseScreen> _allModalScreens = new();
+        private readonly Stack<BaseScreen> _screenStack = new();
+        private readonly Stack<BaseScreen> _popupStack = new();
+        private readonly Stack<BaseScreen> _overlayStack = new();
 
         protected override void Awake()
         {
             base.Awake();
-            mainMenuDocument = GetComponent<UIDocument>();
+            _mainMenuDocument = GetComponent<UIDocument>();
         }
 
         private void OnEnable()
@@ -56,8 +59,8 @@ namespace Managers
         private void SetupModalScreens()
         {
             // Populate the allModalScreens list
-            allModalScreens.Clear();
-            allModalScreens.AddRange(GetComponentsInChildren<BaseScreen>());
+            _allModalScreens.Clear();
+            _allModalScreens.AddRange(GetComponentsInChildren<BaseScreen>());
 
             // Show and hide all screens initially
             ShowAndHideAllScreens();
@@ -65,14 +68,14 @@ namespace Managers
 
         private void ShowAndHideAllScreens()
         {
-            foreach (BaseScreen screen in allModalScreens)
+            foreach (var screen in _allModalScreens)
             {
                 screen.Show();
                 screen.Hide();
             }
         }
 
-        private void HideAllScreens(Stack<BaseScreen> stack)
+        private static void HideAllScreens(Stack<BaseScreen> stack)
         {
             if (stack.Count == 0)
                 return;
@@ -100,7 +103,7 @@ namespace Managers
             stack.Push(screen);
 
             screen.Show();
-            PrintScreenStack(stack);
+            // PrintScreenStack(stack);
         }
 
         private void HideScreen(Stack<BaseScreen> stack, BaseScreen screen)
@@ -110,42 +113,48 @@ namespace Managers
 
             HideParentScreen(screen, stack);
 
-            if (stack.Count > 0)
-            {
-                stack.Pop().Hide();
-                PrintScreenStack(stack);
-            }
+            if (stack.Count <= 0) return;
+            stack.Pop().Hide();
+            // PrintScreenStack(stack);
         }
 
-        public void ShowScreen(BaseScreen screen)
+        private void ShowScreen(BaseScreen screen)
         {
             switch (screen.GetScreenType())
             {
                 case ScreenType.FullScreen:
-                    ShowScreen(screenStack, screen);
+                    ShowScreen(_screenStack, screen);
                     break;
                 case ScreenType.Popup:
-                    ShowScreen(popupStack, screen);
+                    ShowScreen(_popupStack, screen);
                     break;
                 case ScreenType.Overlay:
-                    ShowScreen(overlayStack, screen);
+                    ShowScreen(_overlayStack, screen);
                     break;
+                case ScreenType.None:
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
             }
         }
 
-        public void HideScreen(BaseScreen screen)
+        private void HideScreen(BaseScreen screen)
         {
             switch (screen.GetScreenType())
             {
                 case ScreenType.FullScreen:
-                    HideScreen(screenStack, screen);
+                    HideScreen(_screenStack, screen);
                     break;
                 case ScreenType.Popup:
-                    HideScreen(popupStack, screen);
+                    HideScreen(_popupStack, screen);
                     break;
                 case ScreenType.Overlay:
-                    HideScreen(overlayStack, screen);
+                    HideScreen(_overlayStack, screen);
                     break;
+                case ScreenType.None:
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
             }
         }
 
@@ -154,19 +163,17 @@ namespace Managers
             if (screen == null)
                 return;
 
-            if (screen.GetParentScreen() != null)
+            if (screen.GetParentScreen() == null) return;
+            if (stack.Contains(screen.GetParentScreen()))
             {
-                if (stack.Contains(screen.GetParentScreen()))
+                while (stack.Count > 0 && stack.Peek() != screen.GetParentScreen())
                 {
-                    while (stack.Count > 0 && stack.Peek() != screen.GetParentScreen())
-                    {
-                        HideScreen(stack.Peek());
-                    }
+                    HideScreen(stack.Peek());
                 }
-                else
-                {
-                    ShowScreen(screen.GetParentScreen());
-                }
+            }
+            else
+            {
+                ShowScreen(screen.GetParentScreen());
             }
         }
 
@@ -175,19 +182,15 @@ namespace Managers
             if (screen == null || stack.Count == 0)
                 return;
 
-            if (screen.GetParentScreen() != null)
+            if (screen.GetParentScreen() == null) return;
+            if (!stack.Contains(screen.GetParentScreen())) return;
+            while (stack.Peek() != screen.GetParentScreen())
             {
-                if (stack.Contains(screen.GetParentScreen()))
-                {
-                    while (stack.Peek() != screen.GetParentScreen())
-                    {
-                        HideScreen(stack.Peek());
-                    }
-                }
+                HideScreen(stack.Peek());
             }
         }
 
-        private void PrintScreenStack(Stack<BaseScreen> stack)
+        private static void PrintScreenStack(Stack<BaseScreen> stack)
         {
             if (stack.Count == 0)
             {
@@ -214,9 +217,10 @@ namespace Managers
         public void HidePlayerNamePopupScreen() => HideScreen(playerNamePopupScreen);
         public void ShowNetworkDisconnectedScreen() => ShowScreen(networkDisconnectedScreen);
         public void HideNetworkDisconnectedScreen() => HideScreen(networkDisconnectedScreen);
-        public void ShowEULAScreen() => ShowScreen(eulaModalScreen);
-        public void HideEULAScreen() => HideScreen(eulaModalScreen);
+        public void ShowEulaScreen() => ShowScreen(eulaModalScreen);
+        public void HideEulaScreen() => HideScreen(eulaModalScreen);
         public void ShowLoadingScreen() => ShowScreen(clientLoadingScreen);
+        public void StopLoadingScreen() => clientLoadingScreen.StopLoadingScreen();
         public void HideLoadingScreen() => HideScreen(clientLoadingScreen);
         public void UpdateLoadingScreen() => clientLoadingScreen.UpdateLoadingScreen();
         public void ShowBufferScreen() => ShowScreen(bufferScreen);
@@ -234,7 +238,7 @@ namespace Managers
 
         public UIDocument GetMainDocument()
         {
-            return mainMenuDocument;
+            return _mainMenuDocument;
         }
     }
 }

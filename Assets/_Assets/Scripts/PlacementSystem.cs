@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Player;
 using UnityEngine;
 
 namespace KitchenKrapper
@@ -42,7 +43,7 @@ namespace KitchenKrapper
 
         private void UpdateStationPlacement()
         {
-            Vector3 playerOffsetPos = player.GetPlayerPostionOffset();
+            Vector3 playerOffsetPos = player.GetPlayerPositionOffset();
             Vector3Int gridPos = grid.WorldToCell(playerOffsetPos);
 
             bool placementValidity = CheckPlacementValidity(gridPos);
@@ -68,7 +69,7 @@ namespace KitchenKrapper
 
         public bool PlaceStationObject(BaseStation prefab)
         {
-            Vector3 playerOffsetPos = player.GetPlayerPostionOffset();
+            Vector3 playerOffsetPos = player.GetPlayerPositionOffset();
             Vector3Int gridPos = grid.WorldToCell(playerOffsetPos);
             if (!CheckPlacementValidity(gridPos))
                 // TODO: play wrong sound

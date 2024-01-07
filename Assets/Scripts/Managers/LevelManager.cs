@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using KitchenKrapper;
+using Player;
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -87,7 +88,7 @@ namespace Managers
             DeliveryManager.Instance.OnRecipeDeliveryFailed += DeliveryManager_OnRecipeFailed;
             DeliveryManager.Instance.OnRecipeExpired += DeliveryManager_OnRecipeExpired;
             CuttingCounter.OnAnyCut += CuttingCounter_OnAnyCut;
-            PlayerController.OnAnyPickupObject += Player_OnPickedUpObject;
+            BasePlayer.OnAnyPickupObject += Player_OnPickedUpObject;
             BaseStation.OnAnyObjectPlacedOnCounter += BaseCounter_OnAnyObjectPlacedOnCounter;
             TrashCounter.OnAnyObjectTrashed += TrashCounter_OnAnyObjectTrashed;
         }
@@ -99,7 +100,7 @@ namespace Managers
             DeliveryManager.Instance.OnRecipeDeliveryFailed -= DeliveryManager_OnRecipeFailed;
             DeliveryManager.Instance.OnRecipeExpired -= DeliveryManager_OnRecipeExpired;
             CuttingCounter.OnAnyCut -= CuttingCounter_OnAnyCut;
-            PlayerController.OnAnyPickupObject -= Player_OnPickedUpObject;
+            BasePlayer.OnAnyPickupObject -= Player_OnPickedUpObject;
             BaseStation.OnAnyObjectPlacedOnCounter -= BaseCounter_OnAnyObjectPlacedOnCounter;
             TrashCounter.OnAnyObjectTrashed -= TrashCounter_OnAnyObjectTrashed;
         }
@@ -109,7 +110,7 @@ namespace Managers
             AudioManager.Instance.PlaySoundEffect(soundEffectsAudioClipRefs.trashSounds);
         }
 
-        private void Player_OnPickedUpObject(object sender, EventArgs e)
+        private void Player_OnPickedUpObject()
         {
             AudioManager.Instance.PlaySoundEffect(soundEffectsAudioClipRefs.objectPickupSounds);
         }
@@ -139,7 +140,7 @@ namespace Managers
 
         private void DeliveryManager_OnRecipeSpawned(object sender, DeliveryManager.RecipeEventArgs e)
         {
-            throw new NotImplementedException();
+            // throw new NotImplementedException();
         }
 
         private void BaseCounter_OnAnyObjectPlacedOnCounter(object sender, EventArgs e)
@@ -208,10 +209,6 @@ namespace Managers
         public PlayerController SpawnPlayerSinglePlayerMode()
         {
             PlayerController player = Instantiate(playerPrefab, Vector3.zero, Quaternion.identity);
-            if (gameMode == GameMode.Tutorial)
-            {
-                player.SetIsTutorialPlayer(true);
-            }
             return player;
         }
 

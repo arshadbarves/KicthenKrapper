@@ -1,5 +1,6 @@
 using System;
 using Managers;
+using Player;
 using Unity.Netcode;
 using UnityEngine;
 

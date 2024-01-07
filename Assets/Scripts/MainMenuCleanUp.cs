@@ -1,4 +1,5 @@
 using Managers;
+using Multiplayer.EOS;
 using Unity.Netcode;
 using UnityEngine;
 

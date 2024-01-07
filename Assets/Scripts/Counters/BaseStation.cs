@@ -2,6 +2,7 @@ using System;
 using Unity.Netcode;
 using DG.Tweening;
 using Managers;
+using Player;
 using UnityEngine;
 
 namespace KitchenKrapper
@@ -21,7 +22,6 @@ namespace KitchenKrapper
         protected virtual void Awake()
         {
             followTransform = GetComponent<FollowTransform>();
-            Debug.Log(followTransform);
         }
 
         public static void ResetStaticData()
