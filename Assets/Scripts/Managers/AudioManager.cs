@@ -4,7 +4,7 @@ using UnityEngine.Audio;
 
 namespace Managers
 {
-    public class AudioManager : Singleton<AudioManager>
+    public class AudioManager : MonoSingleton<AudioManager>
     {
         private const string MUSIC_VOLUME_KEY = "MusicVolume";
         private const string SOUND_EFFECTS_VOLUME_KEY = "SoundEffectsVolume";

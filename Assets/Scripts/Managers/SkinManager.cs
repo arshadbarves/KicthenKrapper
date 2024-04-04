@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Managers
 {
-    public class SkinManager : Singleton<SkinManager>
+    public class SkinManager : MonoSingleton<SkinManager>
     {
         // Dictionary of all the skins
         private Dictionary<string, SkinSO> skins = new Dictionary<string, SkinSO>();

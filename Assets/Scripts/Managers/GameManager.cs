@@ -9,7 +9,7 @@ using Utils.Enums;
 
 namespace Managers
 {
-    public class GameManager : Singleton<GameManager>
+    public class GameManager : MonoSingleton<GameManager>
     {
         private static PlatformType CurrentPlatform => PlatformManager.CurrentPlatform;
         private GameStatus _gameStatus = GameStatus.None;

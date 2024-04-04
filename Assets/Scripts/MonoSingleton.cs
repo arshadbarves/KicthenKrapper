@@ -1,8 +1,8 @@
 using Unity.Netcode;
 using UnityEngine;
 
-// Singleton
-public class Singleton<T> : MonoBehaviour where T : MonoBehaviour
+// MonoBehaviour Singleton
+public class MonoSingleton<T> : MonoBehaviour where T : MonoBehaviour
 {
     private static T _instance;
 

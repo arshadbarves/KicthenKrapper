@@ -6,7 +6,7 @@ using Utils.Enums;
 
 namespace Managers
 {
-    public class ShopManager : Singleton<ShopManager>
+    public class ShopManager : MonoSingleton<ShopManager>
     {
         public static event EventHandler OnShopItemBought;
         public static event EventHandler OnShopItemBoughtFailed;

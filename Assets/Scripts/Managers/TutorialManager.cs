@@ -8,7 +8,7 @@ using UnityEngine.UI;
 
 namespace Managers
 {
-    public class TutorialManager : Singleton<TutorialManager>
+    public class TutorialManager : MonoSingleton<TutorialManager>
     {
         [SerializeField] private TextMeshProUGUI tutorialText;
         [SerializeField] private GameObject tutorialOverUI;

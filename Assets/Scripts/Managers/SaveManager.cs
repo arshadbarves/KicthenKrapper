@@ -4,7 +4,7 @@ using UnityEngine;
 namespace Managers
 {
     [RequireComponent(typeof(GameManager))]
-    public class SaveManager : Singleton<SaveManager>
+    public class SaveManager : MonoSingleton<SaveManager>
     {
         private const string GAME_DATA_KEY = "GameData";
 

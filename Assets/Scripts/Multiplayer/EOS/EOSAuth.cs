@@ -10,25 +10,11 @@ using Utils.Enums;
 
 namespace Multiplayer.EOS
 {
-    public class EOSAuth : MonoBehaviour
+    public class EOSAuth : MonoSingleton<EOSAuth>
     {
         public static EOSAuth Instance { get; private set; }
 
         private string refreshToken;
-
-        private void Awake()
-        {
-            if (Instance != null && Instance != this)
-            {
-                Destroy(gameObject);
-            }
-            else
-            {
-                Instance = this;
-            }
-
-            DontDestroyOnLoad(gameObject);
-        }
 
         public bool IsLoggedIn()
         {

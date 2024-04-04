@@ -9,7 +9,7 @@ using UnityEngine.UIElements;
 namespace Managers
 {
     [RequireComponent(typeof(UIDocument))]
-    public class MainMenuUIManager : Singleton<MainMenuUIManager>
+    public class MainMenuUIManager : MonoSingleton<MainMenuUIManager>
     {
         // Serialized Fields
         [Header("Modal Menu Screens")]
