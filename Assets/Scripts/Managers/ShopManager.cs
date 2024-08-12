@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using KitchenKrapper;
 using UnityEngine;
-using Utils.Enums;
+using Utilities.Enums;
 
 namespace Managers
 {

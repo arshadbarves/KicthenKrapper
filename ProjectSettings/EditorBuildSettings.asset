@@ -9,7 +9,7 @@ EditorBuildSettings:
     path: Assets/Samples/Unity Toon Shader/0.9.5-preview/Universal render pipeline/Scenes/PointLightTest.unity
     guid: 3fd1bd19f29d41b3938f1bc8d4b702e7
   - enabled: 0
-    path: Assets/Samples/Epic Online Services Plugin for Unity/3.0.3/Standard Pack
+    path: Assets/Samples/Epic Online Services Plugin for Unity/3.1.0/Standard Pack
       _ EOS Plugin for Unity Samples/Scenes/SessionsAndMatchmaking.unity
     guid: 83091cd7b6082234dafba0b04421625b
   - enabled: 1
@@ -40,3 +40,4 @@ EditorBuildSettings:
       guid: e1667a5265e8faa4bb61f82ab09170a7, type: 2}
     com.unity.adaptiveperformance.simulator.provider_settings: {fileID: 11400000,
       guid: ccf6f0742d65e7f4f87b4387d6acdf67, type: 2}
+  m_UseUCBPForAssetBundles: 0

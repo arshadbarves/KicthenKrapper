@@ -1,0 +1,5 @@
+/Users/arshadbarves/MyProject/KicthenKrapper/.utmp/Debug/e1j1jw11/armeabi-v7a/CMakeFiles/edit_cache.dir
+/Users/arshadbarves/MyProject/KicthenKrapper/.utmp/Debug/e1j1jw11/armeabi-v7a/CMakeFiles/rebuild_cache.dir
+/Users/arshadbarves/MyProject/KicthenKrapper/.utmp/Debug/e1j1jw11/armeabi-v7a/FramePacing/CMakeFiles/swappywrapper.dir
+/Users/arshadbarves/MyProject/KicthenKrapper/.utmp/Debug/e1j1jw11/armeabi-v7a/FramePacing/CMakeFiles/edit_cache.dir
+/Users/arshadbarves/MyProject/KicthenKrapper/.utmp/Debug/e1j1jw11/armeabi-v7a/FramePacing/CMakeFiles/rebuild_cache.dir

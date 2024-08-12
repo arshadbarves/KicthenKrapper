@@ -190,7 +190,7 @@ namespace Multiplayer.EOS
             }
         }
 
-        public void SearchSessions(int searchPattern, Action<Dictionary<Session, SessionDetails>> callback = null)
+        public void SearchSessions (int searchPattern, Action<Dictionary<Session, SessionDetails>> callback = null)
         {
             var levelAttribute = CreateSearchSessionAttribute(searchPattern);
             EOSSessionsManager.OnSessionSearchCompleted += SearchCompletedHandler;

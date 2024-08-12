@@ -3,6 +3,7 @@ using Epic.OnlineServices;
 using Epic.OnlineServices.Sessions;
 using KitchenKrapper;
 using Multiplayer.EOS;
+using Player;
 using PlayEveryWare.EpicOnlineServices;
 using PlayEveryWare.EpicOnlineServices.Samples;
 using PlayEveryWare.EpicOnlineServices.Samples.Network;
@@ -102,7 +103,7 @@ namespace Managers
                 return;
             }
             OnJoiningGame?.Invoke();
-            // PlayerController.SetNetworkHostId(hostId);
+            PlayerController.SetNetworkHostId(hostId);
             if (_transportManager.StartClient())
             {
                 _multiplayerStatus = MultiplayerStatus.Joined;

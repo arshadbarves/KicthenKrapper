@@ -1,5 +1,5 @@
 using UnityEngine;
-using Utils.Enums;
+using Utilities.Enums;
 
 namespace KitchenKrapper
 {

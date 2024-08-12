@@ -11,7 +11,7 @@ public class MonoSingleton<T> : MonoBehaviour where T : MonoBehaviour
         get
         {
             if (_instance != null) return _instance;
-            _instance = FindObjectOfType<T>();
+            _instance = FindAnyObjectByType<T>();
 
             if (_instance == null)
             {
@@ -54,7 +54,7 @@ public class NetworkSingleton<T> : NetworkBehaviour where T : NetworkBehaviour
         get
         {
             if (_instance != null) return _instance;
-            _instance = FindObjectOfType<T>();
+            _instance = FindAnyObjectByType<T>();
 
             if (_instance == null)
             {
@@ -69,7 +69,8 @@ public class NetworkSingleton<T> : NetworkBehaviour where T : NetworkBehaviour
     {
         if (_instance != null && _instance != this)
         {
-            Debug.LogWarning($"[NetworkSingleton] An instance of {typeof(T)} already exists. Destroying this instance.");
+            Debug.LogWarning(
+                $"[NetworkSingleton] An instance of {typeof(T)} already exists. Destroying this instance.");
             Destroy(this);
             return;
         }
@@ -83,6 +84,28 @@ public class NetworkSingleton<T> : NetworkBehaviour where T : NetworkBehaviour
         if (_instance == this)
         {
             _instance = null;
+        }
+    }
+}
+
+// Non-MonoBehaviour Singleton
+public class Singleton<T> where T : class, new()
+{
+    private static T _instance;
+    private static readonly object Lock = new object();
+
+    protected Singleton()
+    {
+    }
+
+    public static T Instance
+    {
+        get
+        {
+            lock (Lock)
+            {
+                return _instance ??= new T();
+            }
         }
     }
 }

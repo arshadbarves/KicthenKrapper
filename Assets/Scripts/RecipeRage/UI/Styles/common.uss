@@ -1,0 +1,14 @@
+.splashPanel {
+    flex-grow: 1;
+    align-items: center;
+    justify-content: center;
+    align-self: center;
+    opacity: 0;
+    transition-property: opacity;
+    transition-duration: 1s;
+    transition-delay: 2s;
+}
+
+.splashPanel--active {
+    opacity: 1;
+}

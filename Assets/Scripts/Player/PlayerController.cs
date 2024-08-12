@@ -168,11 +168,11 @@ namespace Player
 
         public static void SetNetworkHostId(ProductUserId userId)
         {
-            var transportLayer = NetworkManager.Singleton.GetComponent<EOSTransport>();
-            if (transportLayer != null)
-            {
-                transportLayer.ServerUserIdToConnectTo = userId;
-            }
+            // var transportLayer = NetworkManager.Singleton.GetComponent<EOSTransport>();
+            // if (transportLayer != null)
+            // {
+            //     transportLayer.ServerUserIdToConnectTo = userId;
+            // }
         }
     }
 }

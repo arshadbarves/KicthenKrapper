@@ -5,7 +5,7 @@ using TMPro;
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.UI;
-using Utils.Enums;
+using Utilities.Enums;
 
 namespace KitchenKrapper
 {

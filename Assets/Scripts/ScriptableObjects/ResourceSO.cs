@@ -1,7 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using Utils.Enums;
+using Utilities.Enums;
 
 namespace KitchenKrapper
 {

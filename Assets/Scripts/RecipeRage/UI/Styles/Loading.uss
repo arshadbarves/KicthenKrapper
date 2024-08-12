@@ -1,0 +1,28 @@
+.recipeLogoLabel {
+    -unity-font-definition: url("project://database/Assets/RecipeRage/Fonts/Frijole-Regular%20SDF.asset?fileID=11400000&guid=d6e6a9e6e80f14f389c0cbb8ce82e5ce&type=2#Frijole-Regular SDF");
+    font-size: 100px;
+    bottom: -50px;
+    transition-property: translate;
+    transition-duration: 0.5s;
+    transition-timing-function: ease-in-out-elastic;
+    transition-delay: 0.5s;
+    translate: -250% 0;
+}
+
+.rageLogoLabel {
+    -unity-font-definition: url("project://database/Assets/RecipeRage/Fonts/BlackHanSans-Regular%20SDF.asset?fileID=11400000&guid=f736fc25f207f4c79aa4c2c7b070f7e6&type=2#BlackHanSans-Regular SDF");
+    font-size: 325px;
+    transition-property: translate;
+    transition-duration: 0.5s;
+    transition-delay: 1s;
+    transition-timing-function: ease-in-out-bounce;
+    scale: 1.5 1.5;
+}
+
+.recipeLogoLabel--active {
+    translate: 0 0;
+}
+
+.rageLogoLabel--active {
+    scale: 1 1;
+}

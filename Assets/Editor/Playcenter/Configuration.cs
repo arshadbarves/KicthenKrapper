@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using UnityEditor;
+using UnityEditor.Build;
 using UnityEngine;
 
 namespace Playcenter
@@ -41,11 +42,12 @@ namespace Playcenter
             foreach (var define in Defines)
             {
                 EditorGUILayout.BeginHorizontal();
-                bool currentDefineState = PlayerSettings.GetScriptingDefineSymbolsForGroup(BuildTargetGroup.Android).Contains(define);
+                bool currentDefineState = PlayerSettings.GetScriptingDefineSymbols(NamedBuildTarget.Android).Contains(define);
                 bool newDefineState = EditorGUILayout.Toggle(define, currentDefineState);
                 if (newDefineState != currentDefineState)
                 {
-                    ApplyDefineChange(define, newDefineState, BuildTargetGroup.Android);
+                    ApplyDefineChange(define, newDefineState, NamedBuildTarget.Android);
+                    ApplyDefineChange(define, newDefineState, NamedBuildTarget.Standalone);
                 }
                 EditorGUILayout.EndHorizontal();
 ;            }
@@ -55,32 +57,33 @@ namespace Playcenter
             foreach (var define in Defines)
             {
                 EditorGUILayout.BeginHorizontal();
-                bool currentDefineState = PlayerSettings.GetScriptingDefineSymbolsForGroup(BuildTargetGroup.iOS).Contains(define);
+                bool currentDefineState = PlayerSettings.GetScriptingDefineSymbols(NamedBuildTarget.iOS).Contains(define);
                 bool newDefineState = EditorGUILayout.Toggle(define, currentDefineState);
                 if (newDefineState != currentDefineState)
                 {
-                    ApplyDefineChange(define, newDefineState, BuildTargetGroup.iOS);
+                    ApplyDefineChange(define, newDefineState, NamedBuildTarget.iOS);
                 }
                 EditorGUILayout.EndHorizontal();
             }
             EditorGUILayout.EndHorizontal();
         }
 
-        private void ApplyDefineChange(string define, bool enable, BuildTargetGroup targetGroup)
+        private void ApplyDefineChange(string define, bool enable, NamedBuildTarget targetPlatform)
         {
-            string currentDefines = PlayerSettings.GetScriptingDefineSymbolsForGroup(targetGroup);
+            string currentDefines = PlayerSettings.GetScriptingDefineSymbols(targetPlatform);
             List<string> defineList = new List<string>(currentDefines.Split(';'));
 
-            if (enable && !defineList.Contains(define))
+            switch (enable)
             {
-                defineList.Add(define);
-            }
-            else if (!enable && defineList.Contains(define))
-            {
-                defineList.Remove(define);
+                case true when !defineList.Contains(define):
+                    defineList.Add(define);
+                    break;
+                case false when defineList.Contains(define):
+                    defineList.Remove(define);
+                    break;
             }
 
-            PlayerSettings.SetScriptingDefineSymbolsForGroup(targetGroup, string.Join(";", defineList.ToArray()));
+            PlayerSettings.SetScriptingDefineSymbols(targetPlatform, string.Join(";", defineList.ToArray()));
         }
     }
 }

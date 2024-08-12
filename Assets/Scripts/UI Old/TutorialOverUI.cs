@@ -3,7 +3,7 @@ using Managers;
 using SceneManagement;
 using UnityEngine;
 using UnityEngine.UI;
-using Utils.Enums;
+using Utilities.Enums;
 
 namespace KitchenKrapper
 {

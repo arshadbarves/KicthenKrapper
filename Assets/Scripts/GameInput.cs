@@ -3,7 +3,7 @@ using Managers;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UniversalMobileController;
-using Utils.Enums;
+using Utilities.Enums;
 
 namespace KitchenKrapper
 {

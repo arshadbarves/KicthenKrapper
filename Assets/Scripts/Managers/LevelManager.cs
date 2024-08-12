@@ -5,7 +5,7 @@ using Player;
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using Utils.Enums;
+using Utilities.Enums;
 
 namespace Managers
 {

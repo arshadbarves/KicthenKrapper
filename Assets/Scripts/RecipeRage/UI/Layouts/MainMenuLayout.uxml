@@ -1,0 +1,39 @@
+<engine:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:engine="UnityEngine.UIElements" xmlns:editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <Style src="project://database/Assets/Scripts/RecipeRage/UI/Styles/MainMenu.uss?fileID=7433441132597879392&amp;guid=a286ba9ff5d9d42c69fa741e60f37519&amp;type=3#MainMenu" />
+    <engine:VisualElement style="flex-grow: 1; background-image: url(&quot;project://database/Assets/RecipeRage/Images/lobby_background.png?fileID=2800000&amp;guid=2a3d33e73708044deaed012579e99881&amp;type=3#lobby_background&quot;); -unity-font-definition: url(&quot;project://database/Assets/RecipeRage/Fonts/Bangers-Regular%20SDF.asset?fileID=11400000&amp;guid=5d3b305aa197b4f1da3accea7ce52da7&amp;type=2#Bangers-Regular SDF&quot;); font-size: 40px; -unity-text-align: middle-center;">
+        <engine:TabView name="navBar" style="height: 100%;">
+            <engine:Tab icon-image="project://database/Assets/RecipeRage/Images/Icons/icons8-home-90.png?fileID=2800000&amp;guid=3542ebd42bbdd410f94e58347d4c14fe&amp;type=3#icons8-home-90">
+                <engine:VisualElement style="flex-grow: 1;" />
+                <engine:VisualElement style="flex-direction: row; justify-content: space-between; margin-top: 10px; margin-right: 50px; margin-left: 50px; margin-bottom: 0;">
+                    <engine:Button text="Select Mode" style="height: 125px; width: 500px;" />
+                    <engine:Button text="PLAY!" name="playButton" style="height: 125px; width: 400px; background-color: rgb(80, 243, 154); font-size: 65px; border-left-color: rgb(0, 0, 0); border-right-color: rgb(0, 0, 0); border-top-color: rgb(0, 0, 0); border-bottom-color: rgb(0, 0, 0); border-top-width: 5px; border-right-width: 0; border-bottom-width: 0; border-left-width: 0; border-top-left-radius: 20px; border-top-right-radius: 20px; align-items: center; justify-content: center; align-self: center;" />
+                </engine:VisualElement>
+            </engine:Tab>
+            <engine:Tab icon-image="project://database/Assets/RecipeRage/Images/Icons/icons8-chef-90%20(1).png?fileID=2800000&amp;guid=35c3ed2dc570f4dd994772a3d3ff1ca8&amp;type=3#icons8-chef-90 (1)" />
+            <engine:Tab icon-image="project://database/Assets/RecipeRage/Images/Icons/icons8-store-90.png?fileID=2800000&amp;guid=c6df5a3de9327476f94f5fe9663cb586&amp;type=3#icons8-store-90" />
+            <engine:Tab icon-image="project://database/Assets/RecipeRage/Images/Icons/icons8-gear-90.png?fileID=2800000&amp;guid=39119cc649e50458eacbadf48972b82d&amp;type=3#icons8-gear-90" />
+        </engine:TabView>
+        <engine:Label text="!" name="notificationLabel" class="notificationLabel" />
+        <engine:VisualElement style="flex-direction: row; position: absolute; left: 0; top: 0; margin-top: 0; margin-right: 50px; margin-bottom: 0; margin-left: 50px;">
+            <engine:Button style="top: 0; left: 0; height: 125px; width: 450px; background-color: rgb(0, 0, 0); color: rgb(255, 255, 255); border-top-width: 0; border-right-width: 0; border-bottom-width: 0; border-left-width: 0; border-top-left-radius: 0; border-top-right-radius: 0; border-bottom-right-radius: 25px; border-bottom-left-radius: 50px; flex-direction: row;">
+                <engine:VisualElement style="width: 105px; height: 100px; background-color: rgb(99, 168, 255); border-top-left-radius: 100%; border-top-right-radius: 100%; border-bottom-right-radius: 100%; border-bottom-left-radius: 100%;">
+                    <engine:VisualElement style="flex-grow: 1; background-image: url(&quot;project://database/Assets/RecipeRage/Images/Icons/icons8-chef-90.png?fileID=2800000&amp;guid=3002ba0e88f074bbf962281bc95675d1&amp;type=3#icons8-chef-90&quot;);" />
+                </engine:VisualElement>
+                <engine:VisualElement style="flex-grow: 1; margin-top: 10px; margin-right: 10px; margin-bottom: 10px; margin-left: 10px;">
+                    <engine:Label text="#Real Player" style="font-size: 26px;" />
+                    <engine:Label text="1500" style="font-size: 36px;" />
+                </engine:VisualElement>
+            </engine:Button>
+        </engine:VisualElement>
+        <engine:VisualElement style="flex-direction: row; position: absolute; right: 0; top: 25px;">
+            <engine:Button emoji-fallback-support="false" class="itemButton" style="padding-top: 10px; padding-bottom: 10px; border-top-left-radius: 20px; border-top-right-radius: 20px; border-bottom-right-radius: 20px; border-bottom-left-radius: 20px;">
+                <engine:VisualElement class="itemIcon" />
+                <engine:Label text="100000" class="itemLabel" />
+            </engine:Button>
+            <engine:Button emoji-fallback-support="false" class="itemButton" style="padding-top: 10px; padding-bottom: 10px; border-top-left-radius: 20px; border-top-right-radius: 20px; border-bottom-right-radius: 20px; border-bottom-left-radius: 20px;">
+                <engine:VisualElement class="itemIcon" style="background-image: url(&quot;project://database/Assets/Third%20Party%20Assets/GUI%20PRO%20Kit%20-%20Simple%20Casual/Sprite/Demo/Demo_Play/Spin_Icon_Gem.png?fileID=2800000&amp;guid=ea53aebc958b646bd88575dec0e8357e&amp;type=3#Spin_Icon_Gem&quot;);" />
+                <engine:Label text="100000" class="itemLabel" />
+            </engine:Button>
+        </engine:VisualElement>
+    </engine:VisualElement>
+</engine:UXML>

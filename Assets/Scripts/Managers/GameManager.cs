@@ -5,7 +5,7 @@ using Multiplayer.EOS;
 using PlayEveryWare.EpicOnlineServices;
 using UnityEngine;
 using UnityEngine.Android;
-using Utils.Enums;
+using Utilities.Enums;
 
 namespace Managers
 {

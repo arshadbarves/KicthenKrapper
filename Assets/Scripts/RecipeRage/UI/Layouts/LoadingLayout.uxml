@@ -1,0 +1,15 @@
+<engine:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:engine="UnityEngine.UIElements" xmlns:editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <Style src="project://database/Assets/Scripts/RecipeRage/UI/Styles/Loading.uss?fileID=7433441132597879392&amp;guid=a26c560af4d91495dad7247722945552&amp;type=3#Loading" />
+    <engine:VisualElement style="flex-grow: 1; background-image: url(&quot;project://database/Assets/RecipeRage/Images/background_image.png?fileID=2800000&amp;guid=311fbe290be194e079ae46cab068b84f&amp;type=3#background_image&quot;);">
+        <engine:VisualElement name="Logo" style="-unity-text-align: upper-center; align-items: center; justify-content: center; align-self: center; flex-grow: 1; display: flex; width: 100%;">
+            <engine:Label text="RECIPE" name="recipeLogoLabel" selectable="true" class="recipeLogoLabel" />
+            <engine:Label text="RAGE" name="rageLogoLabel" class="rageLogoLabel" />
+        </engine:VisualElement>
+        <engine:VisualElement name="VisualElement" style="position: absolute; width: 100%; height: 100%; justify-content: flex-end;">
+            <engine:Label text="Tip: The &apos;Swap&apos; power-up can be used to steal an ingredient from your opponent. It&apos;s a great way to get ahead!" name="tipLabel" style="align-self: center; height: 150px; -unity-font-definition: url(&quot;project://database/Assets/RecipeRage/Fonts/Frijole-Regular%20SDF.asset?fileID=11400000&amp;guid=d6e6a9e6e80f14f389c0cbb8ce82e5ce&amp;type=2#Frijole-Regular SDF&quot;); white-space: normal; width: 50%; -unity-text-align: middle-center; text-overflow: ellipsis; align-items: center; justify-content: center; font-size: 24px;" />
+            <engine:VisualElement name="VisualElement" style="background-color: rgba(0, 0, 0, 0.78); border-top-left-radius: 25px; border-top-right-radius: 25px; align-self: flex-end; right: 50px; align-items: center; justify-content: center; width: 500px; height: 75px;">
+                <engine:Label text="connecting..." name="loadingLabel" style="-unity-font-definition: url(&quot;project://database/Assets/RecipeRage/Fonts/Bangers-Regular%20SDF.asset?fileID=11400000&amp;guid=5d3b305aa197b4f1da3accea7ce52da7&amp;type=2#Bangers-Regular SDF&quot;); font-size: 32px; color: rgb(255, 255, 255); -unity-text-align: middle-center; text-overflow: ellipsis; justify-content: center; align-items: center; align-self: center;" />
+            </engine:VisualElement>
+        </engine:VisualElement>
+    </engine:VisualElement>
+</engine:UXML>

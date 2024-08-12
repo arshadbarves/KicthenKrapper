@@ -6,7 +6,7 @@ using Managers;
 using PlayEveryWare.EpicOnlineServices;
 using SceneManagement;
 using UnityEngine;
-using Utils.Enums;
+using Utilities.Enums;
 
 namespace Multiplayer.EOS
 {

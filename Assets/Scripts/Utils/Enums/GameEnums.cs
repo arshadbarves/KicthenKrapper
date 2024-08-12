@@ -1,4 +1,4 @@
-namespace Utils.Enums
+namespace Utilities.Enums
 {
     public enum GameMode
     {

@@ -6,7 +6,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using PlayEveryWare.EpicOnlineServices.Samples;
 using SceneManagement;
-using Utils.Enums;
+using Utilities.Enums;
 
 namespace KitchenKrapper
 {

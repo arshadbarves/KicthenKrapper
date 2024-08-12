@@ -1,0 +1,9 @@
+<engine:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:engine="UnityEngine.UIElements" xmlns:editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <Style src="project://database/Assets/Scripts/RecipeRage/UI/Styles/common.uss?fileID=7433441132597879392&amp;guid=6ba0d799423d345a6b2c988bd5bc6005&amp;type=3#common" />
+    <engine:VisualElement style="flex-grow: 1; background-color: rgb(0, 0, 0);">
+        <engine:VisualElement name="splashPanel" class="splashPanel">
+            <engine:Label text="playcenter" style="-unity-font-definition: url(&quot;project://database/Assets/RecipeRage/Fonts/Comfortaa-VariableFont_wght%20SDF.asset?fileID=11400000&amp;guid=c93f1d9bee5d84d159dfcf084200ed7f&amp;type=2#Comfortaa-VariableFont_wght SDF&quot;); color: rgb(255, 255, 255); font-size: 128px;" />
+            <engine:Label text="GAME" style="font-size: 48px; -unity-font-definition: url(&quot;project://database/Assets/RecipeRage/Fonts/Jost-VariableFont_wght%20SDF.asset?fileID=11400000&amp;guid=e28e1d39e44eb45fbb6d815ad7f96c5e&amp;type=2#Jost-VariableFont_wght SDF&quot;); color: rgb(255, 255, 255);" />
+        </engine:VisualElement>
+    </engine:VisualElement>
+</engine:UXML>
